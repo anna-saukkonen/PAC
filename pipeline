@@ -1,0 +1,176 @@
+#!/usr/bin/env nextflow
+
+
+/*
+ * Defines some parameters in order to specify the refence genomes
+ * and read pairs by using the command line options
+ */
+
+params.genome 		= "${baseDir}/test/chr22.fa"
+params.variants 	= "${baseDir}/test/NA12877_output.phased.chr22.vcf"
+params.reads 		= "${baseDir}/test/NA12890_merged_{1,2}.sample5000.fq" 
+params.annot 		= "/Users/annasaukkonen/Desktop/R2/Results/gencode.v19.annotation.gtf"
+
+log.info """\
+
+genome 		: $params.genome
+reads 		: $params.reads
+variants 	: $params.variants
+annot 		: $params.annot
+"""
+
+
+
+
+/*
+ * Create the `read_pairs_ch` channel that emits tuples containing three elements:
+ * the pair ID, the first read-pair file and the second read-pair file
+ */
+reads_ch = Channel.fromFilePairs(params.reads)
+
+
+
+
+
+/*
+ * Process 1: Create STAR genome index file.
+ */
+
+process prepare_star_genome_index {
+  tag "$genome.baseName"
+
+
+  input:
+    path genome from params.genome
+    path annot from params.annot
+  output:
+    path STARhaploid into genome_dir_ch
+
+  script:
+  """
+  mkdir STARhaploid
+
+  STAR --runMode genomeGenerate \
+       --genomeDir STARhaploid \
+       --genomeFastaFiles ${genome} \
+       --sjdbGTFfile ${annot} \
+       --sjdbOverhang 74 \
+       --runThreadN ${task.cpus}
+  """
+}
+
+
+
+/**********
+ * PART 2: STAR RNA-Seq Mapping
+ *
+ * Process 2: Align RNA-Seq reads to the genome with STAR
+ */
+
+process '2_rnaseq_mapping_star' {
+  tag "$replicateId"
+
+  
+
+
+  input: 
+    path genome from params.genome 
+    path STARhaploid from genome_dir_ch
+    tuple val(replicateId), path(reads) from reads_ch 
+
+  output: 
+    tuple \
+      val(replicateId), \
+      path('NA12877.SOFT.NOTRIM.STAR.pass2.Aligned.sortedByCoord.out.bam'), \
+      path('NA12877.SOFT.NOTRIM.STAR.pass2.Aligned.sortedByCoord.out.bam.bai') into aligned_bam_ch
+
+  script:    
+  """
+  # Align reads to genome
+  STAR --genomeDir STARhaploid \
+       --readFilesIn $reads \
+       --runThreadN ${task.cpus} \
+       --outSAMstrandField intronMotif \
+       --outFilterMultimapNmax 30 \
+       --alignIntronMax 1000000 \
+       --alignMatesGapMax 1000000 \
+       --outMultimapperOrder Random \
+       --outSAMunmapped Within \
+       --outSAMattrIHstart 0 \
+       --outFilterIntronMotifs RemoveNoncanonicalUnannotated \
+       --sjdbOverhang 74 \
+       --outFilterMismatchNmax 8 \
+       --outSAMattributes NH nM NM MD HI \
+       --outSAMattrRGline  ID:$replicateId PU:Illumina PL:Illumina LB:NA12877.SOFT.NOTRIM SM:NA12877.SOFT.NOTRIM CN:Seq_centre \
+       --outSAMtype BAM SortedByCoordinate \
+       --twopassMode Basic \
+       --outFileNamePrefix NA12877.SOFT.NOTRIM.STAR.pass2. \
+       --outSAMprimaryFlag AllBestScore
+
+  # Index the BAM file
+  samtools index NA12877.SOFT.NOTRIM.STAR.pass2.Aligned.sortedByCoord.out.bam
+  """
+}
+
+
+
+
+
+
+
+process clean_up_reads {
+
+	
+	input:
+	  tuple val(replicateId), path(bam), path(index) from aligned_bam_ch
+	  path variants from params.variants
+
+	output:
+	  path ('phaser_version.bam') into phaser_ch
+	  path ('NA12877.SOFT.NOTRIM.STAR.pass2.Aligned.sortedByCoord.out.PP.UM.bam') into pp_um_ch
+
+	script:
+	"""
+	#KEEP ONLY PROPERLY PAIRED READS
+	samtools view -@ 10 -f 0x0002 -b -o NA12877.SOFT.NOTRIM.STAR.pass2.Aligned.sortedByCoord.out.PP.bam NA12877.SOFT.NOTRIM.STAR.pass2.Aligned.sortedByCoord.out.bam
+	samtools index NA12877.SOFT.NOTRIM.STAR.pass2.Aligned.sortedByCoord.out.PP.bam
+
+	#KEEP UNIQUELY MAPPED READS
+	samtools view -h NA12877.SOFT.NOTRIM.STAR.pass2.Aligned.sortedByCoord.out.PP.bam | grep -P "NH:i:1\t|^@" | samtools view -bS - > NA12877.SOFT.NOTRIM.STAR.pass2.Aligned.sortedByCoord.out.PP.UM.bam
+	samtools index NA12877.SOFT.NOTRIM.STAR.pass2.Aligned.sortedByCoord.out.PP.UM.bam
+
+	#Create BAM compatible with PHASER:
+	gunzip -c  ${variants}  | grep -q 'chr1' || (samtools view -h NA12877.SOFT.NOTRIM.STAR.pass2.Aligned.sortedByCoord.out.PP.UM.bam | sed -e 's/chr//' >> phaser_version.sam; samtools view -bh phaser_version.sam >> phaser_version.bam; samtools index phaser_version.bam)
+	gunzip -c  ${variants}  | grep -q 'chr1' && (samtools view -bh NA12877.SOFT.NOTRIM.STAR.pass2.Aligned.sortedByCoord.out.PP.UM.bam >> phaser_version.bam; samtools index phaser_version.bam)
+	rm phaser_version.sam
+	"""
+}
+
+
+process phaser_step {
+
+	input:
+	path variants from params.variants
+	path ('phaser_version.bam') from phaser_ch
+
+	output:
+	path ('NA12877.SOFT.NOTRIM_PHASER/NA12877') into phaser_out_ch
+
+	script:
+	"""
+	mkdir NA12877.SOFT.NOTRIM_PHASER
+
+	python phaser/phaser/phaser.py --vcf ${variants} --bam phaser_version.bam --paired_end 1 --mapq 0 --baseq 10 --isize 0 --include_indels 1  --blacklist /away/ahodgkinson/Programs/phaser/useful_files/hla_hg19.bed --sample NA12877 --id_separator + --pass_only 0 --o NA12877.SOFT.NOTRIM_PHASER/NA12877
+
+	gunzip NA12877.SOFT.NOTRIM_PHASER/NA12877.vcf.gz
+	rm STAR_original/phaser_version.bam
+	rm STAR_original/phaser_version.bam.bai
+	"""
+}
+
+
+
+
+
+
+
