@@ -1,0 +1,15 @@
+# You can use this file to create a conda environment for this pipeline:
+#   conda env create -f environment.yml
+name: my.env
+channels:
+  - conda-forge
+  - bioconda
+  - defaults
+  
+dependencies:
+  ## bioconda packages, see above
+
+  - star=2.5.4a 
+  - samtools=1.9
+  - ucsc-liftover 
+  - rsem          
