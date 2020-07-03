@@ -19,7 +19,7 @@ RUN apt-get update && apt-get install --yes --no-install-recommends \
     perl \
     python
 
-RUN wget https://github.com/secastel/phaser.git \
+RUN git clone https://github.com/secastel/phaser.git \
 	&& cd phaser/phaser/ \
 	&& python setup.py build_ext –inplace  
 
