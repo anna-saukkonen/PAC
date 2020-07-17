@@ -9,7 +9,7 @@
 params.genome 		= "${baseDir}/test/chr22.fa"
 params.variants 	= "${baseDir}/test/NA12877_output.phased.chr22.vcf"
 params.reads 		= "${baseDir}/test/NA12890_merged_{1,2}.sample5000.fq" 
-params.annot 		= "/Users/annasaukkonen/Desktop/R2/Results/gencode.v19.annotation.gtf"
+params.annot 		= "${baseDir}/test/gencode.v19.annotation.gtf"
 
 log.info """\
 
