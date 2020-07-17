@@ -90,6 +90,7 @@ process '2_rnaseq_mapping_star' {
   STAR --genomeDir STARhaploid \
        --readFilesIn $reads \
        --runThreadN ${task.cpus} \
+       --readFilesCommand zcat \
        --outSAMstrandField intronMotif \
        --outFilterMultimapNmax 30 \
        --alignIntronMax 1000000 \
