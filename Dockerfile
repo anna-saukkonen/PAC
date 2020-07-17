@@ -1,27 +1,33 @@
-# Set the base image to debian jessie
-FROM debian:jessie
+# Set the base image
+FROM centos
 
-# File Author / Maintainer
-MAINTAINER Anna Saukkonen <anna.saukkonen@gmail.com>
+#Load dependencies
 
+RUN yum install -y \
+git \
+python2 \
+wget \
+epel-release \
+python2-pip \
+gcc \ 
+python2-devel \
+make \
+java-devel
 
+RUN dnf install -y redhat-rpm-config
 
-RUN apt-get update && apt-get install --yes --no-install-recommends \
-	ca-certificates \
-    wget \
-    curl \
-    locales \
-    vim-tiny \
-    git \
-    cmake \
-    build-essential \
-    gcc-multilib \
-    perl \
-    python
+#Get phaser:
+RUN git clone https://github.com/secastel/phaser.git
+RUN pip2 install Cython
+RUN pip2 install scipy
+RUN pip2 install pysam
+WORKDIR phaser/phaser
+RUN python2 setup.py build_ext --inplace
+WORKDIR /
 
-RUN git clone https://github.com/secastel/phaser.git \
-	&& cd phaser/phaser/ \
-	&& python setup.py build_ext –inplace  
+#Get Alleleseq:
+RUN wget http://alleleseq.gersteinlab.org/vcf2diploid_v0.2.6a.zip && unzip vcf2diploid_v0.2.6a.zip
+WORKDIR vcf2diploid_v0.2.6a
+RUN make
+WORKDIR /	
 
-RUN wget http://alleleseq.gersteinlab.org/vcf2diploid_v0.2.6a.zip \
-	&& make	
