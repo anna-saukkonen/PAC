@@ -161,7 +161,7 @@ process phaser_step {
 	"""
 	mkdir NA12877.SOFT.NOTRIM_PHASER
 
-	python phaser/phaser/phaser.py --vcf ${variants} --bam phaser_version.bam --paired_end 1 --mapq 0 --baseq 10 --isize 0 --include_indels 1  --blacklist /away/ahodgkinson/Programs/phaser/useful_files/hla_hg19.bed --sample NA12877 --id_separator + --pass_only 0 --o NA12877.SOFT.NOTRIM_PHASER/NA12877
+	python2 /phaser/phaser/phaser.py --vcf ${variants} --bam phaser_version.bam --paired_end 1 --mapq 0 --baseq 10 --isize 0 --include_indels 1  --blacklist /away/ahodgkinson/Programs/phaser/useful_files/hla_hg19.bed --sample NA12877 --id_separator + --pass_only 0 --o NA12877.SOFT.NOTRIM_PHASER/NA12877
 
 	gunzip NA12877.SOFT.NOTRIM_PHASER/NA12877.vcf.gz
 	rm STAR_original/phaser_version.bam
