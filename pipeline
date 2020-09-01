@@ -9,7 +9,8 @@
 params.genome 		= "${baseDir}/test/chr22.fa"
 params.variants 	= "${baseDir}/test/NA12877_output.phased.chr22.vcf"
 params.reads 		= "${baseDir}/test/NA12890_merged_{1,2}.sample5000.fq" 
-params.annot 		= "${baseDir}/test/gencode.v19.annotation.gtf"
+params.annot 		= file("ftp://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_human/release_19/gencode.v19.annotation.gtf.gz")
+
 
 log.info """\
 
@@ -29,12 +30,21 @@ annot 		: $params.annot
 reads_ch = Channel.fromFilePairs(params.reads)
 
 
+process unzip {
+	input:
+	  path annot from params.annot
+
+	output:
+	  path "${annot.baseName}" into files_ch
+
+	script:
+	"""
+	gunzip -k --verbose --stdout --force ${annot} > ${annot.baseName}
+	"""
+}
 
 
 
-/*
- * Process 1: Create STAR genome index file.
- */
 
 process prepare_star_genome_index {
   tag "$genome.baseName"
@@ -42,7 +52,7 @@ process prepare_star_genome_index {
 
   input:
     path genome from params.genome
-    path annot from params.annot
+    path unzipped_annot from files_ch
   output:
     path STARhaploid into genome_dir_ch
 
@@ -50,10 +60,12 @@ process prepare_star_genome_index {
   """
   mkdir STARhaploid
 
+
+
   STAR --runMode genomeGenerate \
        --genomeDir STARhaploid \
        --genomeFastaFiles ${genome} \
-       --sjdbGTFfile ${annot} \
+       --sjdbGTFfile $unzipped_annot \
        --sjdbOverhang 74 \
        --runThreadN ${task.cpus}
   """
@@ -61,11 +73,7 @@ process prepare_star_genome_index {
 
 
 
-/**********
- * PART 2: STAR RNA-Seq Mapping
- *
- * Process 2: Align RNA-Seq reads to the genome with STAR
- */
+
 
 process '2_rnaseq_mapping_star' {
   tag "$replicateId"
@@ -90,7 +98,6 @@ process '2_rnaseq_mapping_star' {
   STAR --genomeDir STARhaploid \
        --readFilesIn $reads \
        --runThreadN ${task.cpus} \
-       --readFilesCommand zcat \
        --outSAMstrandField intronMotif \
        --outFilterMultimapNmax 30 \
        --alignIntronMax 1000000 \
@@ -148,6 +155,7 @@ process clean_up_reads {
 }
 
 
+/*
 process phaser_step {
 
 	input:
@@ -161,17 +169,11 @@ process phaser_step {
 	"""
 	mkdir NA12877.SOFT.NOTRIM_PHASER
 
-	python2 /phaser/phaser/phaser.py --vcf ${variants} --bam phaser_version.bam --paired_end 1 --mapq 0 --baseq 10 --isize 0 --include_indels 1  --blacklist /away/ahodgkinson/Programs/phaser/useful_files/hla_hg19.bed --sample NA12877 --id_separator + --pass_only 0 --o NA12877.SOFT.NOTRIM_PHASER/NA12877
+	python2 /phaser/phaser/phaser.py --vcf ${variants} --bam phaser_version.bam --paired_end 1 --mapq 0 --baseq 10 --isize 0 --include_indels 1 --sample NA12877 --id_separator + --pass_only 0 --o NA12877.SOFT.NOTRIM_PHASER/NA12877
 
 	gunzip NA12877.SOFT.NOTRIM_PHASER/NA12877.vcf.gz
 	rm STAR_original/phaser_version.bam
 	rm STAR_original/phaser_version.bam.bai
 	"""
 }
-
-
-
-
-
-
-
+*/
