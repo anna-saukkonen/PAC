@@ -74,3 +74,16 @@ RUN make
 WORKDIR /
 ENV PATH="/RSEM:${PATH}"
 
+#Get HTSLIB: 
+RUN wget https://github.com/samtools/htslib/releases/download/1.10.2/htslib-1.10.2.tar.bz2 
+RUN bzip2 -d htslib-1.10.2.tar.bz2 
+RUN tar -xvf htslib-1.10.2.tar 
+RUN echo $(ls) 
+WORKDIR htslib-1.10.2 
+RUN ./configure --prefix=/usr 
+RUN make 
+RUN make install 
+WORKDIR /usr/bin 
+RUN echo $(ls) 
+WORKDIR /
+
