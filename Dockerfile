@@ -10,7 +10,6 @@ wget \
 epel-release \
 python2-pip \
 gcc \ 
-which \
 python2-devel \
 make \
 zlib-devel \
@@ -21,6 +20,8 @@ ncurses-devel \
 xz-devel \
 perl-Env \
 java-devel
+
+RUN yum install -y which
 
 RUN dnf install -y redhat-rpm-config
 
