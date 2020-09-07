@@ -39,7 +39,7 @@ process unzip {
 
 	script:
 	"""
-	gunzip -k --verbose --stdout --force ${annot} > ${annot.baseName}
+	gunzip --verbose --stdout --force ${annot} > ${annot.baseName}
 	"""
 }
 
