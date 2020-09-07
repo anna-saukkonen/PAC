@@ -10,6 +10,7 @@ wget \
 epel-release \
 python2-pip \
 gcc \ 
+which \
 python2-devel \
 make \
 zlib-devel \
