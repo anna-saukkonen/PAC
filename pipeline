@@ -155,7 +155,7 @@ process clean_up_reads {
 }
 
 
-/*
+
 process phaser_step {
 
 	input:
@@ -176,4 +176,4 @@ process phaser_step {
 	rm STAR_original/phaser_version.bam.bai
 	"""
 }
-*/
+
