@@ -3,6 +3,8 @@ FROM centos
 
 #Load dependencies
 
+RUN dnf install -y redhat-rpm-config
+
 RUN yum install -y \
 git \
 python2 \
@@ -23,7 +25,6 @@ java-devel
 
 RUN yum install -y which
 
-RUN dnf install -y redhat-rpm-config
 
 #Get STAR
 RUN wget https://github.com/alexdobin/STAR/archive/2.7.4a.tar.gz
@@ -86,4 +87,3 @@ RUN make install
 WORKDIR /usr/bin
 RUN echo $(ls)
 WORKDIR /
-
