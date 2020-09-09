@@ -91,7 +91,7 @@ WORKDIR /
 
 #Get Bedtools:
 RUN ln -snf python2.7 /usr/bin/python
-RUN wget https://github.com/arq5x/bedtools2/releases/download/v2.29.2/bedtools-2.29.2.tar.gz
+RUN wget https://github.com/arq5x/bedtools2/releases/download/v2.29.2/bedtools-2.29.2.tar.gz
 RUN tar -zxvf bedtools-2.29.2.tar.gz
 WORKDIR bedtools2
 RUN make
