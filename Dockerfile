@@ -25,7 +25,6 @@ java-devel
 
 RUN yum install -y which
 
-
 #Get STAR
 RUN wget https://github.com/alexdobin/STAR/archive/2.7.4a.tar.gz
 RUN tar -xzvf 2.7.4a.tar.gz
@@ -34,15 +33,6 @@ RUN make STAR
 WORKDIR /
 ENV PATH="/STAR-2.7.4a/bin/Linux_x86_64_static:${PATH}"
 RUN STAR
-
-#Get phaser:
-RUN git clone https://github.com/secastel/phaser.git
-RUN pip2 install Cython
-RUN pip2 install scipy
-RUN pip2 install pysam
-WORKDIR phaser/phaser
-RUN python2 setup.py build_ext --inplace
-WORKDIR /
 
 #Get Alleleseq:
 RUN wget http://alleleseq.gersteinlab.org/vcf2diploid_v0.2.6a.zip && unzip vcf2diploid_v0.2.6a.zip
@@ -88,7 +78,6 @@ WORKDIR /usr/bin
 RUN echo $(ls)
 WORKDIR /
 
-
 #Get Bedtools:
 RUN ln -snf python2.7 /usr/bin/python
 RUN wget https://github.com/arq5x/bedtools2/releases/download/v2.29.2/bedtools-2.29.2.tar.gz
@@ -96,5 +85,14 @@ RUN tar -zxvf bedtools-2.29.2.tar.gz
 WORKDIR bedtools2
 RUN make
 RUN cp bin/* /usr/local/bin/
+WORKDIR /
+
+#Get phaser:
+RUN git clone https://github.com/secastel/phaser.git
+RUN pip2 install Cython
+RUN pip2 install scipy
+RUN pip2 install pysam
+WORKDIR phaser/phaser
+RUN python2 setup.py build_ext --inplace
 WORKDIR /
 
