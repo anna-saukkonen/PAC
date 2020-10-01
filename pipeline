@@ -7,7 +7,7 @@
  */
 
 params.genome 		= "${baseDir}/test/chr22.fa"
-params.variants 	= "${baseDir}/test/NA12877_output.phased.chr22.vcf"
+params.variants 	= "${baseDir}/test/NA12877_output.phased.chr22.vcf.gz"
 params.reads 		= "${baseDir}/test/NA12890_merged_{1,2}.sample5000.fq" 
 params.annot 		= file("ftp://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_human/release_19/gencode.v19.annotation.gtf.gz")
 
