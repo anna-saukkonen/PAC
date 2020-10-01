@@ -148,9 +148,8 @@ process clean_up_reads {
 	samtools index NA12877.SOFT.NOTRIM.STAR.pass2.Aligned.sortedByCoord.out.PP.UM.bam
 
 	#Create BAM compatible with PHASER:
-	gunzip -c  ${variants}  | grep -q 'chr1' || (samtools view -h NA12877.SOFT.NOTRIM.STAR.pass2.Aligned.sortedByCoord.out.PP.UM.bam | sed -e 's/chr//' >> phaser_version.sam; samtools view -bh phaser_version.sam >> phaser_version.bam; samtools index phaser_version.bam)
-	gunzip -c  ${variants}  | grep -q 'chr1' && (samtools view -bh NA12877.SOFT.NOTRIM.STAR.pass2.Aligned.sortedByCoord.out.PP.UM.bam >> phaser_version.bam; samtools index phaser_version.bam)
-	rm phaser_version.sam
+	gunzip -c ${variants} | grep -q 'chr' || (samtools view -h NA12877.SOFT.NOTRIM.STAR.pass2.Aligned.sortedByCoord.out.PP.UM.bam | sed -e 's/chr//' >> phaser_version.sam; samtools view -bh phaser_version.sam >> phaser_version.bam; samtools index phaser_version.bam; rm phaser_version.sam)
+	gunzip -c  ${variants}  | grep -q 'chr' && (samtools view -bh NA12877.SOFT.NOTRIM.STAR.pass2.Aligned.sortedByCoord.out.PP.UM.bam >> phaser_version.bam; samtools index phaser_version.bam)
 	"""
 }
 
