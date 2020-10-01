@@ -135,6 +135,7 @@ process clean_up_reads {
 
 	output:
 	  path ('phaser_version.bam') into phaser_ch
+	  path ('phaser_version.bam.bai') into phaser_bai_ch
 	  path ('NA12877.SOFT.NOTRIM.STAR.pass2.Aligned.sortedByCoord.out.PP.UM.bam') into pp_um_ch
 
 	script:
@@ -160,6 +161,7 @@ process phaser_step {
 	input:
 	path variants from params.variants
 	path ('phaser_version.bam') from phaser_ch
+	path ('phaser_version.bam.bai') from phaser_bai_ch
 
 	output:
 	path ('NA12877.SOFT.NOTRIM_PHASER/NA12877') into phaser_out_ch
