@@ -164,7 +164,7 @@ process phaser_step {
 	path ('phaser_version.bam.bai') from phaser_bai_ch
 
 	output:
-	path ('NA12877_output_phaser') into phaser_out_ch
+	path ('NA12877_output_phaser.vcf') into phaser_out_ch
 
 	script:
 	"""
