@@ -228,10 +228,7 @@ process liftover {
 	  path NA12877_paternal.fa into parental_genomes
 	  path NA12877_maternal.fa into parental_genomes
 
-	Channel
-	  .from(1..23)
-	  .map { chr -> tuple("sample$chr", file("/some/path/foo.${chr}.indels.vcf"), file("/other/path/foo.snvs.${chr}.vcf")) }
-      .set { pairs_ch }
+
 
 	script:
 
@@ -240,14 +237,16 @@ process liftover {
 	liftOver -gff $unzipped_annot paternal.chain pat_annotation.gtf not_lifted_p.txt
 
 	#Cat References
-	for i in ${1..22}; do cat chr${i}_NA12877_maternal.fa >> NA12877_maternal.fa; done
+	$/
+	for i in {1..22}; do cat chr$i\_NA12877_maternal.fa >> NA12877_maternal.fa; done
 	cat chrX_NA12877_maternal.fa >> NA12877_maternal.fa
 	cat chrY_NA12877_maternal.fa >> NA12877_maternal.fa
 	cat chrM_NA12877_maternal.fa >> NA12877_maternal.fa
-	for i in ${1..22}; do cat chr${i}_NA12877_paternal.fa >> NA12877_paternal.fa; done
+	for i in {1..22}; do cat chr$i\_NA12877_paternal.fa >> NA12877_paternal.fa; done
 	cat chrX_NA12877_paternal.fa >> NA12877_paternal.fa
 	cat chrY_NA12877_paternal.fa >> NA12877_paternal.fa
 	cat chrM_NA12877_paternal.fa >> NA12877_paternal.fa
+	/$
 
 	$/
 	sed 's/\*/N/g' NA12877_paternal.fa > NA12877_paternal.hold.fa
