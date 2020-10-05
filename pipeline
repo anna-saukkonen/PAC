@@ -195,13 +195,13 @@ process create_parental_genomes {
 	  path unzipped_annot from files_ch
 
 	output:
-	  path maternal.chain into maternal_ch
-	  path mat_annotation.gtf into maternal_ch
-	  path not_lifted_m.txt into maternal_ch
+	  path ('maternal.chain') into maternal_ch
+	  path ('mat_annotation.gtf') into maternal_ch
+	  path ('not_lifted_m.txt') into maternal_ch
 
-	  path paternal.chain into paternal_ch
-	  path pat_annotation.gtf into paternal_ch
-	  path not_lifted_p.txt into paternal_ch
+	  path ('paternal.chain') into paternal_ch
+	  path ('pat_annotation.gtf') into paternal_ch
+	  path ('not_lifted_p.txt') into paternal_ch
 
 
 	script:
@@ -216,17 +216,17 @@ process create_parental_genomes {
 process liftover {
 	input:
 	  path unzipped_annot from files_ch
-	  path maternal.chain into maternal_ch
-	  path mat_annotation.gtf into maternal_ch
-	  path not_lifted_m.txt into maternal_ch
-	  path paternal.chain into paternal_ch
-	  path pat_annotation.gtf into paternal_ch
-	  path not_lifted_p.txt into paternal_ch
+	  path ('maternal.chain') into maternal_ch
+	  path ('mat_annotation.gtf') into maternal_ch
+	  path ('not_lifted_m.txt') into maternal_ch
+	  path ('paternal.chain') into paternal_ch
+	  path ('pat_annotation.gtf') into paternal_ch
+	  path ('not_lifted_p.txt') into paternal_ch
 
 
 	output:
-	  path NA12877_paternal.fa into parental_genomes
-	  path NA12877_maternal.fa into marental_genomes
+	  path ('NA12877_paternal.fa') into parental_genomes
+	  path ('NA12877_maternal.fa') into marental_genomes
 
 
 	script:
