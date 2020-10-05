@@ -228,6 +228,11 @@ process liftover {
 	  path NA12877_paternal.fa into parental_genomes
 	  path NA12877_maternal.fa into parental_genomes
 
+	Channel
+	  .from(1..23)
+	  .map { chr -> tuple("sample$chr", file("/some/path/foo.${chr}.indels.vcf"), file("/other/path/foo.snvs.${chr}.vcf")) }
+      .set { pairs_ch }
+
 	script:
 
 	"""
@@ -244,10 +249,14 @@ process liftover {
 	cat chrY_NA12877_paternal.fa >> NA12877_paternal.fa
 	cat chrM_NA12877_paternal.fa >> NA12877_paternal.fa
 
+	$/
 	sed 's/\*/N/g' NA12877_paternal.fa > NA12877_paternal.hold.fa
+	/$
 	mv NA12877_paternal.hold.fa NA12877_paternal.fa
 
+	$/
 	sed 's/\*/N/g' NA12877_maternal.fa > NA12877_maternal.hold.fa
+	/$
 	mv NA12877_maternal.hold.fa NA12877_maternal.fa
 	"""
 }
