@@ -38,6 +38,7 @@ process unzip {
 	  path "${annot.baseName}" into files_ch
 
 	script:
+
 	"""
 	gunzip --verbose --stdout --force ${annot} > ${annot.baseName}
 
@@ -57,6 +58,7 @@ process prepare_star_genome_index {
     path STARhaploid into genome_dir_ch
 
   script:
+
   """
   mkdir STARhaploid
 
@@ -75,7 +77,7 @@ process prepare_star_genome_index {
 
 
 
-process '2_rnaseq_mapping_star' {
+process rnaseq_mapping_star {
   tag "$replicateId"
 
   
@@ -92,7 +94,8 @@ process '2_rnaseq_mapping_star' {
       path('NA12877.SOFT.NOTRIM.STAR.pass2.Aligned.sortedByCoord.out.bam'), \
       path('NA12877.SOFT.NOTRIM.STAR.pass2.Aligned.sortedByCoord.out.bam.bai') into aligned_bam_ch
 
-  script:    
+  script: 
+
   """
   # Align reads to genome
   STAR --genomeDir STARhaploid \
@@ -139,6 +142,7 @@ process clean_up_reads {
 	  path ('NA12877.SOFT.NOTRIM.STAR.pass2.Aligned.sortedByCoord.out.PP.UM.bam') into pp_um_ch
 
 	script:
+
 	"""
 	#KEEP ONLY PROPERLY PAIRED READS
 	samtools view -@ 10 -f 0x0002 -b -o NA12877.SOFT.NOTRIM.STAR.pass2.Aligned.sortedByCoord.out.PP.bam NA12877.SOFT.NOTRIM.STAR.pass2.Aligned.sortedByCoord.out.bam
@@ -167,9 +171,8 @@ process phaser_step {
 	path ('NA12877_output_phaser.vcf') into phaser_out_ch
 
 	script:
-	"""
-	mkdir NA12877.SOFT.NOTRIM_PHASER
 
+	"""
 	tabix -p vcf ${variants}
 
 
@@ -184,5 +187,69 @@ process phaser_step {
 
 
 
+process create_parental_genomes {
+
+	input:
+	  path genome from params.genome
+	  path variants from params.variants
+	  path unzipped_annot from files_ch
+
+	output:
+	  path maternal.chain into maternal_ch
+	  path mat_annotation.gtf into maternal_ch
+	  path not_lifted_m.txt into maternal_ch
+
+	  path maternal.chain into paternal_ch
+	  path pat_annotation.gtf into paternal_ch
+	  path not_lifted_p.txt into paternal_ch
+
+
+	script:
+
+	"""
+	java -Xmx10000m -jar /vcf2diploid_v0.2.6a/vcf2diploid.jar -id NA12877 -chr ${genome} -vcf ${variants} > logfile.txt
+
+	"""
+}
+
+
+process liftover {
+	input:
+	  path unzipped_annot from files_ch
+	  path maternal.chain into maternal_ch
+	  path mat_annotation.gtf into maternal_ch
+	  path not_lifted_m.txt into maternal_ch
+	  path paternal.chain into paternal_ch
+	  path pat_annotation.gtf into paternal_ch
+	  path not_lifted_p.txt into paternal_ch
+
+
+	output:
+	  path NA12877_paternal.fa into parental_genomes
+	  path NA12877_maternal.fa into parental_genomes
+
+	script:
+
+	"""
+	liftOver -gff $unzipped_annot maternal.chain mat_annotation.gtf not_lifted_m.txt
+	liftOver -gff $unzipped_annot paternal.chain pat_annotation.gtf not_lifted_p.txt
+
+	#Cat References
+	for i in {1..22}; do cat chr$i\_NA12877_maternal.fa >> NA12877_maternal.fa; done
+	cat chrX_NA12877_maternal.fa >> NA12877_maternal.fa
+	cat chrY_NA12877_maternal.fa >> NA12877_maternal.fa
+	cat chrM_NA12877_maternal.fa >> NA12877_maternal.fa
+	for i in {1..22}; do cat chr$i\_NA12877_paternal.fa >> NA12877_paternal.fa; done
+	cat chrX_NA12877_paternal.fa >> NA12877_paternal.fa
+	cat chrY_NA12877_paternal.fa >> NA12877_paternal.fa
+	cat chrM_NA12877_paternal.fa >> NA12877_paternal.fa
+
+	sed 's/\*/N/g' NA12877_paternal.fa > NA12877_paternal.hold.fa
+	mv NA12877_paternal.hold.fa NA12877_paternal.fa
+
+	sed 's/\*/N/g' NA12877_maternal.fa > NA12877_maternal.hold.fa
+	mv NA12877_maternal.hold.fa NA12877_maternal.fa
+	"""
+}
 
 
