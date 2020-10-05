@@ -199,7 +199,7 @@ process create_parental_genomes {
 	  path mat_annotation.gtf into maternal_ch
 	  path not_lifted_m.txt into maternal_ch
 
-	  path maternal.chain into paternal_ch
+	  path paternal.chain into paternal_ch
 	  path pat_annotation.gtf into paternal_ch
 	  path not_lifted_p.txt into paternal_ch
 
@@ -226,12 +226,8 @@ process liftover {
 
 	output:
 	  path NA12877_paternal.fa into parental_genomes
-	  path NA12877_maternal.fa into parental_genomes
+	  path NA12877_maternal.fa into marental_genomes
 
-	Channel
-	  .from(1..23)
-	  .map { chr -> tuple("sample$chr", file("/some/path/foo.${chr}.indels.vcf"), file("/other/path/foo.snvs.${chr}.vcf")) }
-      .set { pairs_ch }
 
 	script:
 
