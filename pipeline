@@ -216,18 +216,22 @@ process create_parental_genomes {
 process liftover {
 	input:
 	  path unzipped_annot from files_ch
-	  path ('maternal.chain') into maternal_chain_ch
-	  path ('mat_annotation.gtf') into maternal_gtf_ch
-	  path ('not_lifted_m.txt') into maternal_notlif_ch
-	  path ('paternal.chain') into paternal_chain_ch
-	  path ('pat_annotation.gtf') into paternal_gtf_ch
-	  path ('not_lifted_p.txt') into paternal_notlif_ch
+	  path ('maternal.chain') from maternal_chain_ch
+	  path ('mat_annotation.gtf') from maternal_gtf_ch
+	  path ('not_lifted_m.txt') from maternal_notlif_ch
+	  path ('paternal.chain') from paternal_chain_ch
+	  path ('pat_annotation.gtf') from paternal_gtf_ch
+	  path ('not_lifted_p.txt') from paternal_notlif_ch
 
 
 	output:
 	  path ('NA12877_paternal.fa') into parental_genomes
 	  path ('NA12877_maternal.fa') into marental_genomes
 
+	Channel
+	  .from(1..23)
+	  .map { chr -> tuple("sample$chr", file("/some/path/foo.${chr}.indels.vcf"), file("/other/path/foo.snvs.${chr}.vcf")) }
+      .set { pairs_ch }
 
 	script:
 
