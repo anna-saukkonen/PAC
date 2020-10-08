@@ -212,7 +212,7 @@ process create_parental_genomes {
 	"""
 }
 
-
+/*
 process liftover {
 	input:
 	  path unzipped_annot from files_ch
@@ -260,5 +260,6 @@ process liftover {
 	mv NA12877_maternal.hold.fa NA12877_maternal.fa
 	"""
 }
+*/
 
 
