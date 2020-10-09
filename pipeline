@@ -191,7 +191,7 @@ process create_parental_genomes {
 
 	input:
 	  path genome from params.genome
-	  path variants from params.variants
+	  path ('NA12877_output_phaser.vcf') into phaser_out_ch
 	  path unzipped_annot from files_ch
 
 	output:
@@ -207,10 +207,8 @@ process create_parental_genomes {
 	script:
 
 	"""
-	java -Xmx10000m -jar /vcf2diploid_v0.2.6a/vcf2diploid.jar -id NA12877 -chr ${genome} -vcf ${variants} > logfile.txt
+	java -Xmx10000m -jar /vcf2diploid_v0.2.6a/vcf2diploid.jar -id NA12877 -chr ${genome} -vcf NA12877_output_phaser.vcf > logfile.txt
 
-	"""
-}
 
 /*
 process liftover {
