@@ -203,12 +203,13 @@ process create_parental_genomes {
 	  path ('pat_annotation.gtf') into paternal_gtf_ch
 	  path ('not_lifted_p.txt') into paternal_notlif_ch
 
-	errorStrategy 'ignore'
+	
 	
 	script:
 
 	"""
-	java -Xmx10000m -jar /vcf2diploid_v0.2.6a/vcf2diploid.jar -id NA12877 -chr ${genome} -vcf NA12877_output_phaser.vcf > logfile.txt
+	mkdir STAR_2Gen_Ref
+	java -Xmx10000m -jar /vcf2diploid_v0.2.6a/vcf2diploid.jar -id NA12877 -chr ${genome} -vcf NA12877_output_phaser.vcf -outDir STAR_2Gen_Ref > logfile.txt
 
 	"""
 }
