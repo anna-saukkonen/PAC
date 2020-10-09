@@ -209,7 +209,5 @@ process create_parental_genomes {
 	"""
 	java -Xmx10000m -jar /vcf2diploid_v0.2.6a/vcf2diploid.jar -id NA12877 -chr ${genome} -vcf NA12877_output_phaser.vcf > logfile.txt
 
-
-
-
-
+	"""
+}
