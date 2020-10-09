@@ -212,8 +212,8 @@ process create_parental_genomes {
 	mkdir STAR_2Gen_Ref
 	java -Xmx10000m -jar /vcf2diploid_v0.2.6a/vcf2diploid.jar -id NA12877 -chr ${genome} -vcf NA12877_output_phaser.vcf -outDir STAR_2Gen_Ref > logfile.txt
 	
-	cd STAR_2Gen_Ref
-	liftOver -gff $unzipped_annot maternal.chain mat_annotation.gtf not_lifted_m.txt
-	liftOver -gff $unzipped_annot paternal.chain pat_annotation.gtf not_lifted_p.txt
+	
+	liftOver -gff $unzipped_annot STAR_2Gen_Ref/maternal.chain STAR_2Gen_Ref/mat_annotation.gtf STAR_2Gen_Ref/not_lifted_m.txt
+	liftOver -gff $unzipped_annot STAR_2Gen_Ref/paternal.chain STAR_2Gen_Ref/pat_annotation.gtf STAR_2Gen_Ref/not_lifted_p.txt
 	"""
 }
