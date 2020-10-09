@@ -195,13 +195,13 @@ process create_parental_genomes {
 	  path unzipped_annot from files_ch
 
 	output:
-	  path ('maternal.chain') into maternal_chain_ch
-	  path ('mat_annotation.gtf') into maternal_gtf_ch
-	  path ('not_lifted_m.txt') into maternal_notlif_ch
+	  path ('STAR_2Gen_Ref/maternal.chain') into maternal_chain_ch
+	  path ('STAR_2Gen_Ref/mat_annotation.gtf') into maternal_gtf_ch
+	  path ('STAR_2Gen_Ref/not_lifted_m.txt') into maternal_notlif_ch
 
-	  path ('paternal.chain') into paternal_chain_ch
-	  path ('pat_annotation.gtf') into paternal_gtf_ch
-	  path ('not_lifted_p.txt') into paternal_notlif_ch
+	  path ('STAR_2Gen_Ref/paternal.chain') into paternal_chain_ch
+	  path ('STAR_2Gen_Ref/pat_annotation.gtf') into paternal_gtf_ch
+	  path ('STAR_2Gen_Ref/not_lifted_p.txt') into paternal_notlif_ch
 
 	
 	
