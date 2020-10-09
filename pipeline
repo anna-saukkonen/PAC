@@ -227,13 +227,13 @@ process create_parental_genomes {
 	cat chrY_NA12877_paternal.fa >> NA12877_paternal.fa
 	cat chrM_NA12877_paternal.fa >> NA12877_paternal.fa
 
-	x=*
-	sed 's/${x}/N/g' NA12877_paternal.fa > NA12877_paternal.hold.fa
+	
+	sed 's/{x}/N/g' NA12877_paternal.fa > NA12877_paternal.hold.fa
 	
 	mv NA12877_paternal.hold.fa NA12877_paternal.fa
 
 	
-	sed 's/${x}/N/g' NA12877_maternal.fa > NA12877_maternal.hold.fa
+	sed 's/{x}/N/g' NA12877_maternal.fa > NA12877_maternal.hold.fa
 	
 	mv NA12877_maternal.hold.fa NA12877_maternal.fa
 	"""
