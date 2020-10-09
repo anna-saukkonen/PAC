@@ -210,54 +210,6 @@ process create_parental_genomes {
 	java -Xmx10000m -jar /vcf2diploid_v0.2.6a/vcf2diploid.jar -id NA12877 -chr ${genome} -vcf NA12877_output_phaser.vcf > logfile.txt
 
 
-/*
-process liftover {
-	input:
-	  path unzipped_annot from files_ch
-	  path ('maternal.chain') from maternal_chain_ch
-	  path ('mat_annotation.gtf') from maternal_gtf_ch
-	  path ('not_lifted_m.txt') from maternal_notlif_ch
-	  path ('paternal.chain') from paternal_chain_ch
-	  path ('pat_annotation.gtf') from paternal_gtf_ch
-	  path ('not_lifted_p.txt') from paternal_notlif_ch
 
-
-	output:
-	  path ('NA12877_paternal.fa') into parental_genomes
-	  path ('NA12877_maternal.fa') into marental_genomes
-
-	Channel
-	  .from(1..23)
-	  .map { chr -> tuple("sample$chr", file("/some/path/foo.${chr}.indels.vcf"), file("/other/path/foo.snvs.${chr}.vcf")) }
-      .set { pairs_ch }
-
-	script:
-
-	"""
-	liftOver -gff $unzipped_annot maternal.chain mat_annotation.gtf not_lifted_m.txt
-	liftOver -gff $unzipped_annot paternal.chain pat_annotation.gtf not_lifted_p.txt
-
-	
-	for i in {1..22}; do cat chr${i}_NA12877_maternal.fa >> NA12877_maternal.fa; done
-	cat chrX_NA12877_maternal.fa >> NA12877_maternal.fa
-	cat chrY_NA12877_maternal.fa >> NA12877_maternal.fa
-	cat chrM_NA12877_maternal.fa >> NA12877_maternal.fa
-	for i in {1..22}; do cat chr${i}_NA12877_paternal.fa >> NA12877_paternal.fa; done
-	cat chrX_NA12877_paternal.fa >> NA12877_paternal.fa
-	cat chrY_NA12877_paternal.fa >> NA12877_paternal.fa
-	cat chrM_NA12877_paternal.fa >> NA12877_paternal.fa
-
-	x=*
-	sed 's/${x}/N/g' NA12877_paternal.fa > NA12877_paternal.hold.fa
-	
-	mv NA12877_paternal.hold.fa NA12877_paternal.fa
-
-	
-	sed 's/${x}/N/g' NA12877_maternal.fa > NA12877_maternal.hold.fa
-	
-	mv NA12877_maternal.hold.fa NA12877_maternal.fa
-	"""
-}
-*/
 
 
