@@ -193,7 +193,6 @@ process create_parental_genomes {
 	  path genome from params.genome
 	  path unzipped_annot from files_ch
 	  path ('NA12877_output_phaser.vcf') from phaser_out_ch
-	  path unzipped_annot from files_ch
 
 	output:
 	  path ('STAR_2Gen_Ref/maternal.chain') into maternal_chain_ch
