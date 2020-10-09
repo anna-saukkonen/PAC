@@ -191,7 +191,7 @@ process create_parental_genomes {
 
 	input:
 	  path genome from params.genome
-	  path ('NA12877_output_phaser.vcf') into phaser_out_ch
+	  path ('NA12877_output_phaser.vcf') from phaser_out_ch
 	  path unzipped_annot from files_ch
 
 	output:
