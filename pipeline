@@ -218,23 +218,16 @@ process create_parental_genomes {
 	liftOver -gff $unzipped_annot STAR_2Gen_Ref/paternal.chain STAR_2Gen_Ref/pat_annotation.gtf STAR_2Gen_Ref/not_lifted_p.txt
 	
 	
-	cat chr${i}_NA12877_maternal.fa >> NA12877_maternal.fa
-	cat chrX_NA12877_maternal.fa >> NA12877_maternal.fa
-	cat chrY_NA12877_maternal.fa >> NA12877_maternal.fa
-	cat chrM_NA12877_maternal.fa >> NA12877_maternal.fa
-	cat chr${i}_NA12877_paternal.fa >> NA12877_paternal.fa
-	cat chrX_NA12877_paternal.fa >> NA12877_paternal.fa
-	cat chrY_NA12877_paternal.fa >> NA12877_paternal.fa
-	cat chrM_NA12877_paternal.fa >> NA12877_paternal.fa
+	cat STAR_2Gen_Ref/chr22_NA12877_maternal.fa >> STAR_2Gen_Ref/NA12877_maternal.fa
+
+	cat STAR_2Gen_Ref/chr22_NA12877_paternal.fa >> STAR_2Gen_Ref/NA12877_paternal.fa
+
 
 	
-	sed 's/{x}/N/g' NA12877_paternal.fa > NA12877_paternal.hold.fa
+	sed 's/\\*/N/g' STAR_2Gen_Ref/NA12877_paternal.fa > STAR_2Gen_Ref/NA12877_paternal.hold.fa
 	
-	mv NA12877_paternal.hold.fa NA12877_paternal.fa
 
 	
-	sed 's/{x}/N/g' NA12877_maternal.fa > NA12877_maternal.hold.fa
 	
-	mv NA12877_maternal.hold.fa NA12877_maternal.fa
 	"""
 }
