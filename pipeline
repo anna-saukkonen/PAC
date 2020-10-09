@@ -203,7 +203,8 @@ process create_parental_genomes {
 	  path ('pat_annotation.gtf') into paternal_gtf_ch
 	  path ('not_lifted_p.txt') into paternal_notlif_ch
 
-
+	errorStrategy 'ignore'
+	
 	script:
 
 	"""
