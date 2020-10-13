@@ -242,6 +242,8 @@ process create_parental_genomes {
 	sed 's/\\*/N/g' STAR_2Gen_Ref/NA12877_paternal.fa > STAR_2Gen_Ref/NA12877_paternal.hold.fa
 	mv STAR_2Gen_Ref/NA12877_paternal.hold.fa STAR_2Gen_Ref/NA12877_paternal.fa
 
+	export PATH=~/.local/bin:$PATH
+
 	perl adjust_reference.pl NA12877_output_phaser.vcf NA12877
 	"""
 }	
