@@ -250,7 +250,6 @@ process create_parental_genomes {
 
 process STAR_reference_genomes {
 	input:
-	  path ('NA12877_output_phaser.vcf') from phaser_out_ch
 	  path ('STAR_2Gen_Ref/NA12877_maternal.fa') from mat_fa
   	  path ('STAR_2Gen_Ref/NA12877_paternal.fa') from pat_fa
   	  path ('STAR_2Gen_Ref/mat_annotation.gtf') from mat_annotation_ch
