@@ -221,27 +221,27 @@ process create_parental_genomes {
 	
 	
 	cat STAR_2Gen_Ref/chr22_NA12877_maternal.fa >> STAR_2Gen_Ref/NA12877_maternal.fa
-	
-	#cat STAR_2Gen_Ref/chr${x}_NA12877_maternal.fa >> STAR_2Gen_Ref/NA12877_maternal.fa
-	#cat STAR_2Gen_Ref/chrX_NA12877_maternal.fa >> STAR_2Gen_Ref/NA12877_maternal.fa
-	#cat STAR_2Gen_Ref/chrY_NA12877_maternal.fa >> STAR_2Gen_Ref/NA12877_maternal.fa
-	#cat STAR_2Gen_Ref/chrM_NA12877_maternal.fa >> STAR_2Gen_Ref/NA12877_maternal.fa
-	
+	*/
+	cat STAR_2Gen_Ref/chr${x}_NA12877_maternal.fa >> STAR_2Gen_Ref/NA12877_maternal.fa
+	cat STAR_2Gen_Ref/chrX_NA12877_maternal.fa >> STAR_2Gen_Ref/NA12877_maternal.fa
+	cat STAR_2Gen_Ref/chrY_NA12877_maternal.fa >> STAR_2Gen_Ref/NA12877_maternal.fa
+	cat STAR_2Gen_Ref/chrM_NA12877_maternal.fa >> STAR_2Gen_Ref/NA12877_maternal.fa
+	/*
 	
 
 	cat STAR_2Gen_Ref/chr22_NA12877_paternal.fa >> STAR_2Gen_Ref/NA12877_paternal.fa
-	
-	#cat STAR_2Gen_Ref/chr${x}_NA12877_paternal.fa >> STAR_2Gen_Ref/NA12877_paternal.fa
-	#cat STAR_2Gen_Ref/chrX_NA12877_paternal.fa >> STAR_2Gen_Ref/NA12877_paternal.fa
-	#cat STAR_2Gen_Ref/chrY_NA12877_paternal.fa >> STAR_2Gen_Ref/NA12877_paternal.fa
-	#cat STAR_2Gen_Ref/chrM_NA12877_paternal.fa >> STAR_2Gen_Ref/NA12877_paternal.fa
-	
+	*/
+	cat STAR_2Gen_Ref/chr${x}_NA12877_paternal.fa >> STAR_2Gen_Ref/NA12877_paternal.fa
+	cat STAR_2Gen_Ref/chrX_NA12877_paternal.fa >> STAR_2Gen_Ref/NA12877_paternal.fa
+	cat STAR_2Gen_Ref/chrY_NA12877_paternal.fa >> STAR_2Gen_Ref/NA12877_paternal.fa
+	cat STAR_2Gen_Ref/chrM_NA12877_paternal.fa >> STAR_2Gen_Ref/NA12877_paternal.fa
+	/*
 
 	sed 's/\\*/N/g' STAR_2Gen_Ref/NA12877_maternal.fa > STAR_2Gen_Ref/NA12877_maternal.hold.fa
-	mv NA12877_maternal.hold.fa NA12877_maternal.fa
+	mv STAR_2Gen_Ref/NA12877_maternal.hold.fa STAR_2Gen_Ref/NA12877_maternal.fa
 	
 	sed 's/\\*/N/g' STAR_2Gen_Ref/NA12877_paternal.fa > STAR_2Gen_Ref/NA12877_paternal.hold.fa
-	mv NA12877_paternal.hold.fa NA12877_paternal.fa
+	mv STAR_2Gen_Ref/NA12877_paternal.hold.fa STAR_2Gen_Ref/NA12877_paternal.fa
 
 	perl adjust_reference.pl NA12877_output_phaser.vcf NA12877
 	"""
