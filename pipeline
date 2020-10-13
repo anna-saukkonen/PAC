@@ -186,6 +186,7 @@ process phaser_step {
 
 
 
+
 process create_parental_genomes {
 	chrNum = Channel.from( 1..22 )
 
@@ -205,6 +206,7 @@ process create_parental_genomes {
 	  path ('STAR_2Gen_Ref/not_lifted_m.txt') into not_lift_m_ch
 	  path ('STAR_2Gen_Ref/pat_annotation.gtf') into pat_annotation_ch
 	  path ('STAR_2Gen_Ref/not_lifted_p.txt') into not_lift_p_ch
+	  path ('map_over.txt') into adjusted_ref_ch
 
 	
 	script:
@@ -240,6 +242,8 @@ process create_parental_genomes {
 	
 	sed 's/\\*/N/g' STAR_2Gen_Ref/NA12877_paternal.fa > STAR_2Gen_Ref/NA12877_paternal.hold.fa
 	mv NA12877_paternal.hold.fa NA12877_paternal.fa
+
+	perl adjust_reference.pl NA12877_output_phaser.vcf NA12877
 	"""
 }	
 
@@ -255,7 +259,7 @@ process STAR_reference_genomes {
 	output:
 	  path Paternal_STAR into Paternal_STAR_ch
 	  path Maternal_STAR into Maternal_STAR_ch
-	  path ('map_over.txt') into adjusted_ref_ch
+	  
 
 	script:
 
@@ -267,7 +271,6 @@ process STAR_reference_genomes {
 	STAR --runMode genomeGenerate --genomeDir Maternal_STAR --genomeFastaFiles STAR_2Gen_Ref/NA12877_maternal.fa --sjdbGTFfile STAR_2Gen_Ref/mat_annotation.gtf --sjdbOverhang 74 --runThreadN 5 --outTmpDir mat
 	
 
-	perl adjust_reference.pl NA12877_output_phaser.vcf NA12877
 	"""    
 
 }
