@@ -97,7 +97,7 @@ process rnaseq_mapping_star {
   """
   # Align reads to genome
   STAR --genomeDir STARhaploid \
-       --readFilesIn $reads \
+       --readFilesIn $read1 $read2 \
        --runThreadN ${task.cpus} \
        --outSAMstrandField intronMotif \
        --outFilterMultimapNmax 30 \
