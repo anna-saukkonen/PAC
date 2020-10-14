@@ -24,7 +24,6 @@ annot 		: $params.annot
 
 Channel
 	.fromFilePairs(params.reads)
-	.set {reads}
 	.into {reads_ch1; reads_ch2}
 
 
