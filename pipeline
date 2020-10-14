@@ -27,7 +27,7 @@ annot 		: $params.annot
 
 Channel
 	.fromFilePairs(params.reads)
-	.into {reads_ch1; reads_ch2, reads_ch3}
+	.into {reads_ch1; reads_ch2; reads_ch3}
 
 
 
