@@ -209,7 +209,7 @@ process create_parental_genomes {
 	  path ('STAR_2Gen_Ref/NA12877_paternal.fa') into pat_fa
 	  path ('STAR_2Gen_Ref/mat_annotation.gtf') into mat_annotation_ch
 	  path ('STAR_2Gen_Ref/not_lifted_m.txt') into not_lift_m_ch
-	  path ('STAR_2Gen_Ref/pat_annotation.gtf') into pat_annotation_ch1, into pat_annotation_ch2
+	  path ('STAR_2Gen_Ref/pat_annotation.gtf') into (pat_annotation_ch1, into pat_annotation_ch2)
 	  path ('STAR_2Gen_Ref/not_lifted_p.txt') into not_lift_p_ch
 	  path ('STAR_2Gen_Ref/map_over.txt') into adjusted_ref_ch
 
