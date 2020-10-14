@@ -277,3 +277,52 @@ process STAR_reference_genomes {
 	"""    
 
 }
+
+
+process map_paternal_gen_filter {
+	
+	input:
+	  path Paternal_STAR from Paternal_STAR_ch
+	  tuple val(replicateId), path(reads) from reads_ch
+	  path ('STAR_2Gen_Ref/pat_annotation.gtf') from pat_annotation_ch
+	  path ('STAR_2Gen_Ref/NA12877_paternal.fa') from pat_fa
+
+	output:
+	  path ('NA12877.SOFT.NOTRIM.STAR.pass2.Aligned.sortedByCoord.out.PP.UM.bam') into paternal_mapgen_ch
+	  path ('NA12877.RSEM.TEST.genome.PP.SM.bam') into pat_rsem_ch
+
+	script:
+
+	"""
+	mkdir STAR_Paternal
+	cd STAR_Paternal
+
+	STAR --genomeDir Paternal_STAR --runThreadN 10 --quantMode TranscriptomeSAM --readFilesIn $reads --readFilesCommand zcat --outSAMstrandField intronMotif --outFilterMultimapNmax 30 --alignIntronMax 1000000 --alignMatesGapMax 1000000 --outMultimapperOrder Random --outSAMunmapped Within --outSAMattrIHstart 0 --outFilterIntronMotifs RemoveNoncanonicalUnannotated --sjdbOverhang 74 --outFilterMismatchNmax 8 --outSAMattributes NH nM NM MD HI --outSAMattrRGline  ID:NA12877.SOFT.NOTRIM PU:Illumina PL:Illumina LB:NA12877.SOFT.NOTRIM SM:NA12877.SOFT.NOTRIM CN:Seq_centre --outSAMtype BAM SortedByCoordinate --twopassMode Basic --outFileNamePrefix NA12877.SOFT.NOTRIM.STAR.pass2. --outSAMprimaryFlag AllBestScore
+
+	samtools index NA12877.SOFT.NOTRIM.STAR.pass2.Aligned.sortedByCoord.out.bam
+
+	#KEEP ONLY PROPERLY PAIRED READS
+	samtools view -@ 10 -f 0x0002 -b -o NA12877.SOFT.NOTRIM.STAR.pass2.Aligned.sortedByCoord.out.PP.bam NA12877.SOFT.NOTRIM.STAR.pass2.Aligned.sortedByCoord.out.bam
+	samtools index NA12877.SOFT.NOTRIM.STAR.pass2.Aligned.sortedByCoord.out.PP.bam
+
+	#KEEP UNIQUELY MAPPED READS
+	samtools view -h NA12877.SOFT.NOTRIM.STAR.pass2.Aligned.sortedByCoord.out.PP.bam | grep -P "NH:i:1\t|^@" | samtools view -bS - > NA12877.SOFT.NOTRIM.STAR.pass2.Aligned.sortedByCoord.out.PP.UM.bam
+	samtools index NA12877.SOFT.NOTRIM.STAR.pass2.Aligned.sortedByCoord.out.PP.UM.bam
+
+	##Create RSEM Files:
+	mkdir RSEM_MAT_GEN
+
+	/RSEM/rsem-prepare-reference --gtf STAR_2Gen_Ref/pat_annotation.gtf STAR_2Gen_Ref/NA12877_paternal.fa RSEM_MAT_GEN/RSEM_MAT_GEN
+
+	/RSEM/rsem-calculate-expression --bam --output-genome-bam --sampling-for-bam -p 20 --paired-end  NA12877.SOFT.NOTRIM.STAR.pass2.Aligned.toTranscriptome.out.bam RSEM_MAT_GEN/RSEM_MAT_GEN NA12877.RSEM.TEST
+
+	samtools view -@ 10 -f 0x0002 -b -o NA12877.RSEM.TEST.genome.PP.bam NA12877.RSEM.TEST.genome.bam
+	samtools sort -@ 20 -o NA12877.RSEM.TEST.genome.PP.s.bam NA12877.RSEM.TEST.genome.PP.bam
+	mv NA12877.RSEM.TEST.genome.PP.s.bam NA12877.RSEM.TEST.genome.PP.bam
+	samtools index NA12877.RSEM.TEST.genome.PP.bam
+	samtools view -h NA12877.RSEM.TEST.genome.PP.bam | grep -P "ZW:f:1|^@" | samtools view -bS - > NA12877.RSEM.TEST.genome.PP.SM.bam
+	samtools index NA12877.RSEM.TEST.genome.PP.SM.bam
+
+	"""
+
+}
