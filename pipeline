@@ -76,7 +76,7 @@ process prepare_star_genome_index {
 
 
 process rnaseq_mapping_star {
-  tag "$replicateId"
+  tag "$id"
 
   
 
@@ -88,7 +88,7 @@ process rnaseq_mapping_star {
 
   output: 
     tuple \
-      val(replicateId), \
+      val(id), \
       path('NA12877.SOFT.NOTRIM.STAR.pass2.Aligned.sortedByCoord.out.bam'), \
       path('NA12877.SOFT.NOTRIM.STAR.pass2.Aligned.sortedByCoord.out.bam.bai') into aligned_bam_ch
 
