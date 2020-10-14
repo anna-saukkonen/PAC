@@ -1,5 +1,6 @@
 #!/usr/bin/env nextflow
 
+
 /*
  * Defines some parameters in order to specify the refence genomes
  * and read pairs by using the command line options
@@ -193,6 +194,7 @@ process phaser_step {
 
 
 process create_parental_genomes {
+
 	chrNum = Channel.from( 1..22 )
 
 	input:
@@ -206,7 +208,7 @@ process create_parental_genomes {
 	  path ('STAR_2Gen_Ref/paternal.chain') into paternal_chain_ch
 	  path ('STAR_2Gen_Ref/chr22_NA12877.map') into map_ch
 	  path ('STAR_2Gen_Ref/NA12877_maternal.fa') into mat_fa
-	  path ('STAR_2Gen_Ref/NA12877_paternal.fa') into pat_fa
+	  path ('STAR_2Gen_Ref/NA12877_paternal.fa') into (pat_fa1, pat_fa2)
 	  path ('STAR_2Gen_Ref/mat_annotation.gtf') into mat_annotation_ch
 	  path ('STAR_2Gen_Ref/not_lifted_m.txt') into not_lift_m_ch
 	  path ('STAR_2Gen_Ref/pat_annotation.gtf') into (pat_annotation_ch1, pat_annotation_ch2)
@@ -259,7 +261,7 @@ process create_parental_genomes {
 process STAR_reference_genomes {
 	input:
 	  path ('STAR_2Gen_Ref/NA12877_maternal.fa') from mat_fa
-  	  path ('STAR_2Gen_Ref/NA12877_paternal.fa') from pat_fa
+  	  path ('STAR_2Gen_Ref/NA12877_paternal.fa') from pat_fa1
   	  path ('STAR_2Gen_Ref/mat_annotation.gtf') from mat_annotation_ch
   	  path ('STAR_2Gen_Ref/pat_annotation.gtf') from pat_annotation_ch1
 
@@ -289,7 +291,7 @@ process map_paternal_gen_filter {
 	  path Paternal_STAR from Paternal_STAR_ch
 	  set val(id), file(reads) from reads_ch2
 	  path ('STAR_2Gen_Ref/pat_annotation.gtf') from pat_annotation_ch2
-	  path ('STAR_2Gen_Ref/NA12877_paternal.fa') from pat_fa
+	  path ('STAR_2Gen_Ref/NA12877_paternal.fa') from pat_fa2
 
 	output:
 	  path ('NA12877.SOFT.NOTRIM.STAR.pass2.Aligned.sortedByCoord.out.PP.UM.bam') into paternal_mapgen_ch
