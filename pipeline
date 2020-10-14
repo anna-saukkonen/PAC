@@ -1,6 +1,5 @@
 #!/usr/bin/env nextflow
 
-
 /*
  * Defines some parameters in order to specify the refence genomes
  * and read pairs by using the command line options
@@ -210,7 +209,7 @@ process create_parental_genomes {
 	  path ('STAR_2Gen_Ref/NA12877_paternal.fa') into pat_fa
 	  path ('STAR_2Gen_Ref/mat_annotation.gtf') into mat_annotation_ch
 	  path ('STAR_2Gen_Ref/not_lifted_m.txt') into not_lift_m_ch
-	  path ('STAR_2Gen_Ref/pat_annotation.gtf') into pat_annotation_ch
+	  path ('STAR_2Gen_Ref/pat_annotation.gtf') into pat_annotation_ch1, into pat_annotation_ch2
 	  path ('STAR_2Gen_Ref/not_lifted_p.txt') into not_lift_p_ch
 	  path ('STAR_2Gen_Ref/map_over.txt') into adjusted_ref_ch
 
@@ -262,7 +261,7 @@ process STAR_reference_genomes {
 	  path ('STAR_2Gen_Ref/NA12877_maternal.fa') from mat_fa
   	  path ('STAR_2Gen_Ref/NA12877_paternal.fa') from pat_fa
   	  path ('STAR_2Gen_Ref/mat_annotation.gtf') from mat_annotation_ch
-  	  path ('STAR_2Gen_Ref/pat_annotation.gtf') from pat_annotation_ch
+  	  path ('STAR_2Gen_Ref/pat_annotation.gtf') from pat_annotation_ch1
 
 	output:
 	  path Paternal_STAR into Paternal_STAR_ch
@@ -289,7 +288,7 @@ process map_paternal_gen_filter {
 	input:
 	  path Paternal_STAR from Paternal_STAR_ch
 	  set val(id), file(reads) from reads_ch2
-	  path ('STAR_2Gen_Ref/pat_annotation.gtf') from pat_annotation_ch
+	  path ('STAR_2Gen_Ref/pat_annotation.gtf') from pat_annotation_ch2
 	  path ('STAR_2Gen_Ref/NA12877_paternal.fa') from pat_fa
 
 	output:
