@@ -27,7 +27,7 @@ annot 		: $params.annot
 
 Channel
 	.fromFilePairs(params.reads)
-	.into {reads_ch1; reads_ch2}
+	.into {reads_ch1; reads_ch2, reads_ch3}
 
 
 
@@ -207,9 +207,9 @@ process create_parental_genomes {
 	  path ('STAR_2Gen_Ref/maternal.chain') into maternal_chain_ch
 	  path ('STAR_2Gen_Ref/paternal.chain') into paternal_chain_ch
 	  path ('STAR_2Gen_Ref/chr22_NA12877.map') into map_ch
-	  path ('STAR_2Gen_Ref/NA12877_maternal.fa') into mat_fa
+	  path ('STAR_2Gen_Ref/NA12877_maternal.fa') into (mat_fa1, mat_fa2)
 	  path ('STAR_2Gen_Ref/NA12877_paternal.fa') into (pat_fa1, pat_fa2)
-	  path ('STAR_2Gen_Ref/mat_annotation.gtf') into mat_annotation_ch
+	  path ('STAR_2Gen_Ref/mat_annotation.gtf') into (mat_annotation_ch1, mat_annotation_ch2)
 	  path ('STAR_2Gen_Ref/not_lifted_m.txt') into not_lift_m_ch
 	  path ('STAR_2Gen_Ref/pat_annotation.gtf') into (pat_annotation_ch1, pat_annotation_ch2)
 	  path ('STAR_2Gen_Ref/not_lifted_p.txt') into not_lift_p_ch
@@ -260,9 +260,9 @@ process create_parental_genomes {
 
 process STAR_reference_genomes {
 	input:
-	  path ('STAR_2Gen_Ref/NA12877_maternal.fa') from mat_fa
+	  path ('STAR_2Gen_Ref/NA12877_maternal.fa') from mat_fa1
   	  path ('STAR_2Gen_Ref/NA12877_paternal.fa') from pat_fa1
-  	  path ('STAR_2Gen_Ref/mat_annotation.gtf') from mat_annotation_ch
+  	  path ('STAR_2Gen_Ref/mat_annotation.gtf') from mat_annotation_ch1
   	  path ('STAR_2Gen_Ref/pat_annotation.gtf') from pat_annotation_ch1
 
 	output:
@@ -332,3 +332,55 @@ process map_paternal_gen_filter {
 	"""
 
 }
+
+
+process map_maternal_gen_filter {
+	input:
+	  path Maternal_STAR from Maternal_STAR_ch
+	  tuple val(id), path(reads) from reads_ch3
+	  path ('STAR_2Gen_Ref/mat_annotation.gtf') from mat_annotation_ch2
+	  path ('STAR_2Gen_Ref/NA12877_maternal.fa') from mat_fa2
+
+	output:
+	  path ('NA12877.SOFT.NOTRIM.STAR.pass2.Aligned.sortedByCoord.out.PP.UM.bam') into maternal_mapgen_ch
+	  path ('NA12877.RSEM.TEST.genome.PP.SM.bam') into mat_rsem_ch
+
+	script:
+
+	"""
+	mkdir STAR_Maternal
+	cd STAR_Maternal
+
+	STAR --genomeDir Maternal_STAR --runThreadN 10 --quantMode TranscriptomeSAM --readFilesIn $reads --readFilesCommand zcat --outSAMstrandField intronMotif --outFilterMultimapNmax 30 --alignIntronMax 1000000 --alignMatesGapMax 1000000 --outMultimapperOrder Random --outSAMunmapped Within --outSAMattrIHstart 0 --outFilterIntronMotifs RemoveNoncanonicalUnannotated --sjdbOverhang 74 --outFilterMismatchNmax 8 --outSAMattributes NH nM NM MD HI --outSAMattrRGline  ID:NA12877.SOFT.NOTRIM PU:Illumina PL:Illumina LB:NA12877.SOFT.NOTRIM SM:NA12877.SOFT.NOTRIM CN:Seq_centre --outSAMtype BAM SortedByCoordinate --twopassMode Basic --outFileNamePrefix NA12877.SOFT.NOTRIM.STAR.pass2. --outSAMprimaryFlag AllBestScore
+
+	samtools index NA12877.SOFT.NOTRIM.STAR.pass2.Aligned.sortedByCoord.out.bam
+
+	#KEEP ONLY PROPERLY PAIRED READS
+	samtools view -@ 10 -f 0x0002 -b -o NA12877.SOFT.NOTRIM.STAR.pass2.Aligned.sortedByCoord.out.PP.bam NA12877.SOFT.NOTRIM.STAR.pass2.Aligned.sortedByCoord.out.bam
+	samtools index NA12877.SOFT.NOTRIM.STAR.pass2.Aligned.sortedByCoord.out.PP.bam
+
+	#KEEP UNIQUELY MAPPED READS
+	samtools view -h NA12877.SOFT.NOTRIM.STAR.pass2.Aligned.sortedByCoord.out.PP.bam | grep -P "NH:i:1\t|^@" | samtools view -bS - > NA12877.SOFT.NOTRIM.STAR.pass2.Aligned.sortedByCoord.out.PP.UM.bam
+	samtools index NA12877.SOFT.NOTRIM.STAR.pass2.Aligned.sortedByCoord.out.PP.UM.bam
+
+	##Create RSEM Files:
+	mkdir RSEM_MAT_GEN
+
+	/RSEM/rsem-prepare-reference --gtf STAR_2Gen_Ref/mat_annotation.gtf STAR_2Gen_Ref/NA12877_maternal.fa RSEM_MAT_GEN/RSEM_MAT_GEN
+	/RSEM/rsem-calculate-expression --bam --output-genome-bam --sampling-for-bam -p 20 --paired-end  NA12877.SOFT.NOTRIM.STAR.pass2.Aligned.toTranscriptome.out.bam RSEM_MAT_GEN/RSEM_MAT_GEN NA12877.RSEM.TEST
+	
+	samtools view -@ 10 -f 0x0002 -b -o NA12877.RSEM.TEST.genome.PP.bam NA12877.RSEM.TEST.genome.bam
+	samtools sort -@ 20 -o NA12877.RSEM.TEST.genome.PP.s.bam NA12877.RSEM.TEST.genome.PP.bam
+	mv NA12877.RSEM.TEST.genome.PP.s.bam NA12877.RSEM.TEST.genome.PP.bam
+	samtools view -h NA12877.RSEM.TEST.genome.PP.bam | grep -P "ZW:f:1|^@" | samtools view -bS - > NA12877.RSEM.TEST.genome.PP.SM.bam
+	samtools index NA12877.RSEM.TEST.genome.PP.SM.bam
+	"""
+
+}
+
+
+
+
+
+
+
