@@ -22,12 +22,11 @@ annot 		: $params.annot
 
 
 
+Channel
+	.fromFilePairs(params.reads)
+	.set {reads}
+	.into {reads_ch1; reads_ch2}
 
-/*
- * Create the `read_pairs_ch` channel that emits tuples containing three elements:
- * the pair ID, the first read-pair file and the second read-pair file
- */
-reads_ch = Channel.fromFilePairs(params.reads)
 
 
 process unzip {
@@ -86,7 +85,7 @@ process rnaseq_mapping_star {
   input: 
     path genome from params.genome 
     path STARhaploid from genome_dir_ch
-    tuple val(replicateId), path(reads) from reads_ch 
+    set val(id), file(read1), file(read2) from reads_ch1
 
   output: 
     tuple \
@@ -125,204 +124,3 @@ process rnaseq_mapping_star {
 
 
 
-
-
-
-
-process clean_up_reads {
-
-	
-	input:
-	  tuple val(replicateId), path(bam), path(index) from aligned_bam_ch
-	  path variants from params.variants
-
-	output:
-	  path ('phaser_version.bam') into phaser_ch
-	  path ('phaser_version.bam.bai') into phaser_bai_ch
-	  path ('NA12877.SOFT.NOTRIM.STAR.pass2.Aligned.sortedByCoord.out.PP.UM.bam') into pp_um_ch
-
-	script:
-
-	"""
-	#KEEP ONLY PROPERLY PAIRED READS
-	samtools view -@ 10 -f 0x0002 -b -o NA12877.SOFT.NOTRIM.STAR.pass2.Aligned.sortedByCoord.out.PP.bam NA12877.SOFT.NOTRIM.STAR.pass2.Aligned.sortedByCoord.out.bam
-	samtools index NA12877.SOFT.NOTRIM.STAR.pass2.Aligned.sortedByCoord.out.PP.bam
-
-	#KEEP UNIQUELY MAPPED READS
-	samtools view -h NA12877.SOFT.NOTRIM.STAR.pass2.Aligned.sortedByCoord.out.PP.bam | grep -P "NH:i:1\t|^@" | samtools view -bS - > NA12877.SOFT.NOTRIM.STAR.pass2.Aligned.sortedByCoord.out.PP.UM.bam
-	samtools index NA12877.SOFT.NOTRIM.STAR.pass2.Aligned.sortedByCoord.out.PP.UM.bam
-
-	#Create BAM compatible with PHASER:
-	gunzip -c ${variants} | grep -q 'chr' || (samtools view -h NA12877.SOFT.NOTRIM.STAR.pass2.Aligned.sortedByCoord.out.PP.UM.bam | sed -e 's/chr//' >> phaser_version.sam; samtools view -bh phaser_version.sam >> phaser_version.bam; samtools index phaser_version.bam; rm phaser_version.sam)
-	gunzip -c  ${variants}  | grep -q 'chr' && (samtools view -bh NA12877.SOFT.NOTRIM.STAR.pass2.Aligned.sortedByCoord.out.PP.UM.bam >> phaser_version.bam; samtools index phaser_version.bam)
-	"""
-}
-
-
-
-process phaser_step {
-
-	input:
-	path variants from params.variants
-	path ('phaser_version.bam') from phaser_ch
-	path ('phaser_version.bam.bai') from phaser_bai_ch
-
-	output:
-	path ('NA12877_output_phaser.vcf') into phaser_out_ch
-
-	script:
-
-	"""
-	tabix -p vcf ${variants}
-
-
-	python2 /phaser/phaser/phaser.py --vcf ${variants} --bam phaser_version.bam --paired_end 1 --mapq 0 --baseq 10 --isize 0 --include_indels 1 --sample NA12877 --id_separator + --pass_only 0 --o NA12877_output_phaser
-
-	gunzip NA12877_output_phaser.vcf.gz
-	rm phaser_version.bam
-	rm phaser_version.bam.bai
-	"""
-}
-
-
-
-
-process create_parental_genomes {
-	chrNum = Channel.from( 1..22 )
-
-	input:
-	  path genome from params.genome
-	  path unzipped_annot from files_ch
-	  path ('NA12877_output_phaser.vcf') from phaser_out_ch
-	  val x from chrNum
-
-	output:
-	  path ('STAR_2Gen_Ref/maternal.chain') into maternal_chain_ch
-	  path ('STAR_2Gen_Ref/paternal.chain') into paternal_chain_ch
-	  path ('STAR_2Gen_Ref/chr22_NA12877.map') into map_ch
-	  path ('STAR_2Gen_Ref/NA12877_maternal.fa') into mat_fa
-	  path ('STAR_2Gen_Ref/NA12877_paternal.fa') into pat_fa
-	  path ('STAR_2Gen_Ref/mat_annotation.gtf') into mat_annotation_ch
-	  path ('STAR_2Gen_Ref/not_lifted_m.txt') into not_lift_m_ch
-	  path ('STAR_2Gen_Ref/pat_annotation.gtf') into pat_annotation_ch
-	  path ('STAR_2Gen_Ref/not_lifted_p.txt') into not_lift_p_ch
-	  path ('STAR_2Gen_Ref/map_over.txt') into adjusted_ref_ch
-
-	
-	script:
-
-	"""
-	mkdir STAR_2Gen_Ref
-	java -Xmx10000m -jar /vcf2diploid_v0.2.6a/vcf2diploid.jar -id NA12877 -chr ${genome} -vcf NA12877_output_phaser.vcf -outDir STAR_2Gen_Ref > logfile.txt
-	
-	
-	liftOver -gff $unzipped_annot STAR_2Gen_Ref/maternal.chain STAR_2Gen_Ref/mat_annotation.gtf STAR_2Gen_Ref/not_lifted_m.txt
-	liftOver -gff $unzipped_annot STAR_2Gen_Ref/paternal.chain STAR_2Gen_Ref/pat_annotation.gtf STAR_2Gen_Ref/not_lifted_p.txt
-	
-	
-	cat STAR_2Gen_Ref/chr22_NA12877_maternal.fa >> STAR_2Gen_Ref/NA12877_maternal.fa
-	
-	#cat STAR_2Gen_Ref/chr${x}_NA12877_maternal.fa >> STAR_2Gen_Ref/NA12877_maternal.fa
-	#cat STAR_2Gen_Ref/chrX_NA12877_maternal.fa >> STAR_2Gen_Ref/NA12877_maternal.fa
-	#cat STAR_2Gen_Ref/chrY_NA12877_maternal.fa >> STAR_2Gen_Ref/NA12877_maternal.fa
-	#cat STAR_2Gen_Ref/chrM_NA12877_maternal.fa >> STAR_2Gen_Ref/NA12877_maternal.fa
-	
-	
-
-	cat STAR_2Gen_Ref/chr22_NA12877_paternal.fa >> STAR_2Gen_Ref/NA12877_paternal.fa
-	
-	#cat STAR_2Gen_Ref/chr${x}_NA12877_paternal.fa >> STAR_2Gen_Ref/NA12877_paternal.fa
-	#cat STAR_2Gen_Ref/chrX_NA12877_paternal.fa >> STAR_2Gen_Ref/NA12877_paternal.fa
-	#cat STAR_2Gen_Ref/chrY_NA12877_paternal.fa >> STAR_2Gen_Ref/NA12877_paternal.fa
-	#cat STAR_2Gen_Ref/chrM_NA12877_paternal.fa >> STAR_2Gen_Ref/NA12877_paternal.fa
-
-	sed 's/\\*/N/g' STAR_2Gen_Ref/NA12877_maternal.fa > STAR_2Gen_Ref/NA12877_maternal.hold.fa
-	mv STAR_2Gen_Ref/NA12877_maternal.hold.fa STAR_2Gen_Ref/NA12877_maternal.fa
-	
-	sed 's/\\*/N/g' STAR_2Gen_Ref/NA12877_paternal.fa > STAR_2Gen_Ref/NA12877_paternal.hold.fa
-	mv STAR_2Gen_Ref/NA12877_paternal.hold.fa STAR_2Gen_Ref/NA12877_paternal.fa
-	
-	mv NA12877_output_phaser.vcf STAR_2Gen_Ref/NA12877_output_phaser.vcf
-	
-	cd STAR_2Gen_Ref/
-	# temp perl scripts, change back
-	perl ${baseDir}/bin/adjust_reference_chr.pl NA12877_output_phaser.vcf NA12877	
-	"""
-	
-}	
-
-
-process STAR_reference_genomes {
-	input:
-	  path ('STAR_2Gen_Ref/NA12877_maternal.fa') from mat_fa
-  	  path ('STAR_2Gen_Ref/NA12877_paternal.fa') from pat_fa
-  	  path ('STAR_2Gen_Ref/mat_annotation.gtf') from mat_annotation_ch
-  	  path ('STAR_2Gen_Ref/pat_annotation.gtf') from pat_annotation_ch
-
-	output:
-	  path Paternal_STAR into Paternal_STAR_ch
-	  path Maternal_STAR into Maternal_STAR_ch
-	  
-
-	script:
-
-	"""
-	mkdir Maternal_STAR
-	mkdir Paternal_STAR
-
-	STAR --runMode genomeGenerate --genomeDir Paternal_STAR --genomeFastaFiles STAR_2Gen_Ref/NA12877_paternal.fa --sjdbGTFfile STAR_2Gen_Ref/pat_annotation.gtf --sjdbOverhang 74 --runThreadN 5 --outTmpDir pat
-	STAR --runMode genomeGenerate --genomeDir Maternal_STAR --genomeFastaFiles STAR_2Gen_Ref/NA12877_maternal.fa --sjdbGTFfile STAR_2Gen_Ref/mat_annotation.gtf --sjdbOverhang 74 --runThreadN 5 --outTmpDir mat
-	
-
-	"""    
-
-}
-
-
-process map_paternal_gen_filter {
-	
-	input:
-	  path Paternal_STAR from Paternal_STAR_ch
-	  tuple val(replicateId), path(reads) from reads_ch
-	  path ('STAR_2Gen_Ref/pat_annotation.gtf') from pat_annotation_ch
-	  path ('STAR_2Gen_Ref/NA12877_paternal.fa') from pat_fa
-
-	output:
-	  path ('NA12877.SOFT.NOTRIM.STAR.pass2.Aligned.sortedByCoord.out.PP.UM.bam') into paternal_mapgen_ch
-	  path ('NA12877.RSEM.TEST.genome.PP.SM.bam') into pat_rsem_ch
-
-	script:
-
-	"""
-	mkdir STAR_Paternal
-	cd STAR_Paternal
-
-	STAR --genomeDir Paternal_STAR --runThreadN 10 --quantMode TranscriptomeSAM --readFilesIn $reads --readFilesCommand zcat --outSAMstrandField intronMotif --outFilterMultimapNmax 30 --alignIntronMax 1000000 --alignMatesGapMax 1000000 --outMultimapperOrder Random --outSAMunmapped Within --outSAMattrIHstart 0 --outFilterIntronMotifs RemoveNoncanonicalUnannotated --sjdbOverhang 74 --outFilterMismatchNmax 8 --outSAMattributes NH nM NM MD HI --outSAMattrRGline  ID:NA12877.SOFT.NOTRIM PU:Illumina PL:Illumina LB:NA12877.SOFT.NOTRIM SM:NA12877.SOFT.NOTRIM CN:Seq_centre --outSAMtype BAM SortedByCoordinate --twopassMode Basic --outFileNamePrefix NA12877.SOFT.NOTRIM.STAR.pass2. --outSAMprimaryFlag AllBestScore
-
-	samtools index NA12877.SOFT.NOTRIM.STAR.pass2.Aligned.sortedByCoord.out.bam
-
-	#KEEP ONLY PROPERLY PAIRED READS
-	samtools view -@ 10 -f 0x0002 -b -o NA12877.SOFT.NOTRIM.STAR.pass2.Aligned.sortedByCoord.out.PP.bam NA12877.SOFT.NOTRIM.STAR.pass2.Aligned.sortedByCoord.out.bam
-	samtools index NA12877.SOFT.NOTRIM.STAR.pass2.Aligned.sortedByCoord.out.PP.bam
-
-	#KEEP UNIQUELY MAPPED READS
-	samtools view -h NA12877.SOFT.NOTRIM.STAR.pass2.Aligned.sortedByCoord.out.PP.bam | grep -P "NH:i:1\t|^@" | samtools view -bS - > NA12877.SOFT.NOTRIM.STAR.pass2.Aligned.sortedByCoord.out.PP.UM.bam
-	samtools index NA12877.SOFT.NOTRIM.STAR.pass2.Aligned.sortedByCoord.out.PP.UM.bam
-
-	##Create RSEM Files:
-	mkdir RSEM_MAT_GEN
-
-	/RSEM/rsem-prepare-reference --gtf STAR_2Gen_Ref/pat_annotation.gtf STAR_2Gen_Ref/NA12877_paternal.fa RSEM_MAT_GEN/RSEM_MAT_GEN
-
-	/RSEM/rsem-calculate-expression --bam --output-genome-bam --sampling-for-bam -p 20 --paired-end  NA12877.SOFT.NOTRIM.STAR.pass2.Aligned.toTranscriptome.out.bam RSEM_MAT_GEN/RSEM_MAT_GEN NA12877.RSEM.TEST
-
-	samtools view -@ 10 -f 0x0002 -b -o NA12877.RSEM.TEST.genome.PP.bam NA12877.RSEM.TEST.genome.bam
-	samtools sort -@ 20 -o NA12877.RSEM.TEST.genome.PP.s.bam NA12877.RSEM.TEST.genome.PP.bam
-	mv NA12877.RSEM.TEST.genome.PP.s.bam NA12877.RSEM.TEST.genome.PP.bam
-	samtools index NA12877.RSEM.TEST.genome.PP.bam
-	samtools view -h NA12877.RSEM.TEST.genome.PP.bam | grep -P "ZW:f:1|^@" | samtools view -bS - > NA12877.RSEM.TEST.genome.PP.SM.bam
-	samtools index NA12877.RSEM.TEST.genome.PP.SM.bam
-
-	"""
-
-}
