@@ -302,10 +302,11 @@ process map_paternal_gen_filter {
 
 	"""
 	mkdir STAR_Paternal
-	cd STAR_Paternal
-
+	
 	STAR --genomeDir Paternal_STAR --runThreadN 10 --quantMode TranscriptomeSAM --readFilesIn $reads --outSAMstrandField intronMotif --outFilterMultimapNmax 30 --alignIntronMax 1000000 --alignMatesGapMax 1000000 --outMultimapperOrder Random --outSAMunmapped Within --outSAMattrIHstart 0 --outFilterIntronMotifs RemoveNoncanonicalUnannotated --sjdbOverhang 74 --outFilterMismatchNmax 8 --outSAMattributes NH nM NM MD HI --outSAMattrRGline  ID:NA12877.SOFT.NOTRIM PU:Illumina PL:Illumina LB:NA12877.SOFT.NOTRIM SM:NA12877.SOFT.NOTRIM CN:Seq_centre --outSAMtype BAM SortedByCoordinate --twopassMode Basic --outFileNamePrefix NA12877.SOFT.NOTRIM.STAR.pass2. --outSAMprimaryFlag AllBestScore
 
+	cd STAR_Paternal
+	
 	samtools index NA12877.SOFT.NOTRIM.STAR.pass2.Aligned.sortedByCoord.out.bam
 
 	#KEEP ONLY PROPERLY PAIRED READS
@@ -352,10 +353,11 @@ process map_maternal_gen_filter {
 
 	"""
 	mkdir STAR_Maternal
-	cd STAR_Maternal
 
 	STAR --genomeDir Maternal_STAR --runThreadN 10 --quantMode TranscriptomeSAM --readFilesIn $reads --outSAMstrandField intronMotif --outFilterMultimapNmax 30 --alignIntronMax 1000000 --alignMatesGapMax 1000000 --outMultimapperOrder Random --outSAMunmapped Within --outSAMattrIHstart 0 --outFilterIntronMotifs RemoveNoncanonicalUnannotated --sjdbOverhang 74 --outFilterMismatchNmax 8 --outSAMattributes NH nM NM MD HI --outSAMattrRGline  ID:NA12877.SOFT.NOTRIM PU:Illumina PL:Illumina LB:NA12877.SOFT.NOTRIM SM:NA12877.SOFT.NOTRIM CN:Seq_centre --outSAMtype BAM SortedByCoordinate --twopassMode Basic --outFileNamePrefix NA12877.SOFT.NOTRIM.STAR.pass2. --outSAMprimaryFlag AllBestScore
-
+	
+	cd STAR_Maternal
+	
 	samtools index NA12877.SOFT.NOTRIM.STAR.pass2.Aligned.sortedByCoord.out.bam
 
 	#KEEP ONLY PROPERLY PAIRED READS
