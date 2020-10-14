@@ -84,7 +84,7 @@ process rnaseq_mapping_star {
   input: 
     path genome from params.genome 
     path STARhaploid from genome_dir_ch
-    set val(id), file(read1), file(read2) from reads_ch1
+    set val(id), file(reads) from reads_ch1
 
   output: 
     tuple \
@@ -97,7 +97,7 @@ process rnaseq_mapping_star {
   """
   # Align reads to genome
   STAR --genomeDir STARhaploid \
-       --readFilesIn $read1 $read2 \
+       --readFilesIn $reads \
        --runThreadN ${task.cpus} \
        --outSAMstrandField intronMotif \
        --outFilterMultimapNmax 30 \
