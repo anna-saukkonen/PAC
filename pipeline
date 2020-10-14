@@ -138,7 +138,7 @@ process clean_up_reads {
 
 	
 	input:
-	  tuple val(replicateId), path(bam), path(index) from aligned_bam_ch
+	  tuple val(id), path(bam), path(index) from aligned_bam_ch
 	  path variants from params.variants
 
 	output:
@@ -286,6 +286,7 @@ process STAR_reference_genomes {
 
 
 process map_paternal_gen_filter {
+	tag "$id"
 	
 	input:
 	  path Paternal_STAR from Paternal_STAR_ch
@@ -335,6 +336,8 @@ process map_paternal_gen_filter {
 
 
 process map_maternal_gen_filter {
+	tag "$id"
+
 	input:
 	  path Maternal_STAR from Maternal_STAR_ch
 	  set val(id), file(reads) from reads_ch3
