@@ -110,7 +110,7 @@ process rnaseq_mapping_star {
        --sjdbOverhang 74 \
        --outFilterMismatchNmax 8 \
        --outSAMattributes NH nM NM MD HI \
-       --outSAMattrRGline  ID:$replicateId PU:Illumina PL:Illumina LB:NA12877.SOFT.NOTRIM SM:NA12877.SOFT.NOTRIM CN:Seq_centre \
+       --outSAMattrRGline  ID:$id PU:Illumina PL:Illumina LB:NA12877.SOFT.NOTRIM SM:NA12877.SOFT.NOTRIM CN:Seq_centre \
        --outSAMtype BAM SortedByCoordinate \
        --twopassMode Basic \
        --outFileNamePrefix NA12877.SOFT.NOTRIM.STAR.pass2. \
