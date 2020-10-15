@@ -150,7 +150,7 @@ process clean_up_reads {
 
 	"""
 	mkdir STAR_original
-	cd STAR_original
+	
 
 	#KEEP ONLY PROPERLY PAIRED READS
 	samtools view -@ 10 -f 0x0002 -b -o NA12877.SOFT.NOTRIM.STAR.pass2.Aligned.sortedByCoord.out.PP.bam NA12877.SOFT.NOTRIM.STAR.pass2.Aligned.sortedByCoord.out.bam
@@ -163,6 +163,10 @@ process clean_up_reads {
 	#Create BAM compatible with PHASER:
 	gunzip -c ${variants} | grep -q 'chr' || (samtools view -h NA12877.SOFT.NOTRIM.STAR.pass2.Aligned.sortedByCoord.out.PP.UM.bam | sed -e 's/chr//' >> phaser_version.sam; samtools view -bh phaser_version.sam >> phaser_version.bam; samtools index phaser_version.bam; rm phaser_version.sam)
 	gunzip -c  ${variants}  | grep -q 'chr' && (samtools view -bh NA12877.SOFT.NOTRIM.STAR.pass2.Aligned.sortedByCoord.out.PP.UM.bam >> phaser_version.bam; samtools index phaser_version.bam)
+
+	mv phaser_version.bam STAR_original/phaser_version.bam
+	mv phaser_version.bam.bai STAR_original/phaser_version.bam.bai
+	mv NA12877.SOFT.NOTRIM.STAR.pass2.Aligned.sortedByCoord.out.PP.UM.bam STAR_original/NA12877.SOFT.NOTRIM.STAR.pass2.Aligned.sortedByCoord.out.PP.UM.bam
 	"""
 }
 
