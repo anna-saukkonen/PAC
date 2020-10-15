@@ -488,7 +488,7 @@ process add_rsemreads_bam {
 	  path ('STAR_2Gen_Ref/map_over.txt') from adjusted_ref_ch2
 	  path ('NA12877_output_phaser.vcf') from phaser_out_ch3
 	output:
-	  path
+	  path ('results_2genomes_NA12877.RSEM.STAR.SOFT.NOTRIM.txt') into final_results
 	script:
 
 	"""
