@@ -142,8 +142,8 @@ process clean_up_reads {
 	  path variants from params.variants
 
 	output:
-	  path ('phaser_version.bam') into phaser_ch
-	  path ('phaser_version.bam.bai') into phaser_bai_ch
+	  path ('STAR_original/phaser_version.bam') into phaser_ch
+	  path ('STAR_original/phaser_version.bam.bai') into phaser_bai_ch
 	  path ('STAR_original/NA12877.SOFT.NOTRIM.STAR.pass2.Aligned.sortedByCoord.out.PP.UM.bam') into pp_um_ch
 
 	script:
