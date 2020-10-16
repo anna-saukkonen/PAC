@@ -455,8 +455,6 @@ process extra_reads_rsem {
 	output:
 	  path ('Maternal.RSEM.bam') into mat_rsembam
 	  path ('Paternal.RSEM.bam') into pat_rsembam
-	  path ('extra.rsem.paternal.txt') into extra_rsem_pat_ch
-	  path ('extra.rsem.maternal.txt') into extra_rsem_mat_ch
 
 	script:
 
@@ -494,10 +492,10 @@ process add_rsemreads_bam {
 	  path ('STAR_Maternal/NA12877.SOFT.NOTRIM.STAR.pass2.Aligned.sortedByCoord.out.PP.UM.bam') from maternal_mapgen_ch3
 	  path ('STAR_2Gen_Ref/map_over.txt') from adjusted_ref_ch2
 	  path ('NA12877_output_phaser.vcf') from phaser_out_ch3
-	  path ('extra.rsem.paternal.txt') from extra_rsem_pat_ch
-	  path ('extra.rsem.maternal.txt') from extra_rsem_mat_ch
+
 	output:
 	  path ('results_2genomes_NA12877.RSEM.STAR.SOFT.NOTRIM.txt')
+	  
 	script:
 
 	"""
