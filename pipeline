@@ -10,7 +10,7 @@ params.genome 		= "${baseDir}/test/chr22.fa"
 params.variants 	= "${baseDir}/test/NA12877_output.phased.chr22.vcf.gz"
 params.reads 		= "${baseDir}/test/NA12890_merged_{1,2}.sample5000.fq" 
 params.annot 		= file("ftp://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_human/release_19/gencode.v19.annotation.gtf.gz")
-
+params.outdir 		= "/away/asaukkonen/gitdir"
 
 
 log.info """\
@@ -483,6 +483,8 @@ process extra_reads_rsem {
 }
 
 process add_rsemreads_bam {
+	publishDir "$params.outdir/$results_2genomes_NA12877.RSEM.STAR.SOFT.NOTRIM.txt", mode: 'copy'
+
 	input:
 	  path ('Maternal.RSEM.bam') from mat_rsembam
 	  path ('Paternal.RSEM.bam') from pat_rsembam
@@ -491,7 +493,7 @@ process add_rsemreads_bam {
 	  path ('STAR_2Gen_Ref/map_over.txt') from adjusted_ref_ch2
 	  path ('NA12877_output_phaser.vcf') from phaser_out_ch3
 	output:
-	  path ('results_2genomes_NA12877.RSEM.STAR.SOFT.NOTRIM.txt') into final_results
+	  path ('results_2genomes_NA12877.RSEM.STAR.SOFT.NOTRIM.txt')
 	script:
 
 	"""
