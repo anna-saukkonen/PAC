@@ -464,12 +464,12 @@ process extra_reads_rsem {
 	samtools view STAR_Maternal/NA12877.SOFT.NOTRIM.STAR.pass2.Aligned.sortedByCoord.out.PP.UM.bam | cut -f1 | sort | uniq >> maternal_tags_UM.txt
 	samtools view STAR_Maternal/NA12877.RSEM.TEST.genome.PP.SM.bam | cut -f1 | sort | uniq > maternal_tags_UM.RSEM.txt
 
-	perl ${baseDir}/bin/perl filter_rsem.pl maternal
+	perl ${baseDir}/bin/filter_rsem.pl maternal
 
 	samtools view STAR_Paternal/NA12877.SOFT.NOTRIM.STAR.pass2.Aligned.sortedByCoord.out.PP.UM.bam | cut -f1 | sort | uniq >> paternal_tags_UM.txt
 	samtools view STAR_Paternal/NA12877.RSEM.TEST.genome.PP.SM.bam | cut -f1 | sort | uniq > paternal_tags_UM.RSEM.txt
 
-	perl ${baseDir}/bin/perl filter_rsem.pl paternal
+	perl ${baseDir}/bin/filter_rsem.pl paternal
 
 
 	samtools view -H STAR_Maternal/NA12877.RSEM.TEST.genome.PP.SM.bam > Maternal.RSEM.sam
