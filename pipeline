@@ -525,7 +525,7 @@ process add_rsemreads_bam {
 	samtools sort -@ 20 -o final_pat.sorted.bam final_pat.bam
 	samtools index final_pat.sorted.bam
 
-	perl ${baseDir}/bin/compare_2genomes.pl /STAR_2Gen_Ref/map_over.txt NA12877_output_phaser.vcf final_mat.sorted.bam final_pat.sorted.bam NA12877 results_2genomes_NA12877.RSEM.STAR.SOFT.NOTRIM_baq.txt results_2genomes_NA12877.RSEM.STAR.SOFT.NOTRIM.txt
+	perl ${baseDir}/bin/compare_2genomes.pl STAR_2Gen_Ref/map_over.txt NA12877_output_phaser.vcf final_mat.sorted.bam final_pat.sorted.bam NA12877 results_2genomes_NA12877.RSEM.STAR.SOFT.NOTRIM_baq.txt results_2genomes_NA12877.RSEM.STAR.SOFT.NOTRIM.txt
 
 
 
