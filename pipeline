@@ -6,11 +6,12 @@
  * and read pairs by using the command line options
  */
 
-params.genome 		= "${baseDir}/test/chr22.fa"
-params.variants 	= "${baseDir}/test/NA12877_output.phased.chr22.vcf.gz"
-params.reads 		= "${baseDir}/test/NA12890_merged_{1,2}.sample5000.fq" 
+params.genome 		= file("ftp://ftp.1000genomes.ebi.ac.uk/vol1/ftp/technical/reference/human_g1k_v37.fasta")
+params.variants 	= "/away/asaukkonen/gitdir/NA12877_output.phased.vcf.gz"
+params.reads 		= "/away/asaukkonen/gitdir/NA12890_merged_{1,2}.sample5000.fq" 
 params.annot 		= file("ftp://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_human/release_19/gencode.v19.annotation.gtf.gz")
 params.outdir 		= "/away/asaukkonen/gitdir"
+
 
 
 log.info """\
@@ -101,6 +102,7 @@ process rnaseq_mapping_star {
   # Align reads to genome
   STAR --genomeDir STARhaploid \
        --readFilesIn $reads \
+       --readFilesCommand zcat \
        --runThreadN ${task.cpus} \
        --outSAMstrandField intronMotif \
        --outFilterMultimapNmax 30 \
@@ -265,6 +267,7 @@ process create_parental_genomes {
 }	
 
 
+
 process STAR_reference_genomes {
 	input:
 	  path ('STAR_2Gen_Ref/NA12877_maternal.fa') from mat_fa1
@@ -285,8 +288,6 @@ process STAR_reference_genomes {
 
 	STAR --runMode genomeGenerate --genomeDir Paternal_STAR --genomeFastaFiles STAR_2Gen_Ref/NA12877_paternal.fa --sjdbGTFfile STAR_2Gen_Ref/pat_annotation.gtf --sjdbOverhang 74 --runThreadN 5 --outTmpDir pat
 	STAR --runMode genomeGenerate --genomeDir Maternal_STAR --genomeFastaFiles STAR_2Gen_Ref/NA12877_maternal.fa --sjdbGTFfile STAR_2Gen_Ref/mat_annotation.gtf --sjdbOverhang 74 --runThreadN 5 --outTmpDir mat
-	
-
 	"""    
 
 }
@@ -308,9 +309,7 @@ process map_paternal_gen_filter {
 	script:
 
 	"""
-	
-
-	STAR --genomeDir Paternal_STAR --runThreadN 10 --quantMode TranscriptomeSAM --readFilesIn $reads --outSAMstrandField intronMotif --outFilterMultimapNmax 30 --alignIntronMax 1000000 --alignMatesGapMax 1000000 --outMultimapperOrder Random --outSAMunmapped Within --outSAMattrIHstart 0 --outFilterIntronMotifs RemoveNoncanonicalUnannotated --sjdbOverhang 74 --outFilterMismatchNmax 8 --outSAMattributes NH nM NM MD HI --outSAMattrRGline  ID:NA12877.SOFT.NOTRIM PU:Illumina PL:Illumina LB:NA12877.SOFT.NOTRIM SM:NA12877.SOFT.NOTRIM CN:Seq_centre --outSAMtype BAM SortedByCoordinate --twopassMode Basic --outFileNamePrefix NA12877.SOFT.NOTRIM.STAR.pass2. --outSAMprimaryFlag AllBestScore
+	STAR --genomeDir Paternal_STAR --runThreadN 10 --quantMode TranscriptomeSAM --readFilesIn $reads --readFilesCommand zcat --outSAMstrandField intronMotif --outFilterMultimapNmax 30 --alignIntronMax 1000000 --alignMatesGapMax 1000000 --outMultimapperOrder Random --outSAMunmapped Within --outSAMattrIHstart 0 --outFilterIntronMotifs RemoveNoncanonicalUnannotated --sjdbOverhang 74 --outFilterMismatchNmax 8 --outSAMattributes NH nM NM MD HI --outSAMattrRGline  ID:NA12877.SOFT.NOTRIM PU:Illumina PL:Illumina LB:NA12877.SOFT.NOTRIM SM:NA12877.SOFT.NOTRIM CN:Seq_centre --outSAMtype BAM SortedByCoordinate --twopassMode Basic --outFileNamePrefix NA12877.SOFT.NOTRIM.STAR.pass2. --outSAMprimaryFlag AllBestScore
 
 	
 	samtools index NA12877.SOFT.NOTRIM.STAR.pass2.Aligned.sortedByCoord.out.bam
@@ -340,7 +339,6 @@ process map_paternal_gen_filter {
 	samtools view -h NA12877.RSEM.TEST.genome.PP.bam | grep -P "ZW:f:1|^@" | samtools view -bS - > NA12877.RSEM.TEST.genome.PP.SM.bam
 	samtools index NA12877.RSEM.TEST.genome.PP.SM.bam
 	mv NA12877.RSEM.TEST.genome.PP.SM.bam STAR_Paternal/NA12877.RSEM.TEST.genome.PP.SM.bam
-
 	"""
 
 }
@@ -362,9 +360,7 @@ process map_maternal_gen_filter {
 	script:
 
 	"""
-	
-
-	STAR --genomeDir Maternal_STAR --runThreadN 10 --quantMode TranscriptomeSAM --readFilesIn $reads --outSAMstrandField intronMotif --outFilterMultimapNmax 30 --alignIntronMax 1000000 --alignMatesGapMax 1000000 --outMultimapperOrder Random --outSAMunmapped Within --outSAMattrIHstart 0 --outFilterIntronMotifs RemoveNoncanonicalUnannotated --sjdbOverhang 74 --outFilterMismatchNmax 8 --outSAMattributes NH nM NM MD HI --outSAMattrRGline  ID:NA12877.SOFT.NOTRIM PU:Illumina PL:Illumina LB:NA12877.SOFT.NOTRIM SM:NA12877.SOFT.NOTRIM CN:Seq_centre --outSAMtype BAM SortedByCoordinate --twopassMode Basic --outFileNamePrefix NA12877.SOFT.NOTRIM.STAR.pass2. --outSAMprimaryFlag AllBestScore
+	STAR --genomeDir Maternal_STAR --runThreadN 10 --quantMode TranscriptomeSAM --readFilesIn $reads --readFilesCommand zcat --outSAMstrandField intronMotif --outFilterMultimapNmax 30 --alignIntronMax 1000000 --alignMatesGapMax 1000000 --outMultimapperOrder Random --outSAMunmapped Within --outSAMattrIHstart 0 --outFilterIntronMotifs RemoveNoncanonicalUnannotated --sjdbOverhang 74 --outFilterMismatchNmax 8 --outSAMattributes NH nM NM MD HI --outSAMattrRGline  ID:NA12877.SOFT.NOTRIM PU:Illumina PL:Illumina LB:NA12877.SOFT.NOTRIM SM:NA12877.SOFT.NOTRIM CN:Seq_centre --outSAMtype BAM SortedByCoordinate --twopassMode Basic --outFileNamePrefix NA12877.SOFT.NOTRIM.STAR.pass2. --outSAMprimaryFlag AllBestScore
 
 
 	samtools index NA12877.SOFT.NOTRIM.STAR.pass2.Aligned.sortedByCoord.out.bam
@@ -438,10 +434,10 @@ process merge_parental_bam {
 
 	mkdir results
 	mv results_2genomes_NA12877.SOFT.NOTRIM_baq.txt results_2genomes_NA12877.SOFT.NOTRIM.txt results_1genome_NA12877.SOFT.NOTRIM_baq.txt results_1genome_NA12877.SOFT.NOTRIM.txt results/
-
 	"""
 
 }
+
 
 
 process extra_reads_rsem {
@@ -456,20 +452,19 @@ process extra_reads_rsem {
 	  path ('Maternal.RSEM.bam') into mat_rsembam
 	  path ('Paternal.RSEM.bam') into pat_rsembam
 
+
 	script:
 
 	"""
-
-
 	samtools view STAR_Maternal/NA12877.SOFT.NOTRIM.STAR.pass2.Aligned.sortedByCoord.out.PP.UM.bam | cut -f1 | sort | uniq >> maternal_tags_UM.txt
 	samtools view STAR_Maternal/NA12877.RSEM.TEST.genome.PP.SM.bam | cut -f1 | sort | uniq > maternal_tags_UM.RSEM.txt
 
-	perl ${baseDir}/bin/filter_rsem.pl maternal
+	perl -e 'open (F,"maternal_tags_UM.txt"); my %tag=(); while (<F>) { chomp; $tag{$_}=0; } close (F); open (N,"maternal_tags_UM.RSEM.txt"); while (<N>) { chomp; if (!(exists $tag{$_})) { print "$_\n"; }} close (N);' > extra.rsem.maternal.txt
 
 	samtools view STAR_Paternal/NA12877.SOFT.NOTRIM.STAR.pass2.Aligned.sortedByCoord.out.PP.UM.bam | cut -f1 | sort | uniq >> paternal_tags_UM.txt
 	samtools view STAR_Paternal/NA12877.RSEM.TEST.genome.PP.SM.bam | cut -f1 | sort | uniq > paternal_tags_UM.RSEM.txt
 
-	perl ${baseDir}/bin/filter_rsem.pl paternal
+	perl -e 'open (F,"paternal_tags_UM.txt"); my %tag=(); while (<F>) { chomp; $tag{$_}=0; } close (F); open (N,"paternal_tags_UM.RSEM.txt"); while (<N>) { chomp; if (!(exists $tag{$_})) { print "$_\n"; }} close (N);' > extra.rsem.paternal.txt
 
 
 	samtools view -H STAR_Maternal/NA12877.RSEM.TEST.genome.PP.SM.bam > Maternal.RSEM.sam
@@ -481,6 +476,8 @@ process extra_reads_rsem {
 	samtools view -bS Paternal.RSEM.sam -o Paternal.RSEM.bam
 	"""
 }
+
+
 
 process add_rsemreads_bam {
 	publishDir "$params.outdir/result", mode: 'copy'
@@ -532,5 +529,6 @@ process add_rsemreads_bam {
 	"""
 
 }
+
 
 
