@@ -236,21 +236,21 @@ process create_parental_genomes {
 	liftOver -gff $unzipped_annot STAR_2Gen_Ref/paternal.chain STAR_2Gen_Ref/pat_annotation.gtf STAR_2Gen_Ref/not_lifted_p.txt
 	
 	
-	cat STAR_2Gen_Ref/chr22_NA12877_maternal.fa >> STAR_2Gen_Ref/NA12877_maternal.fa
+	#cat STAR_2Gen_Ref/chr22_NA12877_maternal.fa >> STAR_2Gen_Ref/NA12877_maternal.fa
 	
-	#cat STAR_2Gen_Ref/chr${x}_NA12877_maternal.fa >> STAR_2Gen_Ref/NA12877_maternal.fa
-	#cat STAR_2Gen_Ref/chrX_NA12877_maternal.fa >> STAR_2Gen_Ref/NA12877_maternal.fa
-	#cat STAR_2Gen_Ref/chrY_NA12877_maternal.fa >> STAR_2Gen_Ref/NA12877_maternal.fa
-	#cat STAR_2Gen_Ref/chrM_NA12877_maternal.fa >> STAR_2Gen_Ref/NA12877_maternal.fa
+	cat STAR_2Gen_Ref/chr${x}_NA12877_maternal.fa >> STAR_2Gen_Ref/NA12877_maternal.fa
+	cat STAR_2Gen_Ref/chrX_NA12877_maternal.fa >> STAR_2Gen_Ref/NA12877_maternal.fa
+	cat STAR_2Gen_Ref/chrY_NA12877_maternal.fa >> STAR_2Gen_Ref/NA12877_maternal.fa
+	cat STAR_2Gen_Ref/chrM_NA12877_maternal.fa >> STAR_2Gen_Ref/NA12877_maternal.fa
 	
 	
 
-	cat STAR_2Gen_Ref/chr22_NA12877_paternal.fa >> STAR_2Gen_Ref/NA12877_paternal.fa
+	#cat STAR_2Gen_Ref/chr22_NA12877_paternal.fa >> STAR_2Gen_Ref/NA12877_paternal.fa
 	
-	#cat STAR_2Gen_Ref/chr${x}_NA12877_paternal.fa >> STAR_2Gen_Ref/NA12877_paternal.fa
-	#cat STAR_2Gen_Ref/chrX_NA12877_paternal.fa >> STAR_2Gen_Ref/NA12877_paternal.fa
-	#cat STAR_2Gen_Ref/chrY_NA12877_paternal.fa >> STAR_2Gen_Ref/NA12877_paternal.fa
-	#cat STAR_2Gen_Ref/chrM_NA12877_paternal.fa >> STAR_2Gen_Ref/NA12877_paternal.fa
+	cat STAR_2Gen_Ref/chr${x}_NA12877_paternal.fa >> STAR_2Gen_Ref/NA12877_paternal.fa
+	cat STAR_2Gen_Ref/chrX_NA12877_paternal.fa >> STAR_2Gen_Ref/NA12877_paternal.fa
+	cat STAR_2Gen_Ref/chrY_NA12877_paternal.fa >> STAR_2Gen_Ref/NA12877_paternal.fa
+	cat STAR_2Gen_Ref/chrM_NA12877_paternal.fa >> STAR_2Gen_Ref/NA12877_paternal.fa
 	
 
 	sed 's/\\*/N/g' STAR_2Gen_Ref/NA12877_maternal.fa > STAR_2Gen_Ref/NA12877_maternal.hold.fa
@@ -261,8 +261,8 @@ process create_parental_genomes {
 
 	mv NA12877_output_phaser.vcf STAR_2Gen_Ref/NA12877_output_phaser.vcf
 	cd STAR_2Gen_Ref/
-	# temp perl scripts, change back
-	perl ${baseDir}/bin/adjust_reference_chr.pl NA12877_output_phaser.vcf NA12877
+	
+	perl ${baseDir}/bin/adjust_reference.pl NA12877_output_phaser.vcf NA12877
 	"""
 }	
 
