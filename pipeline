@@ -204,13 +204,11 @@ process phaser_step {
 
 process create_parental_genomes {
 
-	chrNum = Channel.from( 1..22 )
 
 	input:
 	  path genome from params.genome
 	  path unzipped_annot from files_ch
 	  path ('NA12877_output_phaser.vcf') from phaser_out_ch1
-	  val x from chrNum
 
 	output:
 	  path ('STAR_2Gen_Ref/maternal.chain') into maternal_chain_ch
@@ -236,18 +234,56 @@ process create_parental_genomes {
 	liftOver -gff $unzipped_annot STAR_2Gen_Ref/paternal.chain STAR_2Gen_Ref/pat_annotation.gtf STAR_2Gen_Ref/not_lifted_p.txt
 	
 	
-	#cat STAR_2Gen_Ref/chr22_NA12877_maternal.fa >> STAR_2Gen_Ref/NA12877_maternal.fa
 	
-	cat STAR_2Gen_Ref/chr${x}_NA12877_maternal.fa >> STAR_2Gen_Ref/NA12877_maternal.fa
+	cat STAR_2Gen_Ref/chr1_NA12877_maternal.fa >> STAR_2Gen_Ref/NA12877_maternal.fa
+	cat STAR_2Gen_Ref/chr2_NA12877_maternal.fa >> STAR_2Gen_Ref/NA12877_maternal.fa
+	cat STAR_2Gen_Ref/chr3_NA12877_maternal.fa >> STAR_2Gen_Ref/NA12877_maternal.fa
+	cat STAR_2Gen_Ref/chr4_NA12877_maternal.fa >> STAR_2Gen_Ref/NA12877_maternal.fa
+	cat STAR_2Gen_Ref/chr5_NA12877_maternal.fa >> STAR_2Gen_Ref/NA12877_maternal.fa
+	cat STAR_2Gen_Ref/chr6_NA12877_maternal.fa >> STAR_2Gen_Ref/NA12877_maternal.fa
+	cat STAR_2Gen_Ref/chr7_NA12877_maternal.fa >> STAR_2Gen_Ref/NA12877_maternal.fa
+	cat STAR_2Gen_Ref/chr8_NA12877_maternal.fa >> STAR_2Gen_Ref/NA12877_maternal.fa
+	cat STAR_2Gen_Ref/chr9_NA12877_maternal.fa >> STAR_2Gen_Ref/NA12877_maternal.fa
+	cat STAR_2Gen_Ref/chr10_NA12877_maternal.fa >> STAR_2Gen_Ref/NA12877_maternal.fa
+	cat STAR_2Gen_Ref/chr11_NA12877_maternal.fa >> STAR_2Gen_Ref/NA12877_maternal.fa
+	cat STAR_2Gen_Ref/chr12_NA12877_maternal.fa >> STAR_2Gen_Ref/NA12877_maternal.fa
+	cat STAR_2Gen_Ref/chr13_NA12877_maternal.fa >> STAR_2Gen_Ref/NA12877_maternal.fa
+	cat STAR_2Gen_Ref/chr14_NA12877_maternal.fa >> STAR_2Gen_Ref/NA12877_maternal.fa
+	cat STAR_2Gen_Ref/chr15_NA12877_maternal.fa >> STAR_2Gen_Ref/NA12877_maternal.fa
+	cat STAR_2Gen_Ref/chr16_NA12877_maternal.fa >> STAR_2Gen_Ref/NA12877_maternal.fa
+	cat STAR_2Gen_Ref/chr17_NA12877_maternal.fa >> STAR_2Gen_Ref/NA12877_maternal.fa
+	cat STAR_2Gen_Ref/chr18_NA12877_maternal.fa >> STAR_2Gen_Ref/NA12877_maternal.fa
+	cat STAR_2Gen_Ref/chr19_NA12877_maternal.fa >> STAR_2Gen_Ref/NA12877_maternal.fa
+	cat STAR_2Gen_Ref/chr20_NA12877_maternal.fa >> STAR_2Gen_Ref/NA12877_maternal.fa
+	cat STAR_2Gen_Ref/chr21_NA12877_maternal.fa >> STAR_2Gen_Ref/NA12877_maternal.fa
+	cat STAR_2Gen_Ref/chr22_NA12877_maternal.fa >> STAR_2Gen_Ref/NA12877_maternal.fa
 	cat STAR_2Gen_Ref/chrX_NA12877_maternal.fa >> STAR_2Gen_Ref/NA12877_maternal.fa
 	cat STAR_2Gen_Ref/chrY_NA12877_maternal.fa >> STAR_2Gen_Ref/NA12877_maternal.fa
 	cat STAR_2Gen_Ref/chrM_NA12877_maternal.fa >> STAR_2Gen_Ref/NA12877_maternal.fa
 	
 	
-
-	#cat STAR_2Gen_Ref/chr22_NA12877_paternal.fa >> STAR_2Gen_Ref/NA12877_paternal.fa
-	
-	cat STAR_2Gen_Ref/chr${x}_NA12877_paternal.fa >> STAR_2Gen_Ref/NA12877_paternal.fa
+	cat STAR_2Gen_Ref/chr1_NA12877_paternal.fa >> STAR_2Gen_Ref/NA12877_paternal.fa
+	cat STAR_2Gen_Ref/chr2_NA12877_paternal.fa >> STAR_2Gen_Ref/NA12877_paternal.fa
+	cat STAR_2Gen_Ref/chr3_NA12877_paternal.fa >> STAR_2Gen_Ref/NA12877_paternal.fa
+	cat STAR_2Gen_Ref/chr4_NA12877_paternal.fa >> STAR_2Gen_Ref/NA12877_paternal.fa
+	cat STAR_2Gen_Ref/chr5_NA12877_paternal.fa >> STAR_2Gen_Ref/NA12877_paternal.fa
+	cat STAR_2Gen_Ref/chr6_NA12877_paternal.fa >> STAR_2Gen_Ref/NA12877_paternal.fa
+	cat STAR_2Gen_Ref/chr7_NA12877_paternal.fa >> STAR_2Gen_Ref/NA12877_paternal.fa
+	cat STAR_2Gen_Ref/chr8_NA12877_paternal.fa >> STAR_2Gen_Ref/NA12877_paternal.fa
+	cat STAR_2Gen_Ref/chr9_NA12877_paternal.fa >> STAR_2Gen_Ref/NA12877_paternal.fa
+	cat STAR_2Gen_Ref/chr10_NA12877_paternal.fa >> STAR_2Gen_Ref/NA12877_paternal.fa
+	cat STAR_2Gen_Ref/chr11_NA12877_paternal.fa >> STAR_2Gen_Ref/NA12877_paternal.fa
+	cat STAR_2Gen_Ref/chr12_NA12877_paternal.fa >> STAR_2Gen_Ref/NA12877_paternal.fa
+	cat STAR_2Gen_Ref/chr13_NA12877_paternal.fa >> STAR_2Gen_Ref/NA12877_paternal.fa
+	cat STAR_2Gen_Ref/chr14_NA12877_paternal.fa >> STAR_2Gen_Ref/NA12877_paternal.fa
+	cat STAR_2Gen_Ref/chr15_NA12877_paternal.fa >> STAR_2Gen_Ref/NA12877_paternal.fa
+	cat STAR_2Gen_Ref/chr16_NA12877_paternal.fa >> STAR_2Gen_Ref/NA12877_paternal.fa
+	cat STAR_2Gen_Ref/chr17_NA12877_paternal.fa >> STAR_2Gen_Ref/NA12877_paternal.fa
+	cat STAR_2Gen_Ref/chr18_NA12877_paternal.fa >> STAR_2Gen_Ref/NA12877_paternal.fa
+	cat STAR_2Gen_Ref/chr19_NA12877_paternal.fa >> STAR_2Gen_Ref/NA12877_paternal.fa
+	cat STAR_2Gen_Ref/chr20_NA12877_paternal.fa >> STAR_2Gen_Ref/NA12877_paternal.fa
+	cat STAR_2Gen_Ref/chr21_NA12877_paternal.fa >> STAR_2Gen_Ref/NA12877_paternal.fa
+	cat STAR_2Gen_Ref/chr22_NA12877_paternal.fa >> STAR_2Gen_Ref/NA12877_paternal.fa
 	cat STAR_2Gen_Ref/chrX_NA12877_paternal.fa >> STAR_2Gen_Ref/NA12877_paternal.fa
 	cat STAR_2Gen_Ref/chrY_NA12877_paternal.fa >> STAR_2Gen_Ref/NA12877_paternal.fa
 	cat STAR_2Gen_Ref/chrM_NA12877_paternal.fa >> STAR_2Gen_Ref/NA12877_paternal.fa
@@ -264,7 +300,8 @@ process create_parental_genomes {
 	
 	perl ${baseDir}/bin/adjust_reference.pl NA12877_output_phaser.vcf NA12877
 	"""
-}	
+	
+}		
 
 
 
