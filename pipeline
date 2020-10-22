@@ -496,12 +496,12 @@ process extra_reads_rsem {
 	samtools view STAR_Maternal/NA12877.SOFT.NOTRIM.STAR.pass2.Aligned.sortedByCoord.out.PP.UM.bam | cut -f1 | sort | uniq >> maternal_tags_UM.txt
 	samtools view STAR_Maternal/NA12877.RSEM.TEST.genome.PP.SM.bam | cut -f1 | sort | uniq > maternal_tags_UM.RSEM.txt
 
-	perl -e 'open (F,"maternal_tags_UM.txt"); my %tag=(); while (<F>) { chomp; $tag{$_}=0; } close (F); open (N,"maternal_tags_UM.RSEM.txt"); while (<N>) { chomp; if (!(exists $tag{$_})) { print "$_\n"; }} close (N);' > extra.rsem.maternal.txt
+	perl ${baseDir}/bin/filter_rsem.pl maternal
 
 	samtools view STAR_Paternal/NA12877.SOFT.NOTRIM.STAR.pass2.Aligned.sortedByCoord.out.PP.UM.bam | cut -f1 | sort | uniq >> paternal_tags_UM.txt
 	samtools view STAR_Paternal/NA12877.RSEM.TEST.genome.PP.SM.bam | cut -f1 | sort | uniq > paternal_tags_UM.RSEM.txt
 
-	perl -e 'open (F,"paternal_tags_UM.txt"); my %tag=(); while (<F>) { chomp; $tag{$_}=0; } close (F); open (N,"paternal_tags_UM.RSEM.txt"); while (<N>) { chomp; if (!(exists $tag{$_})) { print "$_\n"; }} close (N);' > extra.rsem.paternal.txt
+	perl ${baseDir}/bin/filter_rsem.pl paternal
 
 
 	samtools view -H STAR_Maternal/NA12877.RSEM.TEST.genome.PP.SM.bam > Maternal.RSEM.sam
