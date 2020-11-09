@@ -36,7 +36,7 @@ Channel
 process unzip {
   input:
     path annot from params.annot
-    path genome_zip from params.genome
+    path genome from params.genome
 
   output:
     path "${annot.baseName}" into files_ch
@@ -46,7 +46,7 @@ process unzip {
 
   """
   gunzip --verbose --stdout --force ${annot} > ${annot.baseName}
-  gunzip ${genome_zip} > ${genome.baseName}
+  gunzip ${genome} > ${genome.baseName}
 
   """
 }
