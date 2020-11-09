@@ -40,7 +40,7 @@ process unzip {
 
   output:
     path "${annot.baseName}" into files_ch
-    path "${genome.baseName}"" into genome_ch
+    path "${genome.baseName}" into genome_ch
 
   script:
 
