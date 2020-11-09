@@ -46,7 +46,7 @@ process unzip {
 
   """
   gunzip --verbose --stdout --force ${annot} > ${annot.baseName}
-  gunzip ${genome} > ${genome.baseName}
+  gunzip --verbose --stdout --force ${genome} > ${genome.baseName}
 
   """
 }
