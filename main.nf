@@ -8,7 +8,7 @@
 
 params.genome     = file("http://ftp.1000genomes.ebi.ac.uk/vol1/ftp/technical/reference/human_g1k_v37.fasta.gz")
 params.variants   = "/away/asaukkonen/gitdir/NA12877_output.phased.vcf.gz"
-params.read       = "/away/asaukkonen/gitdir/NA12890_merged_{1,2}.fq.gz" 
+params.reads       = "/away/asaukkonen/gitdir/NA12890_merged_{1,2}.fq.gz" 
 params.annot      = file("ftp://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_human/release_19/gencode.v19.annotation.gtf.gz")
 params.outdir     = "/away/asaukkonen/gitdir"
 
