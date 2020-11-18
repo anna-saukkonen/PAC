@@ -47,32 +47,14 @@ Channel
 
 
 
-process unzip {
-  input:
-    path annot from params.annot
-    path genome from params.genome
-
-  output:
-    path "${annot.baseName}" into files_ch
-    path "${genome.baseName}" into genome_ch
-
-  script:
-
-  """
-  gunzip --verbose --stdout --force ${annot} > ${annot.baseName}
-  gunzip --verbose --stdout --force ${genome} > ${genome.baseName}
-
-  """
-}
-
 
 process prepare_star_genome_index {
   tag "$genome.baseName"
 
 
   input:
-    path genome from genome_ch
-    path unzipped_annot from files_ch
+    path genome from params.genome
+    path annot from params.annot
   output:
     path STARhaploid into genome_dir_ch
 
@@ -86,7 +68,7 @@ process prepare_star_genome_index {
   STAR --runMode genomeGenerate \
        --genomeDir STARhaploid \
        --genomeFastaFiles ${genome} \
-       --sjdbGTFfile $unzipped_annot \
+       --sjdbGTFfile ${annot} \
        --sjdbOverhang 74 \
        --runThreadN ${task.cpus}
   """
@@ -102,7 +84,7 @@ process rnaseq_mapping_star {
 
   
   input: 
-    path genome from genome_ch 
+    path genome from params.genome 
     path STARhaploid from genome_dir_ch
     set val(id), file(reads) from reads_ch1
 
@@ -222,8 +204,8 @@ process create_parental_genomes {
 
 
   input:
-    path genome from genome_ch
-    path unzipped_annot from files_ch
+    path genome from params.genome
+    path annot from params.annot
     path ('NA12877_output_phaser.vcf') from phaser_out_ch1
 
   output:
@@ -246,8 +228,8 @@ process create_parental_genomes {
   java -Xmx10000m -jar /vcf2diploid_v0.2.6a/vcf2diploid.jar -id NA12877 -chr ${genome} -vcf NA12877_output_phaser.vcf -outDir STAR_2Gen_Ref > logfile.txt
   
   
-  liftOver -gff $unzipped_annot STAR_2Gen_Ref/maternal.chain STAR_2Gen_Ref/mat_annotation.gtf STAR_2Gen_Ref/not_lifted_m.txt
-  liftOver -gff $unzipped_annot STAR_2Gen_Ref/paternal.chain STAR_2Gen_Ref/pat_annotation.gtf STAR_2Gen_Ref/not_lifted_p.txt
+  liftOver -gff ${annot} STAR_2Gen_Ref/maternal.chain STAR_2Gen_Ref/mat_annotation.gtf STAR_2Gen_Ref/not_lifted_m.txt
+  liftOver -gff ${annot} STAR_2Gen_Ref/paternal.chain STAR_2Gen_Ref/pat_annotation.gtf STAR_2Gen_Ref/not_lifted_p.txt
   
   
   
