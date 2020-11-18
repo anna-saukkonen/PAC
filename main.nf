@@ -51,7 +51,7 @@ process read_length {
     path variants from params.variants 
 
   output:
-    val readLength into read_len_ch
+    val x into read_len_ch
 
   script:
 
