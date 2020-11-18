@@ -9,17 +9,26 @@
 params.variants   = "/away/asaukkonen/gitdir/NA12877_output.phased.vcf.gz"
 params.reads       = "/away/asaukkonen/gitdir/NA12890_merged_{1,2}.fq.gz" 
 
+params.genome        = params.genomes[ params.genome_version ]?.genome
+params.annot         = params.genomes[ params.genome_version ]?.annot
+
+
 
 // Check if genome exists in the config file
 if (params.genomes && params.genome_version && !params.genomes.containsKey(params.genome_version)) {
     exit 1, "The provided genome '${params.genome_version}' is not available. Currently the available genomes are ${params.genomes.keySet().join(", ")}. Please check your spelling."
 }
 
-params.genome        = params.genomes[ params.genome_version ]?.genome
-params.annot         = params.genomes[ params.genome_version ]?.annot
+if (!params.variants) exit 1, "Path to phased variants has to be specified!"
+if (!params.reads) exit 1, "Path to reads has to be specified!"
+
+
 
 
 log.info """\
+
+nextflow run nf-core/rnafusion --reads '*_{1,2}.fq.gz' -profile docker
+
 
 genome        : $params.genome
 reads         : $params.reads
