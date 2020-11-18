@@ -6,12 +6,17 @@
  * and read pairs by using the command line options
  */
 
-params.genome     = file("http://ftp.1000genomes.ebi.ac.uk/vol1/ftp/technical/reference/human_g1k_v37.fasta.gz")
 params.variants   = "/away/asaukkonen/gitdir/NA12877_output.phased.vcf.gz"
 params.reads       = "/away/asaukkonen/gitdir/NA12890_merged_{1,2}.fq.gz" 
-params.annot      = file("ftp://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_human/release_19/gencode.v19.annotation.gtf.gz")
-params.outdir     = "/away/asaukkonen/gitdir"
 
+
+// Check if genome exists in the config file
+if (params.genomes && params.genome_version && !params.genomes.containsKey(params.genome_version)) {
+    exit 1, "The provided genome '${params.genome_version}' is not available. Currently the available genomes are ${params.genomes.keySet().join(", ")}. Please check your spelling."
+}
+
+params.genome        = params.genomes[ params.genome_version ]?.genome
+params.annot         = params.genomes[ params.genome_version ]?.annot
 
 
 log.info """\
