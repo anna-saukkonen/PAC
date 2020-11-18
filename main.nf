@@ -44,7 +44,7 @@ annot         : $params.annot
 """
 
 
-
+readLength = ''
 
 process read_length {
   input:
@@ -53,12 +53,12 @@ process read_length {
   output:
     val readLength into read_len_ch
 
-  shell:
+  script:
 
-  '''
-  readLength = $(gunzip -c !{variants} | sed '2q;d' | wc -m)
-  echo $readLength
-  '''
+  """
+  readLength = $(gunzip -c \${variants} | sed '2q;d' | wc -m)
+  echo \$readLength
+  """
 }
 
 
