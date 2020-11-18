@@ -52,11 +52,13 @@ process read_length {
   output:
     val readLength into read_len_ch
 
-  script:
+  shell:
 
-  """
-  readLength = \$(gunzip -c ${variants} | sed '2q;d' | wc -m)
-  """
+  '''
+  readLength = $(gunzip -c !{variants} | sed '2q;d' | wc -m)
+  echo $readLength
+
+  '''
 }
 
 
