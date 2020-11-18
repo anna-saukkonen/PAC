@@ -24,6 +24,13 @@ if (!params.reads) exit 1, "Path to reads has to be specified!"
 
 
 
+Channel
+  .fromFilePairs(params.reads)
+  .ifEmpty { exit 1, "Cannot find any reads matching: ${reads}\nNB: Path needs to be enclosed in quotes!\n")}
+  .into {reads_ch1; reads_ch2; reads_ch3}
+
+
+
 
 log.info """\
 
@@ -37,12 +44,6 @@ annot         : $params.annot
 """
 
 
-
-
-
-Channel
-  .fromFilePairs(params.reads)
-  .into {reads_ch1; reads_ch2; reads_ch3}
 
 
 
