@@ -56,7 +56,7 @@ process read_length {
   script:
 
   """
-  readLength = gunzip -c ${variants} | sed '2q;d' | wc -m
+  gunzip -c ${variants} | sed '2q;d' | wc -m
   """  
 }
 
