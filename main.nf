@@ -46,7 +46,19 @@ annot         : $params.annot
 
 
 
+process read_length {
+  input:
+    path variants from params.variants 
 
+  output:
+    val readLength
+
+  script:
+
+  """
+  readLength = $(gunzip -c ${variants} | sed '2q;d' | wc -m)
+  """  
+}
 
 
 process prepare_star_genome_index {
