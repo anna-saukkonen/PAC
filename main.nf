@@ -27,7 +27,7 @@ if (!params.reads) exit 1, "Path to reads has to be specified!"
 
 log.info """\
 
-nextflow run nf-core/rnafusion --genome_version GRCh37 --reads '*_{1,2}.fq.gz' -profile docker
+nextflow run anna-saukkonen/main.nf --genome_version GRCh37 --reads '*_{1,2}.fq.gz' -profile docker
 
 
 genome        : $params.genome
