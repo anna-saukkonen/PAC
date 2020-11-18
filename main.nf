@@ -55,9 +55,9 @@ process read_length {
 
   shell:
 
-  """
+  '''
   readLength = $(gunzip -c !{variants} | sed '2q;d' | wc -m)
-  """  
+  '''
 }
 
 
