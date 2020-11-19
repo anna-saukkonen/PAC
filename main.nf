@@ -71,8 +71,6 @@ readlen_file_ch.map { it.text.trim() }.into { read_len_ch1; read_len_ch2; read_l
 
 
 process prepare_star_genome_index {
-  tag "$genome.baseName"
-
 
   input:
     path genome from params.genome
@@ -95,7 +93,8 @@ process prepare_star_genome_index {
        --genomeFastaFiles ${genome} \
        --sjdbGTFfile ${annot} \
        --sjdbOverhang ${x} \
-       --runThreadN ${task.cpus}
+       --runThreadN ${task.cpus} \
+       --genomeSAindexNbases 13
   """
 }
 
@@ -105,8 +104,6 @@ process prepare_star_genome_index {
 
 
 process rnaseq_mapping_star {
-  tag "$id"
-
   
   input: 
     path genome from params.genome 
