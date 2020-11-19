@@ -58,6 +58,7 @@ process read_length {
   echo !{reads}
   echo !{id}
   (gunzip -c !{reads} | sed '2q;d' | wc -m) -1 >> readLength_file.txt
+  cat readLength_file.txt
 
   '''
 }    
