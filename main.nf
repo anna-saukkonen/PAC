@@ -50,7 +50,7 @@ process read_length {
     path variants from params.variants 
 
   output:
-    path readLength_file.txt into readlen_file_ch
+    file 'readLength_file.txt' into readlen_file_ch
 
   shell:
 
