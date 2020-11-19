@@ -50,16 +50,21 @@ process read_length {
     path variants from params.variants 
 
   output:
-    val "$readLength" into read_len_ch
+    path readLength_file.txt into readlen_file_ch
 
   shell:
 
   '''
-  readLength = $(gunzip -c !{variants} | sed '2q;d' | wc -m)
-  echo $readLength
+  (gunzip -c !{variants} | sed '2q;d' | wc -m) >> readLength_file.txt
 
   '''
-}                                           
+}    
+
+
+
+readlen_file_ch.map { it.text.trim() }.set { read_len_ch }
+
+
 
 
 process prepare_star_genome_index {
@@ -69,7 +74,7 @@ process prepare_star_genome_index {
   input:
     path genome from params.genome
     path annot from params.annot
-    val readLength from read_len_ch
+    val x from read_len_ch
   output:
     path STARhaploid into genome_dir_ch
 
@@ -84,7 +89,7 @@ process prepare_star_genome_index {
        --genomeDir STARhaploid \
        --genomeFastaFiles ${genome} \
        --sjdbGTFfile ${annot} \
-       --sjdbOverhang ${readLength} \
+       --sjdbOverhang ${x} \
        --runThreadN ${task.cpus}
   """
 }
@@ -102,7 +107,7 @@ process rnaseq_mapping_star {
     path genome from params.genome 
     path STARhaploid from genome_dir_ch
     set val(id), file(reads) from reads_ch1
-    val readLength from read_len_ch
+    val x from read_len_ch
 
   output: 
     tuple \
@@ -126,7 +131,7 @@ process rnaseq_mapping_star {
        --outSAMunmapped Within \
        --outSAMattrIHstart 0 \
        --outFilterIntronMotifs RemoveNoncanonicalUnannotated \
-       --sjdbOverhang ${readLength} \
+       --sjdbOverhang ${x} \
        --outFilterMismatchNmax 8 \
        --outSAMattributes NH nM NM MD HI \
        --outSAMattrRGline  ID:$id PU:Illumina PL:Illumina LB:NA12877.SOFT.NOTRIM SM:NA12877.SOFT.NOTRIM CN:Seq_centre \
@@ -326,7 +331,7 @@ process STAR_reference_genomes {
       path ('STAR_2Gen_Ref/NA12877_paternal.fa') from pat_fa1
       path ('STAR_2Gen_Ref/mat_annotation.gtf') from mat_annotation_ch1
       path ('STAR_2Gen_Ref/pat_annotation.gtf') from pat_annotation_ch1
-      val readLength from read_len_ch
+      val x from read_len_ch
 
   output:
     path Paternal_STAR into Paternal_STAR_ch
@@ -339,8 +344,8 @@ process STAR_reference_genomes {
   mkdir Maternal_STAR
   mkdir Paternal_STAR
 
-  STAR --runMode genomeGenerate --genomeDir Paternal_STAR --genomeFastaFiles STAR_2Gen_Ref/NA12877_paternal.fa --sjdbGTFfile STAR_2Gen_Ref/pat_annotation.gtf --sjdbOverhang ${readLength} --runThreadN 5 --outTmpDir pat
-  STAR --runMode genomeGenerate --genomeDir Maternal_STAR --genomeFastaFiles STAR_2Gen_Ref/NA12877_maternal.fa --sjdbGTFfile STAR_2Gen_Ref/mat_annotation.gtf --sjdbOverhang ${readLength} --runThreadN 5 --outTmpDir mat
+  STAR --runMode genomeGenerate --genomeDir Paternal_STAR --genomeFastaFiles STAR_2Gen_Ref/NA12877_paternal.fa --sjdbGTFfile STAR_2Gen_Ref/pat_annotation.gtf --sjdbOverhang ${x} --runThreadN 5 --outTmpDir pat
+  STAR --runMode genomeGenerate --genomeDir Maternal_STAR --genomeFastaFiles STAR_2Gen_Ref/NA12877_maternal.fa --sjdbGTFfile STAR_2Gen_Ref/mat_annotation.gtf --sjdbOverhang ${x} --runThreadN 5 --outTmpDir mat
   """    
 
 }
@@ -354,7 +359,7 @@ process map_paternal_gen_filter {
     set val(id), file(reads) from reads_ch2
     path ('STAR_2Gen_Ref/pat_annotation.gtf') from pat_annotation_ch2
     path ('STAR_2Gen_Ref/NA12877_paternal.fa') from pat_fa2
-    val readLength from read_len_ch
+    val x from read_len_ch
 
   output:
     path ('STAR_Paternal/NA12877.SOFT.NOTRIM.STAR.pass2.Aligned.sortedByCoord.out.PP.UM.bam') into (paternal_mapgen_ch1, paternal_mapgen_ch2, paternal_mapgen_ch3)
@@ -363,7 +368,7 @@ process map_paternal_gen_filter {
   script:
 
   """
-  STAR --genomeDir Paternal_STAR --runThreadN 10 --quantMode TranscriptomeSAM --readFilesIn $reads --readFilesCommand zcat --outSAMstrandField intronMotif --outFilterMultimapNmax 30 --alignIntronMax 1000000 --alignMatesGapMax 1000000 --outMultimapperOrder Random --outSAMunmapped Within --outSAMattrIHstart 0 --outFilterIntronMotifs RemoveNoncanonicalUnannotated --sjdbOverhang ${readLength} --outFilterMismatchNmax 8 --outSAMattributes NH nM NM MD HI --outSAMattrRGline  ID:NA12877.SOFT.NOTRIM PU:Illumina PL:Illumina LB:NA12877.SOFT.NOTRIM SM:NA12877.SOFT.NOTRIM CN:Seq_centre --outSAMtype BAM SortedByCoordinate --twopassMode Basic --outFileNamePrefix NA12877.SOFT.NOTRIM.STAR.pass2. --outSAMprimaryFlag AllBestScore
+  STAR --genomeDir Paternal_STAR --runThreadN 10 --quantMode TranscriptomeSAM --readFilesIn $reads --readFilesCommand zcat --outSAMstrandField intronMotif --outFilterMultimapNmax 30 --alignIntronMax 1000000 --alignMatesGapMax 1000000 --outMultimapperOrder Random --outSAMunmapped Within --outSAMattrIHstart 0 --outFilterIntronMotifs RemoveNoncanonicalUnannotated --sjdbOverhang ${x} --outFilterMismatchNmax 8 --outSAMattributes NH nM NM MD HI --outSAMattrRGline  ID:NA12877.SOFT.NOTRIM PU:Illumina PL:Illumina LB:NA12877.SOFT.NOTRIM SM:NA12877.SOFT.NOTRIM CN:Seq_centre --outSAMtype BAM SortedByCoordinate --twopassMode Basic --outFileNamePrefix NA12877.SOFT.NOTRIM.STAR.pass2. --outSAMprimaryFlag AllBestScore
 
   
   samtools index NA12877.SOFT.NOTRIM.STAR.pass2.Aligned.sortedByCoord.out.bam
@@ -406,7 +411,7 @@ process map_maternal_gen_filter {
     set val(id), file(reads) from reads_ch3
     path ('STAR_2Gen_Ref/mat_annotation.gtf') from mat_annotation_ch2
     path ('STAR_2Gen_Ref/NA12877_maternal.fa') from mat_fa2
-    val readLength from read_len_ch
+    val x from read_len_ch
 
   output:
     path ('STAR_Maternal/NA12877.SOFT.NOTRIM.STAR.pass2.Aligned.sortedByCoord.out.PP.UM.bam') into (maternal_mapgen_ch1, maternal_mapgen_ch2, maternal_mapgen_ch3) 
@@ -415,7 +420,7 @@ process map_maternal_gen_filter {
   script:
 
   """
-  STAR --genomeDir Maternal_STAR --runThreadN 10 --quantMode TranscriptomeSAM --readFilesIn $reads --readFilesCommand zcat --outSAMstrandField intronMotif --outFilterMultimapNmax 30 --alignIntronMax 1000000 --alignMatesGapMax 1000000 --outMultimapperOrder Random --outSAMunmapped Within --outSAMattrIHstart 0 --outFilterIntronMotifs RemoveNoncanonicalUnannotated --sjdbOverhang ${readLength} --outFilterMismatchNmax 8 --outSAMattributes NH nM NM MD HI --outSAMattrRGline  ID:NA12877.SOFT.NOTRIM PU:Illumina PL:Illumina LB:NA12877.SOFT.NOTRIM SM:NA12877.SOFT.NOTRIM CN:Seq_centre --outSAMtype BAM SortedByCoordinate --twopassMode Basic --outFileNamePrefix NA12877.SOFT.NOTRIM.STAR.pass2. --outSAMprimaryFlag AllBestScore
+  STAR --genomeDir Maternal_STAR --runThreadN 10 --quantMode TranscriptomeSAM --readFilesIn $reads --readFilesCommand zcat --outSAMstrandField intronMotif --outFilterMultimapNmax 30 --alignIntronMax 1000000 --alignMatesGapMax 1000000 --outMultimapperOrder Random --outSAMunmapped Within --outSAMattrIHstart 0 --outFilterIntronMotifs RemoveNoncanonicalUnannotated --sjdbOverhang ${x} --outFilterMismatchNmax 8 --outSAMattributes NH nM NM MD HI --outSAMattrRGline  ID:NA12877.SOFT.NOTRIM PU:Illumina PL:Illumina LB:NA12877.SOFT.NOTRIM SM:NA12877.SOFT.NOTRIM CN:Seq_centre --outSAMtype BAM SortedByCoordinate --twopassMode Basic --outFileNamePrefix NA12877.SOFT.NOTRIM.STAR.pass2. --outSAMprimaryFlag AllBestScore
 
 
   samtools index NA12877.SOFT.NOTRIM.STAR.pass2.Aligned.sortedByCoord.out.bam
