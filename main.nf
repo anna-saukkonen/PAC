@@ -67,6 +67,18 @@ readlen_file_ch.map { it.text.trim() }.set { read_len_ch }
 
 
 
+process test {
+  input:
+    val x from read_len_ch
+
+  script:
+  """
+    echo ${x}
+  """
+}
+
+
+
 process prepare_star_genome_index {
   tag "$genome.baseName"
 
