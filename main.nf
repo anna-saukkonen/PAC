@@ -50,16 +50,15 @@ process read_length {
     path variants from params.variants 
 
   output:
-    val readLength into read_len_ch
+    val x into read_len_ch
 
-  shell:
+  script:
 
-  '''
-  readLength = $(gunzip -c !{variants} | sed '2q;d' | wc -m)
-  echo $readLength
+  """
+  (gunzip -c ${variants} | sed '2q;d' | wc -m) > x
 
-  '''
-}
+  """
+}                                           
 
 
 process prepare_star_genome_index {
