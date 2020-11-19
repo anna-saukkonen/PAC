@@ -64,7 +64,7 @@ process read_length {
 
 
 
-readlen_file_ch.map { it.text.trim() }.set { read_len_ch1; read_len_ch2; read_len_ch3; read_len_ch4; read_len_ch5 }
+readlen_file_ch.map { it.text.trim() }.into { read_len_ch1; read_len_ch2; read_len_ch3; read_len_ch4; read_len_ch5 }
 
 
 
