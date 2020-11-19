@@ -47,7 +47,7 @@ annot         : $params.annot
 
 process read_length {
   input:
-    path reads from params.reads 
+    set val(id), file(reads) from reads_ch 
 
   output:
     file 'readLength_file.txt' into readlen_file_ch
@@ -55,6 +55,7 @@ process read_length {
   shell:
 
   '''
+  echo !{reads}
   (gunzip -c !{reads} | sed '2q;d' | wc -m) -1 >> readLength_file.txt
 
   '''
