@@ -56,7 +56,7 @@ process read_length {
 
   '''
 
-  "$(((gunzip -c *_1.fq.gz | sed '2q;d' | wc -m) - 1 )" >> readLength_file.txt
+  gunzip -c *_1.fq.gz | sed '2q;d' | wc -m | awk '{print $1-1}' >> readLength_file.txt
 
   '''
 }    
