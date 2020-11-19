@@ -27,7 +27,7 @@ if (!params.reads) exit 1, "Path to reads has to be specified!"
 Channel
   .fromFilePairs(params.reads)
   .ifEmpty { exit 1, "Cannot find any reads matching: ${reads}\nNB: Path needs to be enclosed in quotes!\n"}
-  .into {reads_ch1; reads_ch2; reads_ch3}
+  .into {reads_ch; reads_ch1; reads_ch2; reads_ch3}
 
 
 
@@ -56,6 +56,7 @@ process read_length {
 
   '''
   echo !{reads}
+  echo !(id)
   (gunzip -c !{reads} | sed '2q;d' | wc -m) -1 >> readLength_file.txt
 
   '''
