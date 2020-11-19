@@ -50,14 +50,15 @@ process read_length {
     path variants from params.variants 
 
   output:
-    val x into read_len_ch
+    val "$readLength" into read_len_ch
 
-  script:
+  shell:
 
-  """
-  gunzip -c ${variants} | sed '2q;d' | wc -m
+  '''
+  readLength = $(gunzip -c !{variants} | sed '2q;d' | wc -m)
+  echo $readLength
 
-  """
+  '''
 }                                           
 
 
