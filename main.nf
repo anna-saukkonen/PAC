@@ -64,7 +64,7 @@ process read_length {
 
 
 
-readlen_file_ch.map { it.text.trim() }.set { read_len_ch }
+readlen_file_ch.map { it.text.trim() }.set { read_len_ch1; read_len_ch2; read_len_ch3; read_len_ch4; read_len_ch5 }
 
 
 
@@ -78,7 +78,7 @@ process prepare_star_genome_index {
   input:
     path genome from params.genome
     path annot from params.annot
-    val x from read_len_ch
+    val x from read_len_ch1
   output:
     path STARhaploid into genome_dir_ch
 
@@ -111,7 +111,7 @@ process rnaseq_mapping_star {
     path genome from params.genome 
     path STARhaploid from genome_dir_ch
     set val(id), file(reads) from reads_ch1
-    val x from read_len_ch
+    val x from read_len_ch2
 
   output: 
     tuple \
@@ -335,7 +335,7 @@ process STAR_reference_genomes {
       path ('STAR_2Gen_Ref/NA12877_paternal.fa') from pat_fa1
       path ('STAR_2Gen_Ref/mat_annotation.gtf') from mat_annotation_ch1
       path ('STAR_2Gen_Ref/pat_annotation.gtf') from pat_annotation_ch1
-      val x from read_len_ch
+      val x from read_len_ch3
 
   output:
     path Paternal_STAR into Paternal_STAR_ch
@@ -363,7 +363,7 @@ process map_paternal_gen_filter {
     set val(id), file(reads) from reads_ch2
     path ('STAR_2Gen_Ref/pat_annotation.gtf') from pat_annotation_ch2
     path ('STAR_2Gen_Ref/NA12877_paternal.fa') from pat_fa2
-    val x from read_len_ch
+    val x from read_len_ch4
 
   output:
     path ('STAR_Paternal/NA12877.SOFT.NOTRIM.STAR.pass2.Aligned.sortedByCoord.out.PP.UM.bam') into (paternal_mapgen_ch1, paternal_mapgen_ch2, paternal_mapgen_ch3)
@@ -415,7 +415,7 @@ process map_maternal_gen_filter {
     set val(id), file(reads) from reads_ch3
     path ('STAR_2Gen_Ref/mat_annotation.gtf') from mat_annotation_ch2
     path ('STAR_2Gen_Ref/NA12877_maternal.fa') from mat_fa2
-    val x from read_len_ch
+    val x from read_len_ch5
 
   output:
     path ('STAR_Maternal/NA12877.SOFT.NOTRIM.STAR.pass2.Aligned.sortedByCoord.out.PP.UM.bam') into (maternal_mapgen_ch1, maternal_mapgen_ch2, maternal_mapgen_ch3) 
