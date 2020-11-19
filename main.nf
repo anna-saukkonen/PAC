@@ -55,9 +55,8 @@ process read_length {
   shell:
 
   '''
-  echo !{reads}
-  echo *_1.fq.gz
-  gunzip -c *_1.fq.gz | sed '2q;d' | wc -m | -1 >> readLength_file.txt
+
+  gunzip -c *_1.fq.gz | sed '2q;d' | wc -m >> readLength_file.txt
   cat readLength_file.txt
 
   '''
@@ -94,7 +93,7 @@ process prepare_star_genome_index {
        --genomeDir STARhaploid \
        --genomeFastaFiles ${genome} \
        --sjdbGTFfile ${annot} \
-       --sjdbOverhang ${x} \
+       --sjdbOverhang ${ x - 1 } \
        --runThreadN ${task.cpus}
   """
 }
