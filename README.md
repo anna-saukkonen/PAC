@@ -13,3 +13,5 @@ It comprises of the following steps:
 3. Selection of the best mapping for each read across the two parental genomes
 
 And more...
+
+TEST / HK
