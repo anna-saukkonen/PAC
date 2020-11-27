@@ -78,12 +78,12 @@ process prepare_star_genome_index {
     val x from read_len_ch1
     path id from params.id
   output:
-    path '{id}STARhaploid' into genome_dir_ch
+    path STARhaploid into genome_dir_ch
 
   script:
 
   """
-  mkdir STARhaploid
+  mkdir ${id}STARhaploid
 
   STAR --runMode genomeGenerate \
        --genomeDir ${id}STARhaploid \
