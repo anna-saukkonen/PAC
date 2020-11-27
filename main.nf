@@ -40,6 +40,7 @@ genome        : $params.genome
 reads         : $params.reads
 variants      : $params.variants
 annot         : $params.annot
+id            : $params.id
 """
 
 
@@ -131,7 +132,7 @@ process rnaseq_mapping_star {
        --sjdbOverhang ${x} \
        --outFilterMismatchNmax 8 \
        --outSAMattributes NH nM NM MD HI \
-       --outSAMattrRGline  ID:${id} PU:Illumina PL:Illumina LB:{id}.SOFT.NOTRIM SM:NA12877.SOFT.NOTRIM CN:Seq_centre \
+       --outSAMattrRGline  ID:${id} PU:Illumina PL:Illumina LB:${id}.SOFT.NOTRIM SM:NA12877.SOFT.NOTRIM CN:Seq_centre \
        --outSAMtype BAM SortedByCoordinate \
        --twopassMode Basic \
        --outFileNamePrefix ${id}.SOFT.NOTRIM.STAR.pass2. \
@@ -162,7 +163,7 @@ process clean_up_reads {
   output:
     path ('STAR_original/phaser_version.bam') into phaser_ch
     path ('STAR_original/phaser_version.bam.bai') into phaser_bai_ch
-    path ('STAR_original/NA12877.SOFT.NOTRIM.STAR.pass2.Aligned.sortedByCoord.out.PP.UM.bam') into pp_um_ch
+    path ('STAR_original/{id}.SOFT.NOTRIM.STAR.pass2.Aligned.sortedByCoord.out.PP.UM.bam') into pp_um_ch
 
   script:
 
@@ -171,7 +172,7 @@ process clean_up_reads {
   
 
   #KEEP ONLY PROPERLY PAIRED READS
-  samtools view -@ 10 -f 0x0002 -b -o NA12877.SOFT.NOTRIM.STAR.pass2.Aligned.sortedByCoord.out.PP.bam NA12877.SOFT.NOTRIM.STAR.pass2.Aligned.sortedByCoord.out.bam
+  samtools view -@ ${task.cpus} -f 0x0002 -b -o NA12877.SOFT.NOTRIM.STAR.pass2.Aligned.sortedByCoord.out.PP.bam NA12877.SOFT.NOTRIM.STAR.pass2.Aligned.sortedByCoord.out.bam
   samtools index NA12877.SOFT.NOTRIM.STAR.pass2.Aligned.sortedByCoord.out.PP.bam
 
   #KEEP UNIQUELY MAPPED READS
@@ -371,7 +372,7 @@ process map_paternal_gen_filter {
   samtools index NA12877.SOFT.NOTRIM.STAR.pass2.Aligned.sortedByCoord.out.bam
 
   #KEEP ONLY PROPERLY PAIRED READS
-  samtools view -@ 10 -f 0x0002 -b -o NA12877.SOFT.NOTRIM.STAR.pass2.Aligned.sortedByCoord.out.PP.bam NA12877.SOFT.NOTRIM.STAR.pass2.Aligned.sortedByCoord.out.bam
+  samtools view -@ ${task.cpus} -f 0x0002 -b -o NA12877.SOFT.NOTRIM.STAR.pass2.Aligned.sortedByCoord.out.PP.bam NA12877.SOFT.NOTRIM.STAR.pass2.Aligned.sortedByCoord.out.bam
   samtools index NA12877.SOFT.NOTRIM.STAR.pass2.Aligned.sortedByCoord.out.PP.bam
 
   #KEEP UNIQUELY MAPPED READS
@@ -388,8 +389,8 @@ process map_paternal_gen_filter {
 
   /RSEM/rsem-calculate-expression --bam --output-genome-bam --sampling-for-bam -p 20 --paired-end  NA12877.SOFT.NOTRIM.STAR.pass2.Aligned.toTranscriptome.out.bam RSEM_MAT_GEN/RSEM_MAT_GEN NA12877.RSEM.TEST
 
-  samtools view -@ 10 -f 0x0002 -b -o NA12877.RSEM.TEST.genome.PP.bam NA12877.RSEM.TEST.genome.bam
-  samtools sort -@ 20 -o NA12877.RSEM.TEST.genome.PP.s.bam NA12877.RSEM.TEST.genome.PP.bam
+  samtools view -@ ${task.cpus} -f 0x0002 -b -o NA12877.RSEM.TEST.genome.PP.bam NA12877.RSEM.TEST.genome.bam
+  samtools sort -@ ${task.cpus} -o NA12877.RSEM.TEST.genome.PP.s.bam NA12877.RSEM.TEST.genome.PP.bam
   mv NA12877.RSEM.TEST.genome.PP.s.bam NA12877.RSEM.TEST.genome.PP.bam
   samtools index NA12877.RSEM.TEST.genome.PP.bam
   samtools view -h NA12877.RSEM.TEST.genome.PP.bam | grep -P "ZW:f:1|^@" | samtools view -bS - > NA12877.RSEM.TEST.genome.PP.SM.bam
@@ -423,7 +424,7 @@ process map_maternal_gen_filter {
   samtools index NA12877.SOFT.NOTRIM.STAR.pass2.Aligned.sortedByCoord.out.bam
 
   #KEEP ONLY PROPERLY PAIRED READS
-  samtools view -@ 10 -f 0x0002 -b -o NA12877.SOFT.NOTRIM.STAR.pass2.Aligned.sortedByCoord.out.PP.bam NA12877.SOFT.NOTRIM.STAR.pass2.Aligned.sortedByCoord.out.bam
+  samtools view -@ ${task.cpus} -f 0x0002 -b -o NA12877.SOFT.NOTRIM.STAR.pass2.Aligned.sortedByCoord.out.PP.bam NA12877.SOFT.NOTRIM.STAR.pass2.Aligned.sortedByCoord.out.bam
   samtools index NA12877.SOFT.NOTRIM.STAR.pass2.Aligned.sortedByCoord.out.PP.bam
 
   #KEEP UNIQUELY MAPPED READS
@@ -439,8 +440,8 @@ process map_maternal_gen_filter {
   /RSEM/rsem-prepare-reference --gtf STAR_2Gen_Ref/mat_annotation.gtf STAR_2Gen_Ref/NA12877_maternal.fa RSEM_MAT_GEN/RSEM_MAT_GEN
   /RSEM/rsem-calculate-expression --bam --output-genome-bam --sampling-for-bam -p 20 --paired-end  NA12877.SOFT.NOTRIM.STAR.pass2.Aligned.toTranscriptome.out.bam RSEM_MAT_GEN/RSEM_MAT_GEN NA12877.RSEM.TEST
   
-  samtools view -@ 10 -f 0x0002 -b -o NA12877.RSEM.TEST.genome.PP.bam NA12877.RSEM.TEST.genome.bam
-  samtools sort -@ 20 -o NA12877.RSEM.TEST.genome.PP.s.bam NA12877.RSEM.TEST.genome.PP.bam
+  samtools view -@ ${task.cpus} -f 0x0002 -b -o NA12877.RSEM.TEST.genome.PP.bam NA12877.RSEM.TEST.genome.bam
+  samtools sort -@ ${task.cpus} -o NA12877.RSEM.TEST.genome.PP.s.bam NA12877.RSEM.TEST.genome.PP.bam
   mv NA12877.RSEM.TEST.genome.PP.s.bam NA12877.RSEM.TEST.genome.PP.bam
   samtools view -h NA12877.RSEM.TEST.genome.PP.bam | grep -P "ZW:f:1|^@" | samtools view -bS - > NA12877.RSEM.TEST.genome.PP.SM.bam
   samtools index NA12877.RSEM.TEST.genome.PP.SM.bam
@@ -573,10 +574,10 @@ process add_rsemreads_bam {
   samtools view Maternal.RSEM.STAR.bam | grep -Fwf maternal_wins_final.txt >> final_mat.sam
   samtools view Paternal.RSEM.STAR.bam | grep -Fwf paternal_wins_final.txt >> final_pat.sam
   samtools view -bS final_mat.sam -o final_mat.bam
-  samtools sort -@ 20 -o final_mat.sorted.bam final_mat.bam
+  samtools sort -@ ${task.cpus} -o final_mat.sorted.bam final_mat.bam
   samtools index final_mat.sorted.bam
   samtools view -bS final_pat.sam -o final_pat.bam
-  samtools sort -@ 20 -o final_pat.sorted.bam final_pat.bam
+  samtools sort -@ ${task.cpus} -o final_pat.sorted.bam final_pat.bam
   samtools index final_pat.sorted.bam
 
   perl ${baseDir}/bin/compare_2genomes.pl STAR_2Gen_Ref/map_over.txt NA12877_output_phaser.vcf final_mat.sorted.bam final_pat.sorted.bam NA12877 results_2genomes_NA12877.RSEM.STAR.SOFT.NOTRIM_baq.txt results_2genomes_NA12877.RSEM.STAR.SOFT.NOTRIM.txt
