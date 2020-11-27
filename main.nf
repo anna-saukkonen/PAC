@@ -82,7 +82,7 @@ process prepare_star_genome_index {
   script:
 
   """
-  mkdir ${id}STARhaploid
+  mkdir STARhaploid
 
   STAR --runMode genomeGenerate \
        --genomeDir STARhaploid \
