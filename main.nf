@@ -6,8 +6,7 @@
  * and read pairs by using the command line options
  */
 
-params.variants   = "/away/asaukkonen/gitdir/NA12877_output.phased.vcf.gz"
-params.reads       = "/away/asaukkonen/gitdir/NA12890_merged_{1,2}.fq.gz" 
+
 
 params.genome        = params.genomes[ params.genome_version ]?.genome
 params.annot         = params.genomes[ params.genome_version ]?.annot
@@ -84,10 +83,6 @@ process prepare_star_genome_index {
   """
   mkdir STARhaploid
 
-
-
-
-
   STAR --runMode genomeGenerate \
        --genomeDir STARhaploid \
        --genomeFastaFiles ${genome} \
@@ -114,15 +109,15 @@ process rnaseq_mapping_star {
   output: 
     tuple \
       val(id), \
-      path('NA12877.SOFT.NOTRIM.STAR.pass2.Aligned.sortedByCoord.out.bam'), \
-      path('NA12877.SOFT.NOTRIM.STAR.pass2.Aligned.sortedByCoord.out.bam.bai') into aligned_bam_ch
+      path('{id}.SOFT.NOTRIM.STAR.pass2.Aligned.sortedByCoord.out.bam'), \
+      path('{id}.SOFT.NOTRIM.STAR.pass2.Aligned.sortedByCoord.out.bam.bai') into aligned_bam_ch
 
   script: 
 
   """
   # Align reads to genome
   STAR --genomeDir STARhaploid \
-       --readFilesIn $reads \
+       --readFilesIn ${reads} \
        --readFilesCommand zcat \
        --runThreadN ${task.cpus} \
        --outSAMstrandField intronMotif \
@@ -136,14 +131,14 @@ process rnaseq_mapping_star {
        --sjdbOverhang ${x} \
        --outFilterMismatchNmax 8 \
        --outSAMattributes NH nM NM MD HI \
-       --outSAMattrRGline  ID:$id PU:Illumina PL:Illumina LB:NA12877.SOFT.NOTRIM SM:NA12877.SOFT.NOTRIM CN:Seq_centre \
+       --outSAMattrRGline  ID:${id} PU:Illumina PL:Illumina LB:{id}.SOFT.NOTRIM SM:NA12877.SOFT.NOTRIM CN:Seq_centre \
        --outSAMtype BAM SortedByCoordinate \
        --twopassMode Basic \
-       --outFileNamePrefix NA12877.SOFT.NOTRIM.STAR.pass2. \
+       --outFileNamePrefix ${id}.SOFT.NOTRIM.STAR.pass2. \
        --outSAMprimaryFlag AllBestScore
 
   # Index the BAM file
-  samtools index NA12877.SOFT.NOTRIM.STAR.pass2.Aligned.sortedByCoord.out.bam
+  samtools index ${id}.SOFT.NOTRIM.STAR.pass2.Aligned.sortedByCoord.out.bam
   """
 }
 
