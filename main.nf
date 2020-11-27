@@ -76,7 +76,6 @@ process prepare_star_genome_index {
     path genome from params.genome
     path annot from params.annot
     val x from read_len_ch1
-    val id from params.id
   output:
     path STARhaploid into genome_dir_ch
 
@@ -86,7 +85,7 @@ process prepare_star_genome_index {
   mkdir ${id}STARhaploid
 
   STAR --runMode genomeGenerate \
-       --genomeDir ${id}STARhaploid \
+       --genomeDir STARhaploid \
        --genomeFastaFiles ${genome} \
        --sjdbGTFfile ${annot} \
        --sjdbOverhang ${x} \
@@ -107,6 +106,7 @@ process rnaseq_mapping_star {
     path STARhaploid from genome_dir_ch
     set val(id), file(reads) from reads_ch1
     val x from read_len_ch2
+    val id from params.id
 
   output: 
     tuple \
@@ -160,6 +160,7 @@ process clean_up_reads {
   input:
     tuple val(id), path(bam), path(index) from aligned_bam_ch
     path variants from params.variants
+    val id from params.id
 
   output:
     path ('STAR_original/phaser_version.bam') into phaser_ch
@@ -198,6 +199,7 @@ process phaser_step {
   path variants from params.variants
   path ('phaser_version.bam') from phaser_ch
   path ('phaser_version.bam.bai') from phaser_bai_ch
+  val id from params.id
 
   output:
   path ('NA12877_output_phaser.vcf') into (phaser_out_ch1, phaser_out_ch2, phaser_out_ch3)
@@ -227,6 +229,7 @@ process create_parental_genomes {
     path genome from params.genome
     path annot from params.annot
     path ('NA12877_output_phaser.vcf') from phaser_out_ch1
+    val id from params.id
 
   output:
     path ('STAR_2Gen_Ref/maternal.chain') into maternal_chain_ch
@@ -331,6 +334,7 @@ process STAR_reference_genomes {
       path ('STAR_2Gen_Ref/mat_annotation.gtf') from mat_annotation_ch1
       path ('STAR_2Gen_Ref/pat_annotation.gtf') from pat_annotation_ch1
       val x from read_len_ch3
+      val id from params.id
 
   output:
     path Paternal_STAR into Paternal_STAR_ch
@@ -359,6 +363,7 @@ process map_paternal_gen_filter {
     path ('STAR_2Gen_Ref/pat_annotation.gtf') from pat_annotation_ch2
     path ('STAR_2Gen_Ref/NA12877_paternal.fa') from pat_fa2
     val x from read_len_ch4
+    val id from params.id
 
   output:
     path ('STAR_Paternal/NA12877.SOFT.NOTRIM.STAR.pass2.Aligned.sortedByCoord.out.PP.UM.bam') into (paternal_mapgen_ch1, paternal_mapgen_ch2, paternal_mapgen_ch3)
@@ -411,6 +416,7 @@ process map_maternal_gen_filter {
     path ('STAR_2Gen_Ref/mat_annotation.gtf') from mat_annotation_ch2
     path ('STAR_2Gen_Ref/NA12877_maternal.fa') from mat_fa2
     val x from read_len_ch5
+    val id from params.id
 
   output:
     path ('STAR_Maternal/NA12877.SOFT.NOTRIM.STAR.pass2.Aligned.sortedByCoord.out.PP.UM.bam') into (maternal_mapgen_ch1, maternal_mapgen_ch2, maternal_mapgen_ch3) 
@@ -459,6 +465,8 @@ process merge_parental_bam {
     path ('STAR_2Gen_Ref/map_over.txt') from adjusted_ref_ch1
     path ('NA12877_output_phaser.vcf') from phaser_out_ch2
     path ('STAR_original/NA12877.SOFT.NOTRIM.STAR.pass2.Aligned.sortedByCoord.out.PP.UM.bam') from pp_um_ch
+    val id from params.id
+
   output:
     path ('results/results*.txt') into results_ch
   script:
@@ -506,6 +514,7 @@ process extra_reads_rsem {
     path ('STAR_Maternal/NA12877.RSEM.TEST.genome.PP.SM.bam') from mat_rsem_ch
     path ('STAR_Paternal/NA12877.SOFT.NOTRIM.STAR.pass2.Aligned.sortedByCoord.out.PP.UM.bam') from paternal_mapgen_ch2
     path ('STAR_Paternal/NA12877.RSEM.TEST.genome.PP.SM.bam') from pat_rsem_ch
+    val id from params.id
 
   output:
     path ('Maternal.RSEM.bam') into mat_rsembam
@@ -548,6 +557,7 @@ process add_rsemreads_bam {
     path ('STAR_Maternal/NA12877.SOFT.NOTRIM.STAR.pass2.Aligned.sortedByCoord.out.PP.UM.bam') from maternal_mapgen_ch3
     path ('STAR_2Gen_Ref/map_over.txt') from adjusted_ref_ch2
     path ('NA12877_output_phaser.vcf') from phaser_out_ch3
+    val id from params.id
 
   output:
     path ('results_2genomes_NA12877.RSEM.STAR.SOFT.NOTRIM.txt')
