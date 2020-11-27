@@ -76,7 +76,7 @@ process prepare_star_genome_index {
     path genome from params.genome
     path annot from params.annot
     val x from read_len_ch1
-    path id from params.id
+    val id from params.id
   output:
     path STARhaploid into genome_dir_ch
 
