@@ -84,6 +84,9 @@ process prepare_star_genome_index {
   """
   mkdir STARhaploid
 
+  println ${x/13}
+  ${x/13}
+
   STAR --runMode genomeGenerate \
        --genomeDir STARhaploid \
        --genomeFastaFiles ${genome} \
@@ -131,7 +134,7 @@ process rnaseq_mapping_star {
        --outSAMattrIHstart 0 \
        --outFilterIntronMotifs RemoveNoncanonicalUnannotated \
        --sjdbOverhang ${x} \
-       --outFilterMismatchNmax 8 \
+       --outFilterMismatchNmax ${x/13} \
        --outSAMattributes NH nM NM MD HI \
        --outSAMattrRGline  ID:${id} PU:Illumina PL:Illumina LB:${id}.SOFT.NOTRIM SM:${id}.SOFT.NOTRIM CN:Seq_centre \
        --outSAMtype BAM SortedByCoordinate \
