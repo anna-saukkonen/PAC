@@ -237,7 +237,6 @@ process create_parental_genomes {
   output:
     path ('STAR_2Gen_Ref/maternal.chain') into maternal_chain_ch
     path ('STAR_2Gen_Ref/paternal.chain') into paternal_chain_ch
-    path ('STAR_2Gen_Ref/chr22_{id}.map') into map_ch
     path ('STAR_2Gen_Ref/{id}_maternal.fa') into (mat_fa1, mat_fa2)
     path ('STAR_2Gen_Ref/{id}_paternal.fa') into (pat_fa1, pat_fa2)
     path ('STAR_2Gen_Ref/mat_annotation.gtf') into (mat_annotation_ch1, mat_annotation_ch2)
@@ -330,17 +329,14 @@ process create_parental_genomes {
 
 
 
-process STAR_reference_genomes {
+process STAR_reference_maternal_genomes {
   input:
     path ('STAR_2Gen_Ref/{id}_maternal.fa') from mat_fa1
-      path ('STAR_2Gen_Ref/{id}_paternal.fa') from pat_fa1
-      path ('STAR_2Gen_Ref/mat_annotation.gtf') from mat_annotation_ch1
-      path ('STAR_2Gen_Ref/pat_annotation.gtf') from pat_annotation_ch1
-      val x from read_len_ch3
-      val id from params.id
+    path ('STAR_2Gen_Ref/mat_annotation.gtf') from mat_annotation_ch1
+    val x from read_len_ch3
+    val id from params.id
 
   output:
-    path Paternal_STAR into Paternal_STAR_ch
     path Maternal_STAR into Maternal_STAR_ch
     
 
@@ -348,13 +344,34 @@ process STAR_reference_genomes {
 
   """
   mkdir Maternal_STAR
-  mkdir Paternal_STAR
 
-  STAR --runMode genomeGenerate --genomeDir Paternal_STAR --genomeFastaFiles STAR_2Gen_Ref/${id}_paternal.fa --sjdbGTFfile STAR_2Gen_Ref/pat_annotation.gtf --sjdbOverhang ${x} --runThreadN 5 --outTmpDir pat
   STAR --runMode genomeGenerate --genomeDir Maternal_STAR --genomeFastaFiles STAR_2Gen_Ref/${id}_maternal.fa --sjdbGTFfile STAR_2Gen_Ref/mat_annotation.gtf --sjdbOverhang ${x} --runThreadN 5 --outTmpDir mat
   """    
 
 }
+
+
+process STAR_reference_paternal_genomes {
+  input:
+    path ('STAR_2Gen_Ref/{id}_paternal.fa') from pat_fa1
+    path ('STAR_2Gen_Ref/pat_annotation.gtf') from pat_annotation_ch1
+    val x from read_len_ch3
+    val id from params.id
+
+  output:
+    path Paternal_STAR into Paternal_STAR_ch
+    
+
+  script:
+
+  """
+  mkdir Paternal_STAR
+
+  STAR --runMode genomeGenerate --genomeDir Paternal_STAR --genomeFastaFiles STAR_2Gen_Ref/${id}_paternal.fa --sjdbGTFfile STAR_2Gen_Ref/pat_annotation.gtf --sjdbOverhang ${x} --runThreadN 5 --outTmpDir pat
+  """    
+
+}
+
 
 
 process map_paternal_gen_filter {
