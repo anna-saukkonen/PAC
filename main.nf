@@ -65,6 +65,8 @@ process read_length {
 
 readlen_file_ch.map { it.text.trim() }.into { read_len_ch1; read_len_ch2; read_len_ch3; read_len_ch4; read_len_ch5 }
 
+readlen_file_ch1.map { it.text.trim().toInteger() }. into { mismatch_ch1; mismatch_ch2 }
+
 
 
 
@@ -76,6 +78,7 @@ process prepare_star_genome_index {
     path genome from params.genome
     path annot from params.annot
     val x from read_len_ch1
+    val y from mismatch_ch1
   output:
     path STARhaploid into genome_dir_ch
 
@@ -84,8 +87,8 @@ process prepare_star_genome_index {
   """
   mkdir STARhaploid
 
-  println ${x/13}
-  ${x/13}
+  println ${y}
+  y
 
   STAR --runMode genomeGenerate \
        --genomeDir STARhaploid \
