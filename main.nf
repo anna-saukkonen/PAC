@@ -88,8 +88,8 @@ process prepare_star_genome_index {
   mkdir STARhaploid
 
   println ${y}
-  y
   println ${y/13}
+  println (int)${y/13}
 
   STAR --runMode genomeGenerate \
        --genomeDir STARhaploid \
