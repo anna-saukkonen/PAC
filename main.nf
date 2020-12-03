@@ -394,9 +394,9 @@ process map_paternal_gen_filter {
   ##Create RSEM Files:
   mkdir RSEM_MAT_GEN
 
-  /RSEM/rsem-prepare-reference --gtf STAR_2Gen_Ref/pat_annotation.gtf STAR_2Gen_Ref/${id}_paternal.fa RSEM_MAT_GEN/RSEM_MAT_GEN
+  /RSEM/rsem-prepare-reference -p ${task.cpus} --gtf STAR_2Gen_Ref/pat_annotation.gtf STAR_2Gen_Ref/${id}_paternal.fa RSEM_MAT_GEN/RSEM_MAT_GEN
 
-  /RSEM/rsem-calculate-expression --bam --output-genome-bam --sampling-for-bam -p 20 --paired-end  ${id}.SOFT.NOTRIM.STAR.pass2.Aligned.toTranscriptome.out.bam RSEM_MAT_GEN/RSEM_MAT_GEN ${id}.RSEM.TEST
+  /RSEM/rsem-calculate-expression --bam --output-genome-bam --sampling-for-bam -p ${task.cpus} --paired-end  ${id}.SOFT.NOTRIM.STAR.pass2.Aligned.toTranscriptome.out.bam RSEM_MAT_GEN/RSEM_MAT_GEN ${id}.RSEM.TEST
 
   samtools view -@ ${task.cpus} -f 0x0002 -b -o ${id}.RSEM.TEST.genome.PP.bam ${id}.RSEM.TEST.genome.bam
   samtools sort -@ ${task.cpus} -o ${id}.RSEM.TEST.genome.PP.s.bam ${id}.RSEM.TEST.genome.PP.bam
@@ -447,8 +447,8 @@ process map_maternal_gen_filter {
   ##Create RSEM Files:
   mkdir RSEM_MAT_GEN
 
-  /RSEM/rsem-prepare-reference --gtf STAR_2Gen_Ref/mat_annotation.gtf STAR_2Gen_Ref/${id}_maternal.fa RSEM_MAT_GEN/RSEM_MAT_GEN
-  /RSEM/rsem-calculate-expression --bam --output-genome-bam --sampling-for-bam -p 20 --paired-end  ${id}.SOFT.NOTRIM.STAR.pass2.Aligned.toTranscriptome.out.bam RSEM_MAT_GEN/RSEM_MAT_GEN ${id}.RSEM.TEST
+  /RSEM/rsem-prepare-reference -p ${task.cpus} --gtf STAR_2Gen_Ref/mat_annotation.gtf STAR_2Gen_Ref/${id}_maternal.fa RSEM_MAT_GEN/RSEM_MAT_GEN
+  /RSEM/rsem-calculate-expression --bam --output-genome-bam --sampling-for-bam -p ${task.cpus} --paired-end  ${id}.SOFT.NOTRIM.STAR.pass2.Aligned.toTranscriptome.out.bam RSEM_MAT_GEN/RSEM_MAT_GEN ${id}.RSEM.TEST
   
   samtools view -@ ${task.cpus} -f 0x0002 -b -o ${id}.RSEM.TEST.genome.PP.bam ${id}.RSEM.TEST.genome.bam
   samtools sort -@ ${task.cpus} -o ${id}.RSEM.TEST.genome.PP.s.bam ${id}.RSEM.TEST.genome.PP.bam
@@ -461,52 +461,6 @@ process map_maternal_gen_filter {
 }
 
 
-process merge_parental_bam {
-  input:
-    path ('STAR_Maternal/{id}.SOFT.NOTRIM.STAR.pass2.Aligned.sortedByCoord.out.PP.UM.bam') from maternal_mapgen_ch1
-    path ('STAR_Paternal/{id}.SOFT.NOTRIM.STAR.pass2.Aligned.sortedByCoord.out.PP.UM.bam') from paternal_mapgen_ch1
-    path ('STAR_2Gen_Ref/map_over.txt') from adjusted_ref_ch1
-    path ('{id}_output_phaser.vcf') from phaser_out_ch2
-    path ('STAR_original/{id}.SOFT.NOTRIM.STAR.pass2.Aligned.sortedByCoord.out.PP.UM.bam') from pp_um_ch
-    val id from params.id
-
-  output:
-    path ('results/results*.txt') into results_ch
-  script:
-
-  """
-  samtools view STAR_Maternal/${id}.SOFT.NOTRIM.STAR.pass2.Aligned.sortedByCoord.out.PP.UM.bam | cut -f1 | sort | uniq >> maternal_tags.txt
-  samtools view STAR_Paternal/${id}.SOFT.NOTRIM.STAR.pass2.Aligned.sortedByCoord.out.PP.UM.bam | cut -f1 | sort | uniq >> paternal_tags.txt
-  cat maternal_tags.txt paternal_tags.txt | sort | uniq -u >> unique_tags.txt
-  cat maternal_tags.txt paternal_tags.txt | sort | uniq -d >> duplicate_tags.txt
-  samtools view STAR_Maternal/${id}.SOFT.NOTRIM.STAR.pass2.Aligned.sortedByCoord.out.PP.UM.bam | grep -Fwf duplicate_tags.txt >> tempout_mat.sam
-  samtools view STAR_Paternal/${id}.SOFT.NOTRIM.STAR.pass2.Aligned.sortedByCoord.out.PP.UM.bam | grep -Fwf duplicate_tags.txt >> tempout_pat.sam
-  sort -k 1,1 tempout_mat.sam > tempout_mat.sort.sam
-  sort -k 1,1 tempout_pat.sam > tempout_pat.sort.sam
-
-  perl ${baseDir}/bin/filter_2genomes.pl tempout_mat.sort.sam tempout_pat.sort.sam
-
-  cat maternal_wins.txt unique_tags.txt > maternal_wins_final.txt
-  cat paternal_wins.txt unique_tags.txt > paternal_wins_final.txt
-
-  samtools view -H STAR_Maternal/${id}.SOFT.NOTRIM.STAR.pass2.Aligned.sortedByCoord.out.PP.UM.bam > final_mat.sam
-  samtools view -H STAR_Paternal/${id}.SOFT.NOTRIM.STAR.pass2.Aligned.sortedByCoord.out.PP.UM.bam > final_pat.sam
-  samtools view STAR_Maternal/${id}.SOFT.NOTRIM.STAR.pass2.Aligned.sortedByCoord.out.PP.UM.bam | grep -Fwf maternal_wins_final.txt >> final_mat.sam
-  samtools view STAR_Paternal/${id}.SOFT.NOTRIM.STAR.pass2.Aligned.sortedByCoord.out.PP.UM.bam | grep -Fwf paternal_wins_final.txt >> final_pat.sam
-  samtools view -bS final_mat.sam -o final_mat.bam
-  samtools index final_mat.bam
-  samtools view -bS final_pat.sam -o final_pat.bam
-  samtools index final_pat.bam
-
-  perl ${baseDir}/bin/compare_2genomes.pl STAR_2Gen_Ref/map_over.txt ${id}_output_phaser.vcf final_mat.bam final_pat.bam ${id} results_2genomes_${id}.SOFT.NOTRIM_baq.txt results_2genomes_${id}.SOFT.NOTRIM.txt
-
-  perl ${baseDir}/bin/compare_basic_map.pl ${id}_output_phaser.vcf STAR_original/${id}.SOFT.NOTRIM.STAR.pass2.Aligned.sortedByCoord.out.PP.UM.bam ${id} results_1genome_${id}.SOFT.NOTRIM_baq.txt results_1genome_${id}.SOFT.NOTRIM.txt
-
-  mkdir results
-  mv results_2genomes_${id}.SOFT.NOTRIM_baq.txt results_2genomes_${id}.SOFT.NOTRIM.txt results_1genome_${id}.SOFT.NOTRIM_baq.txt results_1genome_${id}.SOFT.NOTRIM.txt results/
-  """
-
-}
 
 
 
@@ -564,6 +518,7 @@ process add_rsemreads_bam {
 
   output:
     path ('results_2genomes_{id}.RSEM.STAR.SOFT.NOTRIM.txt')
+    path ('results_2genomes_${id}.RSEM.STAR.SOFT.NOTRIM_baq.txt')
     
   script:
 
