@@ -50,7 +50,7 @@ process read_length {
     set val(id), file(reads) from reads_ch 
 
   output:
-    file 'readLength_file.txt' into readlen_file_ch
+    file 'readLength_file.txt' into (readlen_file_ch, readlen_file_ch1)
 
   shell:
 
@@ -89,6 +89,7 @@ process prepare_star_genome_index {
 
   println ${y}
   y
+  println ${y/13}
 
   STAR --runMode genomeGenerate \
        --genomeDir STARhaploid \
