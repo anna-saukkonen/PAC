@@ -90,6 +90,8 @@ process prepare_star_genome_index {
   println ${y}
   println ${y/13}
   println ${y//13}
+  println ${y%13}
+
 
   STAR --runMode genomeGenerate \
        --genomeDir STARhaploid \
