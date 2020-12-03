@@ -93,13 +93,7 @@ process prepare_star_genome_index {
   println ${y%13}
 
 
-  STAR --runMode genomeGenerate \
-       --genomeDir STARhaploid \
-       --genomeFastaFiles ${genome} \
-       --sjdbGTFfile ${annot} \
-       --sjdbOverhang ${x} \
-       --runThreadN ${task.cpus} \
-       --genomeSAindexNbases 13
+
   """
 }
 
