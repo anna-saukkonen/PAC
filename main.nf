@@ -114,8 +114,8 @@ process rnaseq_mapping_star {
   output: 
     tuple \
       val(id), \
-      path('{id}.SOFT.NOTRIM.STAR.pass2.Aligned.sortedByCoord.out.bam'), \
-      path('{id}.SOFT.NOTRIM.STAR.pass2.Aligned.sortedByCoord.out.bam.bai') into aligned_bam_ch
+      path('${id}.SOFT.NOTRIM.STAR.pass2.Aligned.sortedByCoord.out.bam'), \
+      path('${id}.SOFT.NOTRIM.STAR.pass2.Aligned.sortedByCoord.out.bam.bai') into aligned_bam_ch
 
   script: 
 
