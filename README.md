@@ -29,7 +29,7 @@ It comprises of the following steps:
 2. Install either Docker or Singularity
 3. Run PAC with following command:
 
-`nextflow run anna-saukkonen/main.nf --genome_version GRCh37 --reads "pathtoreads_{1,2}.fq.gz" --variants "pathtovariants" -profile docker`
+`nextflow run http://github.com/anna-saukkonen/PAC.git --genome_version GRCh37 --reads "pathtoreads_{1,2}.fq.gz" --variants "pathtovariants" -profile docker`
 
 
 ### Installation of dependancies
