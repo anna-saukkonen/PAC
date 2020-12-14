@@ -5,7 +5,7 @@
 Author: Anna Saukkonen
 anna.saukkonen@gmail.com
 
-##Introduction:
+## Introduction:
 
 This pipeline has been created to adjust for reference mapping biases that often cause error in the detection of allele specific expression.
 
@@ -15,7 +15,7 @@ It comprises of the following steps:
 2. Creation of parental genomes to align sequencing data to
 3. Selection of the best mapping for each read across the two parental genomes
 
-##Quick Start
+## Quick Start
 1. Download nextflow
 2. Install either Docker or Singularity
 3. Run PAC with following command:
@@ -24,9 +24,9 @@ It comprises of the following steps:
 
 
 
-##Options:
+## Options:
 
-####Required
+#### Required
 --genome_version GRCh37/GRCh38
 
 --reads "pathtoreads **_{1,2}.fq.gz**"
@@ -36,7 +36,7 @@ It comprises of the following steps:
 -profile docker/singularity
 
 
-####Additional non-essential
+#### Additional non-essential
 
 To be emailed when the pipeline is finished
 -N name@email_address.com
@@ -49,7 +49,7 @@ Name of output directory
 
 
 
-###Installation of dependancies
+### Installation of dependancies
 Make sure you have Java v8+:
 `java -version`
 
