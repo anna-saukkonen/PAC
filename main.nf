@@ -32,10 +32,9 @@ Channel
 
 
 log.info """\
+Starting PAC run
 
-nextflow run anna-saukkonen/main.nf --genome_version GRCh37 --reads '*_{1,2}.fq.gz' -profile docker
-
-
+Files used:
 genome        : $params.genome
 reads         : $params.reads
 variants      : $params.variants
@@ -50,7 +49,7 @@ process read_length {
     set val(id), file(reads) from reads_ch 
 
   output:
-    file 'readLength_file.txt' into readlen_file_ch
+    file "readLength_file.txt" into readlen_file_ch
 
   shell:
 
@@ -93,7 +92,6 @@ process prepare_star_genome_index {
        --sjdbGTFfile ${annot} \
        --sjdbOverhang ${x} \
        --runThreadN ${task.cpus} \
-       --genomeSAindexNbases 13
   """
 }
 
@@ -166,9 +164,9 @@ process clean_up_reads {
     val id from params.id
 
   output:
-    path ('STAR_original/phaser_version.bam') into phaser_ch
-    path ('STAR_original/phaser_version.bam.bai') into phaser_bai_ch
-    path ('STAR_original/{id}.SOFT.NOTRIM.STAR.pass2.Aligned.sortedByCoord.out.PP.UM.bam') into pp_um_ch
+    path ("STAR_original/phaser_version.bam") into phaser_ch
+    path ("STAR_original/phaser_version.bam.bai") into phaser_bai_ch
+    path ("STAR_original/${id}.SOFT.NOTRIM.STAR.pass2.Aligned.sortedByCoord.out.PP.UM.bam") into pp_um_ch
 
   script:
 
@@ -200,12 +198,12 @@ process phaser_step {
 
   input:
   path variants from params.variants
-  path ('phaser_version.bam') from phaser_ch
-  path ('phaser_version.bam.bai') from phaser_bai_ch
+  path ("phaser_version.bam") from phaser_ch
+  path ("phaser_version.bam.bai") from phaser_bai_ch
   val id from params.id
 
   output:
-  path ('{id}.vcf') into (phaser_out_ch1, phaser_out_ch2, phaser_out_ch3)
+  path ("${id}.vcf") into (phaser_out_ch1, phaser_out_ch2, phaser_out_ch3)
 
   script:
 
@@ -231,19 +229,19 @@ process create_parental_genomes {
   input:
     path genome from params.genome
     path annot from params.annot
-    path ('{id}_output_phaser.vcf') from phaser_out_ch1
+    path ("${id}_output_phaser.vcf") from phaser_out_ch1
     val id from params.id
 
   output:
-    path ('STAR_2Gen_Ref/maternal.chain') into maternal_chain_ch
-    path ('STAR_2Gen_Ref/paternal.chain') into paternal_chain_ch
-    path ('STAR_2Gen_Ref/{id}_maternal.fa') into (mat_fa1, mat_fa2)
-    path ('STAR_2Gen_Ref/{id}_paternal.fa') into (pat_fa1, pat_fa2)
-    path ('STAR_2Gen_Ref/mat_annotation.gtf') into (mat_annotation_ch1, mat_annotation_ch2)
-    path ('STAR_2Gen_Ref/not_lifted_m.txt') into not_lift_m_ch
-    path ('STAR_2Gen_Ref/pat_annotation.gtf') into (pat_annotation_ch1, pat_annotation_ch2)
-    path ('STAR_2Gen_Ref/not_lifted_p.txt') into not_lift_p_ch
-    path ('STAR_2Gen_Ref/map_over.txt') into (adjusted_ref_ch1, adjusted_ref_ch2)
+    path ("STAR_2Gen_Ref/maternal.chain") into maternal_chain_ch
+    path ("STAR_2Gen_Ref/paternal.chain") into paternal_chain_ch
+    path ("STAR_2Gen_Ref/${id}_maternal.fa") into (mat_fa1, mat_fa2)
+    path ("STAR_2Gen_Ref/${id}_paternal.fa") into (pat_fa1, pat_fa2)
+    path ("STAR_2Gen_Ref/mat_annotation.gtf") into (mat_annotation_ch1, mat_annotation_ch2)
+    path ("STAR_2Gen_Ref/not_lifted_m.txt") into not_lift_m_ch
+    path ("STAR_2Gen_Ref/pat_annotation.gtf") into (pat_annotation_ch1, pat_annotation_ch2)
+    path ("STAR_2Gen_Ref/not_lifted_p.txt") into not_lift_p_ch
+    path ("STAR_2Gen_Ref/map_over.txt") into (adjusted_ref_ch1, adjusted_ref_ch2)
 
   
   script:
@@ -331,8 +329,8 @@ process create_parental_genomes {
 
 process STAR_reference_maternal_genomes {
   input:
-    path ('STAR_2Gen_Ref/{id}_maternal.fa') from mat_fa1
-    path ('STAR_2Gen_Ref/mat_annotation.gtf') from mat_annotation_ch1
+    path ("STAR_2Gen_Ref/${id}_maternal.fa") from mat_fa1
+    path ("STAR_2Gen_Ref/mat_annotation.gtf") from mat_annotation_ch1
     val x from read_len_ch3
     val id from params.id
 
@@ -353,7 +351,7 @@ process STAR_reference_maternal_genomes {
 
 process STAR_reference_paternal_genomes {
   input:
-    path ('STAR_2Gen_Ref/{id}_paternal.fa') from pat_fa1
+    path ('STAR_2Gen_Ref/${id}_paternal.fa') from pat_fa1
     path ('STAR_2Gen_Ref/pat_annotation.gtf') from pat_annotation_ch1
     val x from read_len_ch4
     val id from params.id
@@ -367,7 +365,13 @@ process STAR_reference_paternal_genomes {
   """
   mkdir Paternal_STAR
 
-  STAR --runMode genomeGenerate --genomeDir Paternal_STAR --genomeFastaFiles STAR_2Gen_Ref/${id}_paternal.fa --sjdbGTFfile STAR_2Gen_Ref/pat_annotation.gtf --sjdbOverhang ${x} --runThreadN ${task.cpus} --outTmpDir pat
+  STAR --runMode genomeGenerate \
+       --genomeDir Paternal_STAR \
+       --genomeFastaFiles STAR_2Gen_Ref/${id}_paternal.fa \
+       --sjdbGTFfile STAR_2Gen_Ref/pat_annotation.gtf \
+       --sjdbOverhang ${x} \
+       --runThreadN ${task.cpus} \
+       --outTmpDir pat
   """    
 
 }
@@ -380,19 +384,39 @@ process map_paternal_gen_filter {
   input:
     path Paternal_STAR from Paternal_STAR_ch
     set val(id), file(reads) from reads_ch2
-    path ('STAR_2Gen_Ref/pat_annotation.gtf') from pat_annotation_ch2
-    path ('STAR_2Gen_Ref/{id}_paternal.fa') from pat_fa2
+    path ("STAR_2Gen_Ref/pat_annotation.gtf") from pat_annotation_ch2
+    path ("STAR_2Gen_Ref/${id}_paternal.fa") from pat_fa2
     val x from read_len_ch5
     val id from params.id
 
   output:
-    path ('STAR_Paternal/{id}.SOFT.NOTRIM.STAR.pass2.Aligned.sortedByCoord.out.PP.UM.bam') into (paternal_mapgen_ch1, paternal_mapgen_ch2, paternal_mapgen_ch3)
-    path ('STAR_Paternal/{id}.RSEM.TEST.genome.PP.SM.bam') into pat_rsem_ch
+    path ("STAR_Paternal/${id}.SOFT.NOTRIM.STAR.pass2.Aligned.sortedByCoord.out.PP.UM.bam") into (paternal_mapgen_ch1, paternal_mapgen_ch2, paternal_mapgen_ch3)
+    path ("STAR_Paternal/${id}.RSEM.TEST.genome.PP.SM.bam") into pat_rsem_ch
 
   script:
 
   """
-  STAR --genomeDir Paternal_STAR --runThreadN ${task.cpus} --quantMode TranscriptomeSAM --readFilesIn $reads --readFilesCommand zcat --outSAMstrandField intronMotif --outFilterMultimapNmax 30 --alignIntronMax 1000000 --alignMatesGapMax 1000000 --outMultimapperOrder Random --outSAMunmapped Within --outSAMattrIHstart 0 --outFilterIntronMotifs RemoveNoncanonicalUnannotated --sjdbOverhang ${x} --outFilterMismatchNmax ${(x-(x%13))/13} --outSAMattributes NH nM NM MD HI --outSAMattrRGline  ID:${id}.SOFT.NOTRIM PU:Illumina PL:Illumina LB:${id}.SOFT.NOTRIM SM:${id}.SOFT.NOTRIM CN:Seq_centre --outSAMtype BAM SortedByCoordinate --twopassMode Basic --outFileNamePrefix ${id}.SOFT.NOTRIM.STAR.pass2. --outSAMprimaryFlag AllBestScore
+  STAR --genomeDir Paternal_STAR \
+       --runThreadN ${task.cpus} \
+       --quantMode TranscriptomeSAM \
+       --readFilesIn $reads \
+       --readFilesCommand zcat \
+       --outSAMstrandField intronMotif \
+       --outFilterMultimapNmax 30 \
+       --alignIntronMax 1000000 \
+       --alignMatesGapMax 1000000 \
+       --outMultimapperOrder Random \
+       --outSAMunmapped Within \
+       --outSAMattrIHstart 0 \
+       --outFilterIntronMotifs RemoveNoncanonicalUnannotated \
+       --sjdbOverhang ${x} \
+       --outFilterMismatchNmax ${(x-(x%13))/13} \
+       --outSAMattributes NH nM NM MD HI \
+       --outSAMattrRGline  ID:${id}.SOFT.NOTRIM PU:Illumina PL:Illumina LB:${id}.SOFT.NOTRIM SM:${id}.SOFT.NOTRIM CN:Seq_centre \
+       --outSAMtype BAM SortedByCoordinate \
+       --twopassMode Basic \
+       --outFileNamePrefix ${id}.SOFT.NOTRIM.STAR.pass2. \
+       --outSAMprimaryFlag AllBestScore
 
   
   samtools index ${id}.SOFT.NOTRIM.STAR.pass2.Aligned.sortedByCoord.out.bam
@@ -433,19 +457,39 @@ process map_maternal_gen_filter {
   input:
     path Maternal_STAR from Maternal_STAR_ch
     set val(id), file(reads) from reads_ch3
-    path ('STAR_2Gen_Ref/mat_annotation.gtf') from mat_annotation_ch2
-    path ('STAR_2Gen_Ref/{id}_maternal.fa') from mat_fa2
+    path ("STAR_2Gen_Ref/mat_annotation.gtf") from mat_annotation_ch2
+    path ("STAR_2Gen_Ref/${id}_maternal.fa") from mat_fa2
     val x from read_len_ch6
     val id from params.id
 
   output:
-    path ('STAR_Maternal/{id}.SOFT.NOTRIM.STAR.pass2.Aligned.sortedByCoord.out.PP.UM.bam') into (maternal_mapgen_ch1, maternal_mapgen_ch2, maternal_mapgen_ch3) 
-    path ('STAR_Maternal/{id}.RSEM.TEST.genome.PP.SM.bam') into mat_rsem_ch
+    path ("STAR_Maternal/${id}.SOFT.NOTRIM.STAR.pass2.Aligned.sortedByCoord.out.PP.UM.bam") into (maternal_mapgen_ch1, maternal_mapgen_ch2, maternal_mapgen_ch3) 
+    path ("STAR_Maternal/${id}.RSEM.TEST.genome.PP.SM.bam") into mat_rsem_ch
 
   script:
 
   """
-  STAR --genomeDir Maternal_STAR --runThreadN ${task.cpus} --quantMode TranscriptomeSAM --readFilesIn $reads --readFilesCommand zcat --outSAMstrandField intronMotif --outFilterMultimapNmax 30 --alignIntronMax 1000000 --alignMatesGapMax 1000000 --outMultimapperOrder Random --outSAMunmapped Within --outSAMattrIHstart 0 --outFilterIntronMotifs RemoveNoncanonicalUnannotated --sjdbOverhang ${x} --outFilterMismatchNmax ${(x-(x%13))/13} --outSAMattributes NH nM NM MD HI --outSAMattrRGline  ID:${id}.SOFT.NOTRIM PU:Illumina PL:Illumina LB:${id}.SOFT.NOTRIM SM:${id}.SOFT.NOTRIM CN:Seq_centre --outSAMtype BAM SortedByCoordinate --twopassMode Basic --outFileNamePrefix ${id}.SOFT.NOTRIM.STAR.pass2. --outSAMprimaryFlag AllBestScore
+  STAR --genomeDir Maternal_STAR \
+       --runThreadN ${task.cpus} \
+       --quantMode TranscriptomeSAM \
+       --readFilesIn $reads \
+       --readFilesCommand zcat \
+       --outSAMstrandField intronMotif \
+       --outFilterMultimapNmax 30 \
+       --alignIntronMax 1000000 \
+       --alignMatesGapMax 1000000 \
+       --outMultimapperOrder Random \
+       --outSAMunmapped Within \
+       --outSAMattrIHstart 0 \
+       --outFilterIntronMotifs RemoveNoncanonicalUnannotated \
+       --sjdbOverhang ${x} \
+       --outFilterMismatchNmax ${(x-(x%13))/13} \
+       --outSAMattributes NH nM NM MD HI \
+       --outSAMattrRGline  ID:${id}.SOFT.NOTRIM PU:Illumina PL:Illumina LB:${id}.SOFT.NOTRIM SM:${id}.SOFT.NOTRIM CN:Seq_centre \
+       --outSAMtype BAM SortedByCoordinate \
+       --twopassMode Basic \
+       --outFileNamePrefix ${id}.SOFT.NOTRIM.STAR.pass2. \
+       --outSAMprimaryFlag AllBestScore
 
 
   samtools index ${id}.SOFT.NOTRIM.STAR.pass2.Aligned.sortedByCoord.out.bam
@@ -484,15 +528,15 @@ process map_maternal_gen_filter {
 process extra_reads_rsem {
 
   input:
-    path ('STAR_Maternal/{id}.SOFT.NOTRIM.STAR.pass2.Aligned.sortedByCoord.out.PP.UM.bam') from maternal_mapgen_ch2
-    path ('STAR_Maternal/{id}.RSEM.TEST.genome.PP.SM.bam') from mat_rsem_ch
-    path ('STAR_Paternal/{id}.SOFT.NOTRIM.STAR.pass2.Aligned.sortedByCoord.out.PP.UM.bam') from paternal_mapgen_ch2
-    path ('STAR_Paternal/{id}.RSEM.TEST.genome.PP.SM.bam') from pat_rsem_ch
+    path ("STAR_Maternal/${id}.SOFT.NOTRIM.STAR.pass2.Aligned.sortedByCoord.out.PP.UM.bam") from maternal_mapgen_ch2
+    path ("STAR_Maternal/${id}.RSEM.TEST.genome.PP.SM.bam") from mat_rsem_ch
+    path ("STAR_Paternal/${id}.SOFT.NOTRIM.STAR.pass2.Aligned.sortedByCoord.out.PP.UM.bam") from paternal_mapgen_ch2
+    path ("STAR_Paternal/${id}.RSEM.TEST.genome.PP.SM.bam") from pat_rsem_ch
     val id from params.id
 
   output:
-    path ('Maternal.RSEM.bam') into mat_rsembam
-    path ('Paternal.RSEM.bam') into pat_rsembam
+    path ("Maternal.RSEM.bam") into mat_rsembam
+    path ("Paternal.RSEM.bam") into pat_rsembam
 
 
   script:
@@ -525,17 +569,17 @@ process add_rsemreads_bam {
   publishDir "$params.outdir", mode: 'copy'
 
   input:
-    path ('Maternal.RSEM.bam') from mat_rsembam
-    path ('Paternal.RSEM.bam') from pat_rsembam
-    path ('STAR_Paternal/{id}.SOFT.NOTRIM.STAR.pass2.Aligned.sortedByCoord.out.PP.UM.bam') from paternal_mapgen_ch3
-    path ('STAR_Maternal/{id}.SOFT.NOTRIM.STAR.pass2.Aligned.sortedByCoord.out.PP.UM.bam') from maternal_mapgen_ch3
-    path ('STAR_2Gen_Ref/map_over.txt') from adjusted_ref_ch2
-    path ('{id}_output_phaser.vcf') from phaser_out_ch3
+    path ("Maternal.RSEM.bam") from mat_rsembam
+    path ("Paternal.RSEM.bam") from pat_rsembam
+    path ("STAR_Paternal/${id}.SOFT.NOTRIM.STAR.pass2.Aligned.sortedByCoord.out.PP.UM.bam") from paternal_mapgen_ch3
+    path ("STAR_Maternal/${id}.SOFT.NOTRIM.STAR.pass2.Aligned.sortedByCoord.out.PP.UM.bam") from maternal_mapgen_ch3
+    path ("STAR_2Gen_Ref/map_over.txt") from adjusted_ref_ch2
+    path ("${id}_output_phaser.vcf") from phaser_out_ch3
     val id from params.id
 
   output:
-    path ('results_2genomes_{id}.RSEM.STAR.SOFT.NOTRIM.txt')
-    path ('results_2genomes_${id}.RSEM.STAR.SOFT.NOTRIM_baq.txt')
+    path ("results_2genomes_${id}.RSEM.STAR.SOFT.NOTRIM.txt")
+    path ("results_2genomes_${id}.RSEM.STAR.SOFT.NOTRIM_baq.txt")
     
   script:
 
@@ -576,3 +620,35 @@ process add_rsemreads_bam {
 
 
 
+workflow.onComplete {
+    log.info """\
+
+                PAC pipeline complete!
+
+
+                -----------------------
+                Just use
+
+                  __    ___      __
+                ||__)  /___\\  /   `
+                ||    /     \\ \\__, ,
+
+                man ;)
+
+                -----------------------
+
+
+                PAC Pipeline execution summary
+                -------------------------------
+                Completed at: ${workflow.complete}
+                Duration    : ${workflow.duration}
+                Success     : ${workflow.success}
+                workDir     : ${workflow.workDir}
+                exit status : ${workflow.exitStatus}
+                """
+
+}
+
+workflow.onError {
+    println ("Pipeline execution stopped with the following message: ${workflow.errorMessage}"
+}
