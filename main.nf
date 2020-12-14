@@ -92,6 +92,7 @@ process prepare_star_genome_index {
        --sjdbGTFfile ${annot} \
        --sjdbOverhang ${x} \
        --runThreadN ${task.cpus} \
+       --genomeSAindexNbases 13 
   """
 }
 
