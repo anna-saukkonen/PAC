@@ -1,5 +1,12 @@
 # PAC
 
+ Just use
+   __    ___      __
+ ||__)  /___\\  /   `
+ ||    /     \\ \\__, ,
+
+ man ;)
+
 **P**ersonalised **A**SE **C**aller
 
 Author: Anna Saukkonen
