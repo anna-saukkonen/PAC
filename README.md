@@ -15,12 +15,25 @@ It comprises of the following steps:
 2. Creation of parental genomes to align sequencing data to
 3. Selection of the best mapping for each read across the two parental genomes
 
+
 ## Quick Start
 1. Download nextflow
 2. Install either Docker or Singularity
 3. Run PAC with following command:
 
 `nextflow run anna-saukkonen/main.nf --genome_version GRCh37 --reads "pathtoreads_{1,2}.fq.gz" --variants "pathtovariants" -profile docker`
+
+
+### Installation of dependancies
+Make sure you have Java v8+:
+`java -version`
+
+Install Nextflow
+`curl -fsSL get.nextflow.io | bash`
+
+Download docker to your system from
+[here](https://docs.docker.com/get-docker/)
+
 
 
 
@@ -49,13 +62,5 @@ Name of output directory
 
 
 
-### Installation of dependancies
-Make sure you have Java v8+:
-`java -version`
 
-Install Nextflow
-`curl -fsSL get.nextflow.io | bash`
-
-Download docker to your system from
-[here](https://docs.docker.com/get-docker/)
 
