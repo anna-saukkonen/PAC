@@ -64,9 +64,11 @@ To be emailed when the pipeline is finished
 
 Name of the sample
 -id "name_of_sample"
+Default: "default_id"
 
 Name of output directory
 -outdir "name_of_results_file_directory"
+Default: "/pac_results"
 
 
 
