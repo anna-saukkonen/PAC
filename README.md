@@ -56,6 +56,6 @@ Make sure you have Java v8+:
 Install Nextflow
 `curl -fsSL get.nextflow.io | bash`
 
-Download docker from
-[Docker download options](https://docs.docker.com/get-docker/)
+Download docker to your system from
+[here](https://docs.docker.com/get-docker/)
 
