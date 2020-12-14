@@ -650,5 +650,5 @@ workflow.onComplete {
 }
 
 workflow.onError {
-    println ("Pipeline execution stopped with the following message: ${workflow.errorMessage}"
+    println "Pipeline execution stopped with the following message: ${workflow.errorMessage}"
 }
