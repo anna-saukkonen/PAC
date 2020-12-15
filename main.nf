@@ -71,7 +71,8 @@ readlen_file_ch.map { it.text.trim().toInteger() }.into { read_len_ch1; read_len
 
 
 process prepare_star_genome_index {
-
+  label 'process_medium'
+  
   input:
     path genome from params.genome
     path annot from params.annot
