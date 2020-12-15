@@ -72,7 +72,7 @@ readlen_file_ch.map { it.text.trim().toInteger() }.into { read_len_ch1; read_len
 
 process prepare_star_genome_index {
   label 'process_medium'
-  
+
   input:
     path genome from params.genome
     path annot from params.annot
@@ -102,7 +102,8 @@ process prepare_star_genome_index {
 
 
 process rnaseq_mapping_star {
-  
+  label 'process_medium'
+
   input: 
     path genome from params.genome 
     path STARhaploid from genome_dir_ch
@@ -196,6 +197,7 @@ process clean_up_reads {
 
 
 process phaser_step {
+  label 'process_low'
 
   input:
   path variants from params.variants
@@ -225,7 +227,7 @@ process phaser_step {
 
 
 process create_parental_genomes {
-
+  label 'process_medium'
 
   input:
     path genome from params.genome
@@ -329,6 +331,8 @@ process create_parental_genomes {
 
 
 process STAR_reference_maternal_genomes {
+  label 'process_medium'
+
   input:
     path ("STAR_2Gen_Ref/${id}_maternal.fa") from mat_fa1
     path ("STAR_2Gen_Ref/mat_annotation.gtf") from mat_annotation_ch1
@@ -351,6 +355,8 @@ process STAR_reference_maternal_genomes {
 
 
 process STAR_reference_paternal_genomes {
+  label 'process_medium'
+
   input:
     path ('STAR_2Gen_Ref/${id}_paternal.fa') from pat_fa1
     path ('STAR_2Gen_Ref/pat_annotation.gtf') from pat_annotation_ch1
@@ -381,6 +387,7 @@ process STAR_reference_paternal_genomes {
 
 process map_paternal_gen_filter {
   tag "$id"
+  label 'process_medium'
   
   input:
     path Paternal_STAR from Paternal_STAR_ch
@@ -454,6 +461,7 @@ process map_paternal_gen_filter {
 
 process map_maternal_gen_filter {
   tag "$id"
+  label 'process_medium'
 
   input:
     path Maternal_STAR from Maternal_STAR_ch
@@ -527,6 +535,7 @@ process map_maternal_gen_filter {
 
 
 process extra_reads_rsem {
+  label 'process_low'
 
   input:
     path ("STAR_Maternal/${id}.SOFT.NOTRIM.STAR.pass2.Aligned.sortedByCoord.out.PP.UM.bam") from maternal_mapgen_ch2
@@ -567,6 +576,7 @@ process extra_reads_rsem {
 
 
 process add_rsemreads_bam {
+  label 'process_low'
   publishDir "$params.outdir", mode: 'copy'
 
   input:
