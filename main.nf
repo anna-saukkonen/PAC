@@ -102,7 +102,7 @@ process prepare_star_genome_index {
 
 
 process rnaseq_mapping_star {
-  label 'process_medium'
+  label 'process_high'
 
   input: 
     path genome from params.genome 
