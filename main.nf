@@ -32,19 +32,17 @@ Channel
 
 
 log.info """\
+
 Starting PAC run
 
-Files used:
-genome        : $params.genome
-reads         : $params.reads
-variants      : $params.variants
-annot         : $params.annot
-id            : $params.id
+
 """
 
 
 
+
 process read_length {
+
   input:
     set val(id), file(reads) from reads_ch 
 
@@ -54,11 +52,10 @@ process read_length {
   shell:
 
   '''
-
   gunzip -c *_1.{fq,fastq}.gz | sed '2q;d' | wc -m | awk '{print $1-1}' >> readLength_file.txt
-
   '''
 }    
+
 
 
 
@@ -67,16 +64,14 @@ readlen_file_ch.map { it.text.trim().toInteger() }.into { read_len_ch1; read_len
 
 
 
-
-
-
 process prepare_star_genome_index {
-  label 'process_medium'
 
   input:
     path genome from params.genome
     path annot from params.annot
     val x from read_len_ch1
+    val cpus from params.cpus
+
   output:
     path STARhaploid into genome_dir_ch
 
@@ -85,24 +80,19 @@ process prepare_star_genome_index {
   """
   mkdir STARhaploid
 
-
-
   STAR --runMode genomeGenerate \
        --genomeDir STARhaploid \
        --genomeFastaFiles ${genome} \
        --sjdbGTFfile ${annot} \
        --sjdbOverhang ${x} \
-       --runThreadN ${task.cpus} 
+       --runThreadN ${cpus} 
   """
 }
 
 
 
 
-
-
 process rnaseq_mapping_star {
-  label 'process_high'
 
   input: 
     path genome from params.genome 
@@ -110,6 +100,7 @@ process rnaseq_mapping_star {
     set val(id), file(reads) from reads_ch1
     val x from read_len_ch2
     val id from params.id
+    val cpus from params.cpus
 
   output: 
     tuple \
@@ -124,7 +115,7 @@ process rnaseq_mapping_star {
   STAR --genomeDir STARhaploid \
        --readFilesIn ${reads} \
        --readFilesCommand zcat \
-       --runThreadN ${task.cpus} \
+       --runThreadN ${cpus} \
        --outSAMstrandField intronMotif \
        --outFilterMultimapNmax 30 \
        --alignIntronMax 1000000 \
@@ -150,20 +141,13 @@ process rnaseq_mapping_star {
 
 
 
-
-
-
-
-
-
-
 process clean_up_reads {
 
-  
   input:
     tuple val(id), path(bam), path(index) from aligned_bam_ch
     path variants from params.variants
     val id from params.id
+    val cpus from params.cpus
 
   output:
     path ("STAR_original/phaser_version.bam") into phaser_ch
@@ -174,10 +158,9 @@ process clean_up_reads {
 
   """
   mkdir STAR_original
-  
 
   #KEEP ONLY PROPERLY PAIRED READS
-  samtools view -@ ${task.cpus} -f 0x0002 -b -o ${id}.SOFT.NOTRIM.STAR.pass2.Aligned.sortedByCoord.out.PP.bam ${id}.SOFT.NOTRIM.STAR.pass2.Aligned.sortedByCoord.out.bam
+  samtools view -@ ${cpus} -f 0x0002 -b -o ${id}.SOFT.NOTRIM.STAR.pass2.Aligned.sortedByCoord.out.PP.bam ${id}.SOFT.NOTRIM.STAR.pass2.Aligned.sortedByCoord.out.bam
   samtools index ${id}.SOFT.NOTRIM.STAR.pass2.Aligned.sortedByCoord.out.PP.bam
 
   #KEEP UNIQUELY MAPPED READS
@@ -196,8 +179,8 @@ process clean_up_reads {
 
 
 
+
 process phaser_step {
-  label 'process_low'
 
   input:
   path variants from params.variants
@@ -213,7 +196,6 @@ process phaser_step {
   """
   tabix -p vcf ${variants}
 
-
   python2 /phaser/phaser/phaser.py --vcf ${variants} --bam phaser_version.bam --paired_end 1 --mapq 0 --baseq 10 --isize 0 --include_indels 1 --sample ${id} --id_separator + --pass_only 0 --o ${id}_output_phaser
 
   gunzip ${id}_output_phaser.vcf.gz
@@ -225,9 +207,7 @@ process phaser_step {
 
 
 
-
 process create_parental_genomes {
-  label 'process_medium'
 
   input:
     path genome from params.genome
@@ -245,18 +225,15 @@ process create_parental_genomes {
     path ("STAR_2Gen_Ref/pat_annotation.gtf") into (pat_annotation_ch1, pat_annotation_ch2)
     path ("STAR_2Gen_Ref/not_lifted_p.txt") into not_lift_p_ch
     path ("STAR_2Gen_Ref/map_over.txt") into (adjusted_ref_ch1, adjusted_ref_ch2)
-
-  
+ 
   script:
 
   """
   mkdir STAR_2Gen_Ref
   java -Xmx10000m -jar /vcf2diploid_v0.2.6a/vcf2diploid.jar -id ${id} -chr ${genome} -vcf ${id}_output_phaser.vcf -outDir STAR_2Gen_Ref > logfile.txt
   
-  
   liftOver -gff ${annot} STAR_2Gen_Ref/maternal.chain STAR_2Gen_Ref/mat_annotation.gtf STAR_2Gen_Ref/not_lifted_m.txt
   liftOver -gff ${annot} STAR_2Gen_Ref/paternal.chain STAR_2Gen_Ref/pat_annotation.gtf STAR_2Gen_Ref/not_lifted_p.txt
-  
   
   
   cat STAR_2Gen_Ref/chr1_${id}_maternal.fa >> STAR_2Gen_Ref/${id}_maternal.fa
@@ -286,8 +263,6 @@ process create_parental_genomes {
   cat STAR_2Gen_Ref/chrM_${id}_maternal.fa >> STAR_2Gen_Ref/${id}_maternal.fa
   
   
-
-  
   cat STAR_2Gen_Ref/chr1_${id}_paternal.fa >> STAR_2Gen_Ref/${id}_paternal.fa
   cat STAR_2Gen_Ref/chr2_${id}_paternal.fa >> STAR_2Gen_Ref/${id}_paternal.fa
   cat STAR_2Gen_Ref/chr3_${id}_paternal.fa >> STAR_2Gen_Ref/${id}_paternal.fa
@@ -314,7 +289,6 @@ process create_parental_genomes {
   cat STAR_2Gen_Ref/chrY_${id}_paternal.fa >> STAR_2Gen_Ref/${id}_paternal.fa
   cat STAR_2Gen_Ref/chrM_${id}_paternal.fa >> STAR_2Gen_Ref/${id}_paternal.fa
   
-
   sed 's/\\*/N/g' STAR_2Gen_Ref/${id}_maternal.fa > STAR_2Gen_Ref/${id}_maternal.hold.fa
   mv STAR_2Gen_Ref/${id}_maternal.hold.fa STAR_2Gen_Ref/${id}_maternal.fa
   
@@ -330,43 +304,44 @@ process create_parental_genomes {
 
 
 
+
 process STAR_reference_maternal_genomes {
-  label 'process_medium'
 
   input:
     path ("STAR_2Gen_Ref/${id}_maternal.fa") from mat_fa1
     path ("STAR_2Gen_Ref/mat_annotation.gtf") from mat_annotation_ch1
     val x from read_len_ch3
     val id from params.id
+    val cpus from params.cpus
 
   output:
-    path Maternal_STAR into Maternal_STAR_ch
-    
+    path Maternal_STAR into Maternal_STAR_ch  
 
   script:
 
   """
   mkdir Maternal_STAR
 
-  STAR --runMode genomeGenerate --genomeDir Maternal_STAR --genomeFastaFiles STAR_2Gen_Ref/${id}_maternal.fa --sjdbGTFfile STAR_2Gen_Ref/mat_annotation.gtf --sjdbOverhang ${x} --runThreadN ${task.cpus} --outTmpDir mat
+  STAR --runMode genomeGenerate --genomeDir Maternal_STAR --genomeFastaFiles STAR_2Gen_Ref/${id}_maternal.fa --sjdbGTFfile STAR_2Gen_Ref/mat_annotation.gtf --sjdbOverhang ${x} --runThreadN ${cpus} --outTmpDir mat
   """    
 
 }
 
 
+
+
 process STAR_reference_paternal_genomes {
-  label 'process_medium'
 
   input:
     path ('STAR_2Gen_Ref/${id}_paternal.fa') from pat_fa1
     path ('STAR_2Gen_Ref/pat_annotation.gtf') from pat_annotation_ch1
     val x from read_len_ch4
     val id from params.id
+    val cpus from params.cpus
 
   output:
     path Paternal_STAR into Paternal_STAR_ch
     
-
   script:
 
   """
@@ -377,7 +352,7 @@ process STAR_reference_paternal_genomes {
        --genomeFastaFiles STAR_2Gen_Ref/${id}_paternal.fa \
        --sjdbGTFfile STAR_2Gen_Ref/pat_annotation.gtf \
        --sjdbOverhang ${x} \
-       --runThreadN ${task.cpus} \
+       --runThreadN ${cpus} \
        --outTmpDir pat
   """    
 
@@ -385,9 +360,9 @@ process STAR_reference_paternal_genomes {
 
 
 
+
 process map_paternal_gen_filter {
   tag "$id"
-  label 'process_medium'
   
   input:
     path Paternal_STAR from Paternal_STAR_ch
@@ -396,6 +371,7 @@ process map_paternal_gen_filter {
     path ("STAR_2Gen_Ref/${id}_paternal.fa") from pat_fa2
     val x from read_len_ch5
     val id from params.id
+    val cpus from params.cpus
 
   output:
     path ("STAR_Paternal/${id}.SOFT.NOTRIM.STAR.pass2.Aligned.sortedByCoord.out.PP.UM.bam") into (paternal_mapgen_ch1, paternal_mapgen_ch2, paternal_mapgen_ch3)
@@ -405,7 +381,7 @@ process map_paternal_gen_filter {
 
   """
   STAR --genomeDir Paternal_STAR \
-       --runThreadN ${task.cpus} \
+       --runThreadN ${cpus} \
        --quantMode TranscriptomeSAM \
        --readFilesIn $reads \
        --readFilesCommand zcat \
@@ -430,7 +406,7 @@ process map_paternal_gen_filter {
   samtools index ${id}.SOFT.NOTRIM.STAR.pass2.Aligned.sortedByCoord.out.bam
 
   #KEEP ONLY PROPERLY PAIRED READS
-  samtools view -@ ${task.cpus} -f 0x0002 -b -o ${id}.SOFT.NOTRIM.STAR.pass2.Aligned.sortedByCoord.out.PP.bam ${id}.SOFT.NOTRIM.STAR.pass2.Aligned.sortedByCoord.out.bam
+  samtools view -@ ${cpus} -f 0x0002 -b -o ${id}.SOFT.NOTRIM.STAR.pass2.Aligned.sortedByCoord.out.PP.bam ${id}.SOFT.NOTRIM.STAR.pass2.Aligned.sortedByCoord.out.bam
   samtools index ${id}.SOFT.NOTRIM.STAR.pass2.Aligned.sortedByCoord.out.PP.bam
 
   #KEEP UNIQUELY MAPPED READS
@@ -443,12 +419,12 @@ process map_paternal_gen_filter {
   ##Create RSEM Files:
   mkdir RSEM_MAT_GEN
 
-  /RSEM/rsem-prepare-reference -p ${task.cpus} --gtf STAR_2Gen_Ref/pat_annotation.gtf STAR_2Gen_Ref/${id}_paternal.fa RSEM_MAT_GEN/RSEM_MAT_GEN
+  /RSEM/rsem-prepare-reference -p ${cpus} --gtf STAR_2Gen_Ref/pat_annotation.gtf STAR_2Gen_Ref/${id}_paternal.fa RSEM_MAT_GEN/RSEM_MAT_GEN
 
-  /RSEM/rsem-calculate-expression --bam --output-genome-bam --sampling-for-bam -p ${task.cpus} --paired-end  ${id}.SOFT.NOTRIM.STAR.pass2.Aligned.toTranscriptome.out.bam RSEM_MAT_GEN/RSEM_MAT_GEN ${id}.RSEM.TEST
+  /RSEM/rsem-calculate-expression --bam --output-genome-bam --sampling-for-bam -p ${cpus} --paired-end  ${id}.SOFT.NOTRIM.STAR.pass2.Aligned.toTranscriptome.out.bam RSEM_MAT_GEN/RSEM_MAT_GEN ${id}.RSEM.TEST
 
-  samtools view -@ ${task.cpus} -f 0x0002 -b -o ${id}.RSEM.TEST.genome.PP.bam ${id}.RSEM.TEST.genome.bam
-  samtools sort -@ ${task.cpus} -o ${id}.RSEM.TEST.genome.PP.s.bam ${id}.RSEM.TEST.genome.PP.bam
+  samtools view -@ ${cpus} -f 0x0002 -b -o ${id}.RSEM.TEST.genome.PP.bam ${id}.RSEM.TEST.genome.bam
+  samtools sort -@ ${cpus} -o ${id}.RSEM.TEST.genome.PP.s.bam ${id}.RSEM.TEST.genome.PP.bam
   mv ${id}.RSEM.TEST.genome.PP.s.bam ${id}.RSEM.TEST.genome.PP.bam
   samtools index ${id}.RSEM.TEST.genome.PP.bam
   samtools view -h ${id}.RSEM.TEST.genome.PP.bam | grep -P "ZW:f:1|^@" | samtools view -bS - > ${id}.RSEM.TEST.genome.PP.SM.bam
@@ -459,9 +435,10 @@ process map_paternal_gen_filter {
 }
 
 
+
+
 process map_maternal_gen_filter {
   tag "$id"
-  label 'process_medium'
 
   input:
     path Maternal_STAR from Maternal_STAR_ch
@@ -470,6 +447,7 @@ process map_maternal_gen_filter {
     path ("STAR_2Gen_Ref/${id}_maternal.fa") from mat_fa2
     val x from read_len_ch6
     val id from params.id
+    val cpus from params.cpus
 
   output:
     path ("STAR_Maternal/${id}.SOFT.NOTRIM.STAR.pass2.Aligned.sortedByCoord.out.PP.UM.bam") into (maternal_mapgen_ch1, maternal_mapgen_ch2, maternal_mapgen_ch3) 
@@ -479,7 +457,7 @@ process map_maternal_gen_filter {
 
   """
   STAR --genomeDir Maternal_STAR \
-       --runThreadN ${task.cpus} \
+       --runThreadN ${cpus} \
        --quantMode TranscriptomeSAM \
        --readFilesIn $reads \
        --readFilesCommand zcat \
@@ -504,7 +482,7 @@ process map_maternal_gen_filter {
   samtools index ${id}.SOFT.NOTRIM.STAR.pass2.Aligned.sortedByCoord.out.bam
 
   #KEEP ONLY PROPERLY PAIRED READS
-  samtools view -@ ${task.cpus} -f 0x0002 -b -o ${id}.SOFT.NOTRIM.STAR.pass2.Aligned.sortedByCoord.out.PP.bam ${id}.SOFT.NOTRIM.STAR.pass2.Aligned.sortedByCoord.out.bam
+  samtools view -@ ${cpus} -f 0x0002 -b -o ${id}.SOFT.NOTRIM.STAR.pass2.Aligned.sortedByCoord.out.PP.bam ${id}.SOFT.NOTRIM.STAR.pass2.Aligned.sortedByCoord.out.bam
   samtools index ${id}.SOFT.NOTRIM.STAR.pass2.Aligned.sortedByCoord.out.PP.bam
 
   #KEEP UNIQUELY MAPPED READS
@@ -517,11 +495,11 @@ process map_maternal_gen_filter {
   ##Create RSEM Files:
   mkdir RSEM_MAT_GEN
 
-  /RSEM/rsem-prepare-reference -p ${task.cpus} --gtf STAR_2Gen_Ref/mat_annotation.gtf STAR_2Gen_Ref/${id}_maternal.fa RSEM_MAT_GEN/RSEM_MAT_GEN
-  /RSEM/rsem-calculate-expression --bam --output-genome-bam --sampling-for-bam -p ${task.cpus} --paired-end  ${id}.SOFT.NOTRIM.STAR.pass2.Aligned.toTranscriptome.out.bam RSEM_MAT_GEN/RSEM_MAT_GEN ${id}.RSEM.TEST
+  /RSEM/rsem-prepare-reference -p ${cpus} --gtf STAR_2Gen_Ref/mat_annotation.gtf STAR_2Gen_Ref/${id}_maternal.fa RSEM_MAT_GEN/RSEM_MAT_GEN
+  /RSEM/rsem-calculate-expression --bam --output-genome-bam --sampling-for-bam -p ${cpus} --paired-end  ${id}.SOFT.NOTRIM.STAR.pass2.Aligned.toTranscriptome.out.bam RSEM_MAT_GEN/RSEM_MAT_GEN ${id}.RSEM.TEST
   
-  samtools view -@ ${task.cpus} -f 0x0002 -b -o ${id}.RSEM.TEST.genome.PP.bam ${id}.RSEM.TEST.genome.bam
-  samtools sort -@ ${task.cpus} -o ${id}.RSEM.TEST.genome.PP.s.bam ${id}.RSEM.TEST.genome.PP.bam
+  samtools view -@ ${cpus} -f 0x0002 -b -o ${id}.RSEM.TEST.genome.PP.bam ${id}.RSEM.TEST.genome.bam
+  samtools sort -@ ${cpus} -o ${id}.RSEM.TEST.genome.PP.s.bam ${id}.RSEM.TEST.genome.PP.bam
   mv ${id}.RSEM.TEST.genome.PP.s.bam ${id}.RSEM.TEST.genome.PP.bam
   samtools view -h ${id}.RSEM.TEST.genome.PP.bam | grep -P "ZW:f:1|^@" | samtools view -bS - > ${id}.RSEM.TEST.genome.PP.SM.bam
   samtools index ${id}.RSEM.TEST.genome.PP.SM.bam
@@ -533,9 +511,59 @@ process map_maternal_gen_filter {
 
 
 
+process merge_parental_bam {
+  publishDir "$params.outdir", mode: 'copy'
+
+  input:
+    path ('STAR_Maternal/NA12877.SOFT.NOTRIM.STAR.pass2.Aligned.sortedByCoord.out.PP.UM.bam') from maternal_mapgen_ch1
+    path ('STAR_Paternal/NA12877.SOFT.NOTRIM.STAR.pass2.Aligned.sortedByCoord.out.PP.UM.bam') from paternal_mapgen_ch1
+    path ('STAR_2Gen_Ref/map_over.txt') from adjusted_ref_ch1
+    path ('NA12877_output_phaser.vcf') from phaser_out_ch2
+    path ('STAR_original/NA12877.SOFT.NOTRIM.STAR.pass2.Aligned.sortedByCoord.out.PP.UM.bam') from pp_um_ch
+
+  output:
+    path ('1gen/results*.txt')
+
+  script:
+
+  """
+  samtools view STAR_Maternal/NA12877.SOFT.NOTRIM.STAR.pass2.Aligned.sortedByCoord.out.PP.UM.bam | cut -f1 | sort | uniq >> maternal_tags.txt
+  samtools view STAR_Paternal/NA12877.SOFT.NOTRIM.STAR.pass2.Aligned.sortedByCoord.out.PP.UM.bam | cut -f1 | sort | uniq >> paternal_tags.txt
+  cat maternal_tags.txt paternal_tags.txt | sort | uniq -u >> unique_tags.txt
+  cat maternal_tags.txt paternal_tags.txt | sort | uniq -d >> duplicate_tags.txt
+  samtools view STAR_Maternal/NA12877.SOFT.NOTRIM.STAR.pass2.Aligned.sortedByCoord.out.PP.UM.bam | grep -Fwf duplicate_tags.txt >> tempout_mat.sam
+  samtools view STAR_Paternal/NA12877.SOFT.NOTRIM.STAR.pass2.Aligned.sortedByCoord.out.PP.UM.bam | grep -Fwf duplicate_tags.txt >> tempout_pat.sam
+  sort -k 1,1 tempout_mat.sam > tempout_mat.sort.sam
+  sort -k 1,1 tempout_pat.sam > tempout_pat.sort.sam
+
+  perl ${baseDir}/bin/filter_2genomes.pl tempout_mat.sort.sam tempout_pat.sort.sam
+
+  cat maternal_wins.txt unique_tags.txt > maternal_wins_final.txt
+  cat paternal_wins.txt unique_tags.txt > paternal_wins_final.txt
+
+  samtools view -H STAR_Maternal/NA12877.SOFT.NOTRIM.STAR.pass2.Aligned.sortedByCoord.out.PP.UM.bam > final_mat.sam
+  samtools view -H STAR_Paternal/NA12877.SOFT.NOTRIM.STAR.pass2.Aligned.sortedByCoord.out.PP.UM.bam > final_pat.sam
+  samtools view STAR_Maternal/NA12877.SOFT.NOTRIM.STAR.pass2.Aligned.sortedByCoord.out.PP.UM.bam | grep -Fwf maternal_wins_final.txt >> final_mat.sam
+  samtools view STAR_Paternal/NA12877.SOFT.NOTRIM.STAR.pass2.Aligned.sortedByCoord.out.PP.UM.bam | grep -Fwf paternal_wins_final.txt >> final_pat.sam
+  samtools view -bS final_mat.sam -o final_mat.bam
+  samtools index final_mat.bam
+  samtools view -bS final_pat.sam -o final_pat.bam
+  samtools index final_pat.bam
+
+  perl ${baseDir}/bin/compare_2genomes.pl STAR_2Gen_Ref/map_over.txt NA12877_output_phaser.vcf final_mat.bam final_pat.bam NA12877 results_2genomes_NA12877.SOFT.NOTRIM_baq.txt results_2genomes_NA12877.SOFT.NOTRIM.txt
+
+  perl ${baseDir}/bin/compare_basic_map.pl NA12877_output_phaser.vcf STAR_original/NA12877.SOFT.NOTRIM.STAR.pass2.Aligned.sortedByCoord.out.PP.UM.bam NA12877 results_1genome_NA12877.SOFT.NOTRIM_baq.txt results_1genome_NA12877.SOFT.NOTRIM.txt
+
+  mkdir results
+  mv results_2genomes_NA12877.SOFT.NOTRIM_baq.txt results_2genomes_NA12877.SOFT.NOTRIM.txt results_1genome_NA12877.SOFT.NOTRIM_baq.txt results_1genome_NA12877.SOFT.NOTRIM.txt results/
+  """
+
+}
+
+
+
 
 process extra_reads_rsem {
-  label 'process_low'
 
   input:
     path ("STAR_Maternal/${id}.SOFT.NOTRIM.STAR.pass2.Aligned.sortedByCoord.out.PP.UM.bam") from maternal_mapgen_ch2
@@ -547,7 +575,6 @@ process extra_reads_rsem {
   output:
     path ("Maternal.RSEM.bam") into mat_rsembam
     path ("Paternal.RSEM.bam") into pat_rsembam
-
 
   script:
 
@@ -575,8 +602,8 @@ process extra_reads_rsem {
 
 
 
+
 process add_rsemreads_bam {
-  label 'process_low'
   publishDir "$params.outdir", mode: 'copy'
 
   input:
@@ -587,10 +614,11 @@ process add_rsemreads_bam {
     path ("STAR_2Gen_Ref/map_over.txt") from adjusted_ref_ch2
     path ("${id}_output_phaser.vcf") from phaser_out_ch3
     val id from params.id
+    val cpus from params.cpus
 
   output:
-    path ("results_2genomes_${id}.RSEM.STAR.SOFT.NOTRIM.txt")
-    path ("results_2genomes_${id}.RSEM.STAR.SOFT.NOTRIM_baq.txt")
+    path ("pac/results_2genomes_${id}.RSEM.STAR.SOFT.NOTRIM.txt")
+    path ("pac/results_2genomes_${id}.RSEM.STAR.SOFT.NOTRIM_baq.txt")
     
   script:
 
@@ -615,51 +643,62 @@ process add_rsemreads_bam {
   samtools view Maternal.RSEM.STAR.bam | grep -Fwf maternal_wins_final.txt >> final_mat.sam
   samtools view Paternal.RSEM.STAR.bam | grep -Fwf paternal_wins_final.txt >> final_pat.sam
   samtools view -bS final_mat.sam -o final_mat.bam
-  samtools sort -@ ${task.cpus} -o final_mat.sorted.bam final_mat.bam
+  samtools sort -@ ${cpus} -o final_mat.sorted.bam final_mat.bam
   samtools index final_mat.sorted.bam
   samtools view -bS final_pat.sam -o final_pat.bam
-  samtools sort -@ ${task.cpus} -o final_pat.sorted.bam final_pat.bam
+  samtools sort -@ ${cpus} -o final_pat.sorted.bam final_pat.bam
   samtools index final_pat.sorted.bam
 
   perl ${baseDir}/bin/compare_2genomes.pl STAR_2Gen_Ref/map_over.txt ${id}_output_phaser.vcf final_mat.sorted.bam final_pat.sorted.bam ${id} results_2genomes_${id}.RSEM.STAR.SOFT.NOTRIM_baq.txt results_2genomes_${id}.RSEM.STAR.SOFT.NOTRIM.txt
-
-
-
   """
 
 }
 
 
 
+
+
 workflow.onComplete {
     log.info """\
 
-                PAC pipeline complete!
+  PAC pipeline complete!
 
 
-                -----------------------
-                Just use
+  ---------------------------------------------------
 
-                  __    ___      __
-                ||__)  /___\\  /   `
-                ||    /     \\ \\__, ,
+  Just use 
+                                    ++++
+                                +++++++++++++
+    __    ___      __         ++++++++++++++
+  ||__)  /___\\  /   `       ++++++++++++++
+  ||    /     \\ \\__,      ++++++++++++++
+                            ++++++++++++
+  man ;)                    +++++++++++++
+                             +++++++++++++
+                              +++++++++++++
+                               +++++++++++++
+                                    ++++
 
-                man ;)
 
-                -----------------------
+  ---------------------------------------------------
 
 
-                PAC Pipeline execution summary
-                -------------------------------
-                Completed at: ${workflow.complete}
-                Duration    : ${workflow.duration}
-                Success     : ${workflow.success}
-                workDir     : ${workflow.workDir}
-                exit status : ${workflow.exitStatus}
-                """
+  PAC Pipeline execution summary
+  -------------------------------
+  Completed at: ${workflow.complete}
+  Duration    : ${workflow.duration}
+  Success     : ${workflow.success}
+  workDir     : ${workflow.workDir}
+  exit status : ${workflow.exitStatus}
+  """
 
 }
+
+
+
 
 workflow.onError {
     println "Pipeline execution stopped with the following message: ${workflow.errorMessage}"
 }
+
+
