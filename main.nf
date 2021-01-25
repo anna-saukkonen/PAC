@@ -515,11 +515,11 @@ process merge_parental_bam {
   publishDir "$params.outdir", mode: 'copy'
 
   input:
-    path ('STAR_Maternal/NA12877.SOFT.NOTRIM.STAR.pass2.Aligned.sortedByCoord.out.PP.UM.bam') from maternal_mapgen_ch1
-    path ('STAR_Paternal/NA12877.SOFT.NOTRIM.STAR.pass2.Aligned.sortedByCoord.out.PP.UM.bam') from paternal_mapgen_ch1
+    path ('STAR_Maternal/${id}.SOFT.NOTRIM.STAR.pass2.Aligned.sortedByCoord.out.PP.UM.bam') from maternal_mapgen_ch1
+    path ('STAR_Paternal/${id}.SOFT.NOTRIM.STAR.pass2.Aligned.sortedByCoord.out.PP.UM.bam') from paternal_mapgen_ch1
     path ('STAR_2Gen_Ref/map_over.txt') from adjusted_ref_ch1
-    path ('NA12877_output_phaser.vcf') from phaser_out_ch2
-    path ('STAR_original/NA12877.SOFT.NOTRIM.STAR.pass2.Aligned.sortedByCoord.out.PP.UM.bam') from pp_um_ch
+    path ('${id}_output_phaser.vcf') from phaser_out_ch2
+    path ('STAR_original/${id}.SOFT.NOTRIM.STAR.pass2.Aligned.sortedByCoord.out.PP.UM.bam') from pp_um_ch
 
   output:
     path ('1gen/results*.txt')
@@ -527,12 +527,12 @@ process merge_parental_bam {
   script:
 
   """
-  samtools view STAR_Maternal/NA12877.SOFT.NOTRIM.STAR.pass2.Aligned.sortedByCoord.out.PP.UM.bam | cut -f1 | sort | uniq >> maternal_tags.txt
-  samtools view STAR_Paternal/NA12877.SOFT.NOTRIM.STAR.pass2.Aligned.sortedByCoord.out.PP.UM.bam | cut -f1 | sort | uniq >> paternal_tags.txt
+  samtools view STAR_Maternal/${id}.SOFT.NOTRIM.STAR.pass2.Aligned.sortedByCoord.out.PP.UM.bam | cut -f1 | sort | uniq >> maternal_tags.txt
+  samtools view STAR_Paternal/${id}.SOFT.NOTRIM.STAR.pass2.Aligned.sortedByCoord.out.PP.UM.bam | cut -f1 | sort | uniq >> paternal_tags.txt
   cat maternal_tags.txt paternal_tags.txt | sort | uniq -u >> unique_tags.txt
   cat maternal_tags.txt paternal_tags.txt | sort | uniq -d >> duplicate_tags.txt
-  samtools view STAR_Maternal/NA12877.SOFT.NOTRIM.STAR.pass2.Aligned.sortedByCoord.out.PP.UM.bam | grep -Fwf duplicate_tags.txt >> tempout_mat.sam
-  samtools view STAR_Paternal/NA12877.SOFT.NOTRIM.STAR.pass2.Aligned.sortedByCoord.out.PP.UM.bam | grep -Fwf duplicate_tags.txt >> tempout_pat.sam
+  samtools view STAR_Maternal/${id}.SOFT.NOTRIM.STAR.pass2.Aligned.sortedByCoord.out.PP.UM.bam | grep -Fwf duplicate_tags.txt >> tempout_mat.sam
+  samtools view STAR_Paternal/${id}.SOFT.NOTRIM.STAR.pass2.Aligned.sortedByCoord.out.PP.UM.bam | grep -Fwf duplicate_tags.txt >> tempout_pat.sam
   sort -k 1,1 tempout_mat.sam > tempout_mat.sort.sam
   sort -k 1,1 tempout_pat.sam > tempout_pat.sort.sam
 
@@ -541,21 +541,21 @@ process merge_parental_bam {
   cat maternal_wins.txt unique_tags.txt > maternal_wins_final.txt
   cat paternal_wins.txt unique_tags.txt > paternal_wins_final.txt
 
-  samtools view -H STAR_Maternal/NA12877.SOFT.NOTRIM.STAR.pass2.Aligned.sortedByCoord.out.PP.UM.bam > final_mat.sam
-  samtools view -H STAR_Paternal/NA12877.SOFT.NOTRIM.STAR.pass2.Aligned.sortedByCoord.out.PP.UM.bam > final_pat.sam
-  samtools view STAR_Maternal/NA12877.SOFT.NOTRIM.STAR.pass2.Aligned.sortedByCoord.out.PP.UM.bam | grep -Fwf maternal_wins_final.txt >> final_mat.sam
-  samtools view STAR_Paternal/NA12877.SOFT.NOTRIM.STAR.pass2.Aligned.sortedByCoord.out.PP.UM.bam | grep -Fwf paternal_wins_final.txt >> final_pat.sam
+  samtools view -H STAR_Maternal/${id}.SOFT.NOTRIM.STAR.pass2.Aligned.sortedByCoord.out.PP.UM.bam > final_mat.sam
+  samtools view -H STAR_Paternal/${id}.SOFT.NOTRIM.STAR.pass2.Aligned.sortedByCoord.out.PP.UM.bam > final_pat.sam
+  samtools view STAR_Maternal/${id}.SOFT.NOTRIM.STAR.pass2.Aligned.sortedByCoord.out.PP.UM.bam | grep -Fwf maternal_wins_final.txt >> final_mat.sam
+  samtools view STAR_Paternal/${id}.SOFT.NOTRIM.STAR.pass2.Aligned.sortedByCoord.out.PP.UM.bam | grep -Fwf paternal_wins_final.txt >> final_pat.sam
   samtools view -bS final_mat.sam -o final_mat.bam
   samtools index final_mat.bam
   samtools view -bS final_pat.sam -o final_pat.bam
   samtools index final_pat.bam
 
-  perl ${baseDir}/bin/compare_2genomes.pl STAR_2Gen_Ref/map_over.txt NA12877_output_phaser.vcf final_mat.bam final_pat.bam NA12877 results_2genomes_NA12877.SOFT.NOTRIM_baq.txt results_2genomes_NA12877.SOFT.NOTRIM.txt
+  perl ${baseDir}/bin/compare_2genomes.pl STAR_2Gen_Ref/map_over.txt ${id}_output_phaser.vcf final_mat.bam final_pat.bam ${id} results_2genomes_${id}.SOFT.NOTRIM_baq.txt results_2genomes_${id}.SOFT.NOTRIM.txt
 
-  perl ${baseDir}/bin/compare_basic_map.pl NA12877_output_phaser.vcf STAR_original/NA12877.SOFT.NOTRIM.STAR.pass2.Aligned.sortedByCoord.out.PP.UM.bam NA12877 results_1genome_NA12877.SOFT.NOTRIM_baq.txt results_1genome_NA12877.SOFT.NOTRIM.txt
+  perl ${baseDir}/bin/compare_basic_map.pl ${id}_output_phaser.vcf STAR_original/${id}.SOFT.NOTRIM.STAR.pass2.Aligned.sortedByCoord.out.PP.UM.bam ${id} results_1genome_${id}.SOFT.NOTRIM_baq.txt results_1genome_${id}.SOFT.NOTRIM.txt
 
   mkdir results
-  mv results_2genomes_NA12877.SOFT.NOTRIM_baq.txt results_2genomes_NA12877.SOFT.NOTRIM.txt results_1genome_NA12877.SOFT.NOTRIM_baq.txt results_1genome_NA12877.SOFT.NOTRIM.txt results/
+  mv results_2genomes_${id}.SOFT.NOTRIM_baq.txt results_2genomes_${id}.SOFT.NOTRIM.txt results_1genome_${id}.SOFT.NOTRIM_baq.txt results_1genome_${id}.SOFT.NOTRIM.txt results/
   """
 
 }
