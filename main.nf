@@ -20,6 +20,7 @@ if (params.genomes && params.genome_version && !params.genomes.containsKey(param
 
 if (!params.variants) exit 1, "Path to phased variants has to be specified!"
 if (!params.reads) exit 1, "Path to reads has to be specified!"
+if (!params.id) exit 1, "Sample ID not supplied, needs to be same as in the VCF"
 
 
 
