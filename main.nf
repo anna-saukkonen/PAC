@@ -335,7 +335,6 @@ process STAR_reference_maternal_genomes {
 process STAR_reference_paternal_genomes {
 
   input:
-    path ('STAR_2Gen_Ref/${id}_paternal.fa') from pat_fa1
     path ("STAR_2Gen_Ref/${id}_paternal.fa") from pat_fa1
     path ("STAR_2Gen_Ref/pat_annotation.gtf") from pat_annotation_ch1
     val x from read_len_ch4
