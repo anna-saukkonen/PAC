@@ -348,13 +348,7 @@ process STAR_reference_paternal_genomes {
   """
   mkdir Paternal_STAR
 
-  STAR --runMode genomeGenerate \
-       --genomeDir Paternal_STAR \
-       --genomeFastaFiles STAR_2Gen_Ref/${id}_paternal.fa \
-       --sjdbGTFfile STAR_2Gen_Ref/pat_annotation.gtf \
-       --sjdbOverhang ${x} \
-       --runThreadN ${cpus} \
-       --outTmpDir pat
+  STAR --runMode genomeGenerate --genomeDir Paternal_STAR --genomeFastaFiles STAR_2Gen_Ref/${id}_paternal.fa --sjdbGTFfile STAR_2Gen_Ref/pat_annotation.gtf --sjdbOverhang ${x} --runThreadN ${cpus} --outTmpDir pat
   """    
 
 }
