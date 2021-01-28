@@ -336,7 +336,8 @@ process STAR_reference_paternal_genomes {
 
   input:
     path ('STAR_2Gen_Ref/${id}_paternal.fa') from pat_fa1
-    path ('STAR_2Gen_Ref/pat_annotation.gtf') from pat_annotation_ch1
+    path ("STAR_2Gen_Ref/${id}_paternal.fa") from pat_fa1
+    path ("STAR_2Gen_Ref/pat_annotation.gtf") from pat_annotation_ch1
     val x from read_len_ch4
     val id from params.id
     val cpus from params.cpus
@@ -511,14 +512,14 @@ process merge_parental_bam {
   publishDir "$params.outdir", mode: 'copy'
 
   input:
-    path ('STAR_Maternal/${id}.SOFT.NOTRIM.STAR.pass2.Aligned.sortedByCoord.out.PP.UM.bam') from maternal_mapgen_ch1
-    path ('STAR_Paternal/${id}.SOFT.NOTRIM.STAR.pass2.Aligned.sortedByCoord.out.PP.UM.bam') from paternal_mapgen_ch1
-    path ('STAR_2Gen_Ref/map_over.txt') from adjusted_ref_ch1
-    path ('${id}_output_phaser.vcf') from phaser_out_ch2
-    path ('STAR_original/${id}.SOFT.NOTRIM.STAR.pass2.Aligned.sortedByCoord.out.PP.UM.bam') from pp_um_ch
+    path ("STAR_Maternal/${id}.SOFT.NOTRIM.STAR.pass2.Aligned.sortedByCoord.out.PP.UM.bam") from maternal_mapgen_ch1
+    path ("STAR_Paternal/${id}.SOFT.NOTRIM.STAR.pass2.Aligned.sortedByCoord.out.PP.UM.bam") from paternal_mapgen_ch1
+    path ("STAR_2Gen_Ref/map_over.txt") from adjusted_ref_ch1
+    path ("${id}_output_phaser.vcf") from phaser_out_ch2
+    path ("STAR_original/${id}.SOFT.NOTRIM.STAR.pass2.Aligned.sortedByCoord.out.PP.UM.bam") from pp_um_ch
 
   output:
-    path ('1gen/results*.txt')
+    path ("1gen/results*.txt")
 
   script:
 
