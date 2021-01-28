@@ -290,6 +290,7 @@ process create_parental_genomes {
   cat STAR_2Gen_Ref/chrY_${id}_paternal.fa >> STAR_2Gen_Ref/${id}_paternal.fa
   cat STAR_2Gen_Ref/chrM_${id}_paternal.fa >> STAR_2Gen_Ref/${id}_paternal.fa
   
+  
   sed 's/\\*/N/g' STAR_2Gen_Ref/${id}_maternal.fa > STAR_2Gen_Ref/${id}_maternal.hold.fa
   mv STAR_2Gen_Ref/${id}_maternal.hold.fa STAR_2Gen_Ref/${id}_maternal.fa
   
