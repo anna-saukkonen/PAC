@@ -190,7 +190,7 @@ process phaser_step {
   val id from params.id
 
   output:
-  path ("${id}.vcf") into (phaser_out_ch1, phaser_out_ch2, phaser_out_ch3)
+  path ("${id}_output_phaser.vcf") into (phaser_out_ch1, phaser_out_ch2, phaser_out_ch3)
 
   script:
 
