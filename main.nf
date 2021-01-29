@@ -515,6 +515,7 @@ process merge_parental_bam {
     path ("STAR_Paternal/${id}.SOFT.NOTRIM.STAR.pass2.Aligned.sortedByCoord.out.PP.UM.bam") from paternal_mapgen_ch1
     path ("STAR_2Gen_Ref/map_over.txt") from adjusted_ref_ch1
     path ("${id}_output_phaser.vcf") from phaser_out_ch2
+    val id from params.id
     path ("STAR_original/${id}.SOFT.NOTRIM.STAR.pass2.Aligned.sortedByCoord.out.PP.UM.bam") from pp_um_ch
 
   output:
