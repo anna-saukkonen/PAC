@@ -195,7 +195,7 @@ process phaser_step {
   script:
 
   """
-  tabix -p vcf ${variants}
+  tabix -p -f vcf ${variants}
 
   python2 /phaser/phaser/phaser.py --vcf ${variants} --bam phaser_version.bam --paired_end 1 --mapq 0 --baseq 10 --isize 0 --include_indels 1 --sample ${id} --id_separator + --pass_only 0 --o ${id}_output_phaser
 
