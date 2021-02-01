@@ -519,7 +519,7 @@ process merge_parental_bam {
     path ("STAR_original/${id}.SOFT.NOTRIM.STAR.pass2.Aligned.sortedByCoord.out.PP.UM.bam") from pp_um_ch
 
   output:
-    path ("1gen/results*.txt")
+    path ("/1gen/results*.txt")
 
   script:
 
@@ -614,8 +614,8 @@ process add_rsemreads_bam {
     val cpus from params.cpus
 
   output:
-    path ("pac/results_2genomes_${id}.RSEM.STAR.SOFT.NOTRIM.txt")
-    path ("pac/results_2genomes_${id}.RSEM.STAR.SOFT.NOTRIM_baq.txt")
+    path ("/pac/results_2genomes_${id}.RSEM.STAR.SOFT.NOTRIM.txt")
+    path ("/pac/results_2genomes_${id}.RSEM.STAR.SOFT.NOTRIM_baq.txt")
     
   script:
 
