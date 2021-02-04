@@ -508,7 +508,7 @@ process map_maternal_gen_filter {
 
 
 process merge_parental_bam {
-  publishDir "$params.outdir", mode: 'copy'
+  publishDir "$params.outdir/1gen/", mode: 'copy'
 
   input:
     path ("STAR_Maternal/${id}.SOFT.NOTRIM.STAR.pass2.Aligned.sortedByCoord.out.PP.UM.bam") from maternal_mapgen_ch1
@@ -519,7 +519,7 @@ process merge_parental_bam {
     path ("STAR_original/${id}.SOFT.NOTRIM.STAR.pass2.Aligned.sortedByCoord.out.PP.UM.bam") from pp_um_ch
 
   output:
-    path ("/1gen/results*.txt")
+    path ("results*.txt")
 
   script:
 
@@ -601,7 +601,7 @@ process extra_reads_rsem {
 
 
 process add_rsemreads_bam {
-  publishDir "$params.outdir", mode: 'copy'
+  publishDir "$params.outdir/pac/", mode: 'copy'
 
   input:
     path ("Maternal.RSEM.bam") from mat_rsembam
@@ -614,8 +614,8 @@ process add_rsemreads_bam {
     val cpus from params.cpus
 
   output:
-    path ("/pac/results_2genomes_${id}.RSEM.STAR.SOFT.NOTRIM.txt")
-    path ("/pac/results_2genomes_${id}.RSEM.STAR.SOFT.NOTRIM_baq.txt")
+    path ("results_2genomes_${id}.RSEM.STAR.SOFT.NOTRIM.txt")
+    path ("results_2genomes_${id}.RSEM.STAR.SOFT.NOTRIM_baq.txt")
     
   script:
 
