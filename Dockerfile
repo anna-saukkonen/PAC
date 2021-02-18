@@ -23,6 +23,9 @@ xz-devel \
 perl-Env \
 java-devel
 
+#FROM python
+#RUN pip --no-cache-dir install pandas
+
 RUN yum install -y which
 
 #Get STAR
