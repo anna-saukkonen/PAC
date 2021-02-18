@@ -23,8 +23,6 @@ xz-devel \
 perl-Env \
 java-devel
 
-#FROM python
-#RUN pip --no-cache-dir install pandas
 
 RUN yum install -y which
 
@@ -95,6 +93,8 @@ RUN git clone https://github.com/secastel/phaser.git
 RUN pip2 install Cython
 RUN pip2 install scipy
 RUN pip2 install pysam
+RUN pip2 install pandas
+RUN pip2 install intervaltree
 WORKDIR phaser/phaser
 RUN python2 setup.py build_ext --inplace
 WORKDIR /
