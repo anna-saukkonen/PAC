@@ -521,6 +521,9 @@ process merge_parental_bam {
   output:
     path ("results*.txt")
 
+  when:
+    params.singe_gen  
+
   script:
 
   """
@@ -612,6 +615,7 @@ process add_rsemreads_bam {
     path ("${id}_output_phaser.vcf") from phaser_out_ch3
     val id from params.id
     val cpus from params.cpus
+
 
   output:
     path ("results_2genomes_${id}.RSEM.STAR.SOFT.NOTRIM.txt")
