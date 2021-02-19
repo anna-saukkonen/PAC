@@ -226,6 +226,8 @@ process create_parental_genomes {
     path ("STAR_2Gen_Ref/pat_annotation.gtf") into (pat_annotation_ch1, pat_annotation_ch2)
     path ("STAR_2Gen_Ref/not_lifted_p.txt") into not_lift_p_ch
     path ("STAR_2Gen_Ref/map_over.txt") into adjusted_ref_ch
+    path ("STAR_2Gen_Ref/${id}_output_phaser.mother.vcf.gz") into mothervcf_ch
+    path ("STAR_2Gen_Ref/${id}_output_phaser.father.vcf.gz") into fathervcf_ch
  
   script:
 
@@ -301,6 +303,14 @@ process create_parental_genomes {
   cd STAR_2Gen_Ref/
   
   perl ${baseDir}/bin/adjust_reference.pl ${id}_output_phaser.vcf ${id}
+
+  perl ${baseDir}/bin/adjust_reference_vcf.pl ${id}_output_phaser.vcf ${id}
+
+  bcftools view ${id}_output_phaser.mother.vcf -Oz -o ${id}_output_phaser.mother.vcf.gz
+  bcftools view ${id}_output_phaser.father.vcf -Oz -o ${id}_output_phaser.father.vcf.gz
+  tabix ${id}_output_phaser.father.vcf.gz
+  tabix ${id}_output_phaser.mother.vcf.gz
+
   """
 } 
 
