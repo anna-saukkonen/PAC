@@ -12,6 +12,10 @@ params.genome        = params.genomes[ params.genome_version ]?.genome
 params.annot         = params.genomes[ params.genome_version ]?.annot
 
 
+if (params.genome) {
+  
+}
+
 
 // Check if genome exists in the config file
 if (params.genomes && params.genome_version && !params.genomes.containsKey(params.genome_version)) {
@@ -228,6 +232,8 @@ process create_parental_genomes {
     path ("STAR_2Gen_Ref/map_over.txt") into adjusted_ref_ch
     path ("STAR_2Gen_Ref/${id}_output_phaser.mother.vcf.gz") into mothervcf_ch
     path ("STAR_2Gen_Ref/${id}_output_phaser.father.vcf.gz") into fathervcf_ch
+    path ("STAR_2Gen_Ref/mat.bed") into mat_bed_ch
+    path ("STAR_2Gen_Ref/pat.bed") into pat_bed_ch
  
   script:
 
@@ -237,6 +243,9 @@ process create_parental_genomes {
   
   liftOver -gff ${annot} STAR_2Gen_Ref/maternal.chain STAR_2Gen_Ref/mat_annotation.gtf STAR_2Gen_Ref/not_lifted_m.txt
   liftOver -gff ${annot} STAR_2Gen_Ref/paternal.chain STAR_2Gen_Ref/pat_annotation.gtf STAR_2Gen_Ref/not_lifted_p.txt
+
+  liftOver gencode.v19.GRCh37.genes.chr.bed STAR_2Gen_Ref/maternal.chain STAR_2Gen_Ref/mat.bed STAR_2Gen_Ref/not_bed_lifted_m.txt
+  liftOver gencode.v19.GRCh37.genes.chr.bed STAR_2Gen_Ref/paternal.chain STAR_2Gen_Ref/pat.bed STAR_2Gen_Ref/not_bed_lifted_p.txt
   
   
   cat STAR_2Gen_Ref/chr1_${id}_maternal.fa >> STAR_2Gen_Ref/${id}_maternal.fa
@@ -575,10 +584,13 @@ process add_rsemreads_bam {
     path ("STAR_original/${id}.SOFT.NOTRIM.STAR.pass2.Aligned.sortedByCoord.out.PP.UM.bam") from pp_um_ch
     path ("STAR_2Gen_Ref/${id}_output_phaser.mother.vcf.gz") from mothervcf_ch
     path ("STAR_2Gen_Ref/${id}_output_phaser.father.vcf.gz") from fathervcf_ch
+    path ("STAR_2Gen_Ref/mat.bed") from mat_bed_ch
+    path ("STAR_2Gen_Ref/pat.bed") from pat_bed_ch
 
 
   output:
     path ("results*.txt")
+    path ("${id}_gene_level_ae.txt")
     
   script:
 
@@ -616,6 +628,12 @@ process add_rsemreads_bam {
   python2 /phaser/phaser/phaser.py --vcf ${id}_output_phaser.mother.vcf.gz --bam final_mat.sorted.bam --paired_end 1 --mapq 0 --baseq 10 --isize 0 --include_indels 1 --sample ${id} --id_separator + --pass_only 0 --gw_phase_vcf 1 --o ${id}_mat_output_phaser
   
   python2 /phaser/phaser/phaser.py --vcf ${id}_output_phaser.father.vcf.gz --bam final_pat.sorted.bam --paired_end 1 --mapq 0 --baseq 10 --isize 0 --include_indels 1 --sample ${id} --id_separator + --pass_only 0 --gw_phase_vcf 1 --o ${id}_pat_output_phaser
+
+  python2 /phaser/phaser_gene_ae/phaser_gene_ae.py --haplotypic_counts ${id}_mat_output_phaser.haplotypic_counts.txt --features mat.bed --id_separator +  --o ${id}_maternal_phaser_gene_ae.txt
+
+  python2 /phaser/phaser_gene_ae/phaser_gene_ae.py --haplotypic_counts ${id}_pat_output_phaser.haplotypic_counts.txt --features pat.bed --id_separator +  --o ${id}_paternal_phaser_gene_ae.txt
+
+  perl merge_gene_level.pl gencode.v19.GRCh37.genes.chr.bed ${id}_maternal_phaser_gene_ae.txt ${id}_paternal_phaser_gene_ae.txt ${id}
   """
 
 }
