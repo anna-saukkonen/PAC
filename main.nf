@@ -573,6 +573,8 @@ process add_rsemreads_bam {
     val id from params.id
     val cpus from params.cpus
     path ("STAR_original/${id}.SOFT.NOTRIM.STAR.pass2.Aligned.sortedByCoord.out.PP.UM.bam") from pp_um_ch
+    path ("STAR_2Gen_Ref/${id}_output_phaser.mother.vcf.gz") from mothervcf_ch
+    path ("STAR_2Gen_Ref/${id}_output_phaser.father.vcf.gz") from fathervcf_ch
 
 
   output:
@@ -610,9 +612,14 @@ process add_rsemreads_bam {
   perl ${baseDir}/bin/compare_basic_map.pl ${id}_output_phaser.vcf STAR_original/${id}.SOFT.NOTRIM.STAR.pass2.Aligned.sortedByCoord.out.PP.UM.bam ${id} results_1genome_${id}.SOFT.NOTRIM_baq.txt results_1genome_${id}.SOFT.NOTRIM.txt
 
   perl ${baseDir}/bin/compare_2genomes.pl STAR_2Gen_Ref/map_over.txt ${id}_output_phaser.vcf final_mat.sorted.bam final_pat.sorted.bam ${id} results_2genomes_${id}.RSEM.STAR.SOFT.NOTRIM_baq.txt results_2genomes_${id}.RSEM.STAR.SOFT.NOTRIM.txt
+
+  python2 /phaser/phaser/phaser.py --vcf ${id}_output_phaser.mother.vcf.gz --bam final_mat.sorted.bam --paired_end 1 --mapq 0 --baseq 10 --isize 0 --include_indels 1 --sample ${id} --id_separator + --pass_only 0 --gw_phase_vcf 1 --o ${id}_mat_output_phaser
+  
+  python2 /phaser/phaser/phaser.py --vcf ${id}_output_phaser.father.vcf.gz --bam final_pat.sorted.bam --paired_end 1 --mapq 0 --baseq 10 --isize 0 --include_indels 1 --sample ${id} --id_separator + --pass_only 0 --gw_phase_vcf 1 --o ${id}_pat_output_phaser
   """
 
 }
+
 
 
 
