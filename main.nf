@@ -217,6 +217,7 @@ process create_parental_genomes {
     path annot from params.annot
     path ("${id}_output_phaser.vcf") from phaser_out_ch1
     val id from params.id
+    path gencode_bed from params.gencode_bed
 
   output:
     path ("STAR_2Gen_Ref/maternal.chain") into maternal_chain_ch
@@ -584,6 +585,7 @@ process add_rsemreads_bam {
     path ("STAR_2Gen_Ref/${id}_output_phaser.father.vcf.gz") from fathervcf_ch
     path ("STAR_2Gen_Ref/mat.bed") from mat_bed_ch
     path ("STAR_2Gen_Ref/pat.bed") from pat_bed_ch
+    path gencode_bed from params.gencode_bed
 
 
   output:
