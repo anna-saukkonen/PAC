@@ -10,7 +10,7 @@
 
 params.genome        = params.genomes[ params.genome_version ]?.genome
 params.annot         = params.genomes[ params.genome_version ]?.annot
-
+params.gencode_bed   = params.genomes[ params.genome_version ]?.gencode_bed
 
 
 
