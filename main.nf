@@ -12,9 +12,7 @@ params.genome        = params.genomes[ params.genome_version ]?.genome
 params.annot         = params.genomes[ params.genome_version ]?.annot
 
 
-if (params.genome) {
-  
-}
+
 
 
 // Check if genome exists in the config file
@@ -244,8 +242,8 @@ process create_parental_genomes {
   liftOver -gff ${annot} STAR_2Gen_Ref/maternal.chain STAR_2Gen_Ref/mat_annotation.gtf STAR_2Gen_Ref/not_lifted_m.txt
   liftOver -gff ${annot} STAR_2Gen_Ref/paternal.chain STAR_2Gen_Ref/pat_annotation.gtf STAR_2Gen_Ref/not_lifted_p.txt
 
-  liftOver gencode.v19.GRCh37.genes.chr.bed STAR_2Gen_Ref/maternal.chain STAR_2Gen_Ref/mat.bed STAR_2Gen_Ref/not_bed_lifted_m.txt
-  liftOver gencode.v19.GRCh37.genes.chr.bed STAR_2Gen_Ref/paternal.chain STAR_2Gen_Ref/pat.bed STAR_2Gen_Ref/not_bed_lifted_p.txt
+  liftOver gencode_bed STAR_2Gen_Ref/maternal.chain STAR_2Gen_Ref/mat.bed STAR_2Gen_Ref/not_bed_lifted_m.txt
+  liftOver gencode_bed STAR_2Gen_Ref/paternal.chain STAR_2Gen_Ref/pat.bed STAR_2Gen_Ref/not_bed_lifted_p.txt
   
   
   cat STAR_2Gen_Ref/chr1_${id}_maternal.fa >> STAR_2Gen_Ref/${id}_maternal.fa
@@ -633,7 +631,7 @@ process add_rsemreads_bam {
 
   python2 /phaser/phaser_gene_ae/phaser_gene_ae.py --haplotypic_counts ${id}_pat_output_phaser.haplotypic_counts.txt --features pat.bed --id_separator +  --o ${id}_paternal_phaser_gene_ae.txt
 
-  perl ${baseDir}/bin/merge_gene_level.pl gencode.v19.GRCh37.genes.chr.bed ${id}_maternal_phaser_gene_ae.txt ${id}_paternal_phaser_gene_ae.txt ${id}
+  perl ${baseDir}/bin/merge_gene_level.pl gencode_bed ${id}_maternal_phaser_gene_ae.txt ${id}_paternal_phaser_gene_ae.txt ${id}
   """
 
 }
