@@ -633,7 +633,7 @@ process add_rsemreads_bam {
 
   python2 /phaser/phaser_gene_ae/phaser_gene_ae.py --haplotypic_counts ${id}_pat_output_phaser.haplotypic_counts.txt --features pat.bed --id_separator +  --o ${id}_paternal_phaser_gene_ae.txt
 
-  perl merge_gene_level.pl gencode.v19.GRCh37.genes.chr.bed ${id}_maternal_phaser_gene_ae.txt ${id}_paternal_phaser_gene_ae.txt ${id}
+  perl ${baseDir}/bin/merge_gene_level.pl gencode.v19.GRCh37.genes.chr.bed ${id}_maternal_phaser_gene_ae.txt ${id}_paternal_phaser_gene_ae.txt ${id}
   """
 
 }
