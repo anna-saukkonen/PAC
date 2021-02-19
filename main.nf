@@ -551,7 +551,7 @@ process extra_reads_rsem {
 
 
 process add_rsemreads_bam {
-  publishDir "$params.outdir/pac/", mode: 'copy'
+  publishDir "$params.outdir/", mode: 'copy'
 
   input:
     path ("Maternal.RSEM.bam") from mat_rsembam
@@ -566,8 +566,7 @@ process add_rsemreads_bam {
 
 
   output:
-    path ("results_2genomes_${id}.RSEM.STAR.SOFT.NOTRIM.txt")
-    path ("results_2genomes_${id}.RSEM.STAR.SOFT.NOTRIM_baq.txt")
+    path ("results*.txt")
     
   script:
 
