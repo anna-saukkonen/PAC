@@ -314,8 +314,14 @@ process create_parental_genomes {
 
   perl ${baseDir}/bin/adjust_reference_vcf.pl ${id}_output_phaser.vcf ${id}
 
-  bcftools sort ${id}_output_phaser.mother.vcf -Oz -o ${id}_output_phaser.mother.vcf.gz
-  bcftools sort ${id}_output_phaser.father.vcf -Oz -o ${id}_output_phaser.father.vcf.gz
+  grep "^#" ${id}_output_phaser.mother.vcf > ${id}_output_phaser.mother.s.vcf
+  grep -v "^#" ${id}_output_phaser.mother.vcf | sort -k1,1V -k2,2g >> ${id}_output_phaser.mother.s.vcf
+  grep "^#" ${id}_output_phaser.father.vcf > ${id}_output_phaser.father.s.vcf
+  grep -v "^#" ${id}_output_phaser.father.vcf | sort -k1,1V -k2,2g >> ${id}_output_phaser.father.s.vcf
+  mv ${id}_output_phaser.mother.s.vcf ${id}_output_phaser.mother.vcf
+  mv ${id}_output_phaser.father.s.vcf ${id}_output_phaser.father.vcf
+  bcftools view ${id}_output_phaser.mother.vcf -Oz -o ${id}_output_phaser.mother.vcf.gz
+  bcftools view ${id}_output_phaser.father.vcf -Oz -o ${id}_output_phaser.father.vcf.gz
   tabix ${id}_output_phaser.father.vcf.gz
   tabix ${id}_output_phaser.mother.vcf.gz
 
