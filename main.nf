@@ -314,8 +314,8 @@ process create_parental_genomes {
 
   perl ${baseDir}/bin/adjust_reference_vcf.pl ${id}_output_phaser.vcf ${id}
 
-  bcftools view ${id}_output_phaser.mother.vcf -Oz -o ${id}_output_phaser.mother.vcf.gz
-  bcftools view ${id}_output_phaser.father.vcf -Oz -o ${id}_output_phaser.father.vcf.gz
+  bcftools sort ${id}_output_phaser.mother.vcf -Oz -o ${id}_output_phaser.mother.vcf.gz
+  bcftools sort ${id}_output_phaser.father.vcf -Oz -o ${id}_output_phaser.father.vcf.gz
   tabix ${id}_output_phaser.father.vcf.gz
   tabix ${id}_output_phaser.mother.vcf.gz
 
