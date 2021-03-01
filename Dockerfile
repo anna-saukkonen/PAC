@@ -88,6 +88,19 @@ RUN make
 RUN cp bin/* /usr/local/bin/
 WORKDIR /
 
+#Get BCFTOOLS:
+RUN wget https://github.com/samtools/bcftools/releases/download/1.11/bcftools-1.11.tar.bz2
+RUN bzip2 -d bcftools-1.11.tar.bz2
+RUN tar -xvf bcftools-1.11.tar
+RUN echo $(ls)
+WORKDIR bcftools-1.11
+RUN ./configure --prefix=/usr
+RUN make
+RUN make install
+WORKDIR /usr/bin
+RUN echo $(ls)
+WORKDIR /
+
 #Get phaser:
 RUN git clone https://github.com/secastel/phaser.git
 RUN pip2 install Cython
