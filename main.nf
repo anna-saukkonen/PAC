@@ -638,9 +638,9 @@ process add_rsemreads_bam {
 
   python2 /phaser/phaser/phaser.py --vcf STAR_2Gen_Ref/${id}_output_phaser.father.vcf.gz --bam final_pat.sorted.bam --paired_end 1 --mapq 0 --baseq 10 --isize 0 --include_indels 1 --sample ${id} --id_separator + --pass_only 0 --gw_phase_vcf 1 --threads ${cpus} --o ${id}_pat_output_phaser
 
-  python2 /phaser/phaser_gene_ae/phaser_gene_ae.py --haplotypic_counts ${id}_mat_output_phaser.haplotypic_counts.txt --features STAR_2Gen_Ref/mat.bed --id_separator + --threads ${cpus}  --o ${id}_maternal_phaser_gene_ae.txt
+  python2 /phaser/phaser_gene_ae/phaser_gene_ae.py --haplotypic_counts ${id}_mat_output_phaser.haplotypic_counts.txt --features STAR_2Gen_Ref/mat.bed --id_separator +  --o ${id}_maternal_phaser_gene_ae.txt
 
-  python2 /phaser/phaser_gene_ae/phaser_gene_ae.py --haplotypic_counts ${id}_pat_output_phaser.haplotypic_counts.txt --features STAR_2Gen_Ref/pat.bed --id_separator + --threads ${cpus}  --o ${id}_paternal_phaser_gene_ae.txt
+  python2 /phaser/phaser_gene_ae/phaser_gene_ae.py --haplotypic_counts ${id}_pat_output_phaser.haplotypic_counts.txt --features STAR_2Gen_Ref/pat.bed --id_separator +  --o ${id}_paternal_phaser_gene_ae.txt
 
   perl ${baseDir}/bin/merge_gene_level.pl ${gencode_bed} ${id}_maternal_phaser_gene_ae.txt ${id}_paternal_phaser_gene_ae.txt ${id}
   """
