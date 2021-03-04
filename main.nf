@@ -190,6 +190,7 @@ process phaser_step {
   path ("phaser_version.bam") from phaser_ch
   path ("phaser_version.bam.bai") from phaser_bai_ch
   val id from params.id
+  val cpus from params.cpus
 
   output:
   path ("${id}_output_phaser.vcf") into (phaser_out_ch1, phaser_out_ch2)
