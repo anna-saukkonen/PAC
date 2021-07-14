@@ -25,7 +25,9 @@ Make sure you have [Java v8+](https://www.oracle.com/java/technologies/javase-do
 
 `java -version`
 
+
 ##### 2. Install either [Docker]((https://docs.docker.com/get-docker/)) or [Singularity](https://sylabs.io/guides/3.0/user-guide/installation.html) if cluster doesn't have them yet
+
 
 ##### 3. Run PAC with following command:
 
@@ -37,52 +39,39 @@ Make sure you have [Java v8+](https://www.oracle.com/java/technologies/javase-do
 ## Options:
 
 #### Required
---genome_version:
-
-GRCh37 *or*
-
-GRCh38
-
---reads:
-
-"pathtoreads_**{1,2}.fq.gz**
-
- reads have to be saved in the same directory in the format: *path_to_read_1.fq.gz* and *path_to_read_2.fq.gz*
+--genome_version:  GRCh37 *or* GRCh38
 
 
---variants:
+--reads:  "pathtoreads_**{1,2}.fq.gz**
+reads have to be saved in the same directory in the format: *path_to_read_1.fq.gz* and *path_to_read_2.fq.gz*
 
-"path_to_variants"
 
--profile:
+--variants:  "path_to_variants"
 
-docker *or*
 
-singularity
-       
--id:
+-profile:  docker *or* singularity
+     
 
-"name_of_sample"       
+-id:  "name_of_sample"       
+
 
 
 #### Additional non-essential
 To receive email when the pipeline is finished
--N:
+-N:  name@email_address.com
 
-name@email_address.com
 
 Name of output directory
--outdir:
+-outdir:  "name_of_results_file_directory"
 
-"name_of_results_file_directory"
-default: "/pac_results"
-       
+default:  "/pac_results"
+ 
+
 Number of threads
--cpus:
-
-number
+-cpus:  number
 
 default:1
+
 We recommend at least 10 for speed
 
 
