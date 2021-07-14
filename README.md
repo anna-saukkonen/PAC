@@ -38,41 +38,52 @@ Make sure you have [Java v8+](https://www.oracle.com/java/technologies/javase-do
 
 #### Required
 --genome_version:
-	GRCh37 *or*
-    GRCh38
+
+GRCh37 *or*
+
+GRCh38
 
 --reads:
-	"pathtoreads_**{1,2}.fq.gz**
 
-  	reads have to be saved in the same directory in the format: *path_to_read_1.fq.gz* and *path_to_read_2.fq.gz*
+"pathtoreads_**{1,2}.fq.gz**
+
+ reads have to be saved in the same directory in the format: *path_to_read_1.fq.gz* and *path_to_read_2.fq.gz*
 
 
 --variants:
-		 "path_to_variants"
+
+"path_to_variants"
 
 -profile:
-	docker *or*
-	singularity
+
+docker *or*
+
+singularity
        
 -id:
-	"name_of_sample"       
+
+"name_of_sample"       
 
 
 #### Additional non-essential
 To receive email when the pipeline is finished
 -N:
-	name@email_address.com
+
+name@email_address.com
 
 Name of output directory
 -outdir:
-	"name_of_results_file_directory"
-     default: "/pac_results"
+
+"name_of_results_file_directory"
+default: "/pac_results"
        
 Number of threads
 -cpus:
-	number
-    default:1
-    We recommend at least 10 for speed
+
+number
+
+default:1
+We recommend at least 10 for speed
 
 
 
