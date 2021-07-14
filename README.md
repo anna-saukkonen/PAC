@@ -43,27 +43,34 @@ Make sure you have [Java v8+](https://www.oracle.com/java/technologies/javase-do
 GRCh37 *or* GRCh38
 
 
---reads:  "pathtoreads_**{1,2}.fq.gz**
+##### --reads:  
+"pathtoreads_**{1,2}.fq.gz**
 
 reads have to be saved in the same directory in the format: *path_to_read_1.fq.gz* and *path_to_read_2.fq.gz*
 
 
---variants:  "path_to_variants"
+##### --variants:  
+"path_to_variants"
 
 
--profile:  docker *or* singularity
+##### -profile:  
+docker *or* singularity
      
 
--id:  "name_of_sample"       
+##### -id:  
+"name_of_sample"       
 
 
 
 #### Additional non-essential
--N:  name@email_address.com  (To receive email when the pipeline is finished)
+##### -N:  
+name@email_address.com  (To receive email when the pipeline is finished)
 
--outdir:  "name_of_results_file_directory"  (default:  "/pac_results")
+##### -outdir:  
+"name_of_results_file_directory"  (default:  "/pac_results")
  
--cpus:  number  (default:1  We recommend at least 10 for speed)
+##### -cpus:  
+number  (default:1  We recommend at least 10 for speed)
 
 
 
