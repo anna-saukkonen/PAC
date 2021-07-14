@@ -17,7 +17,7 @@ See our [preprint](https://www.biorxiv.org/content/10.1101/2021.07.13.452202v1) 
 
 
 ## Installation
-#####1. Download nextflow
+##### 1. Download nextflow
 
 `curl -fsSL get.nextflow.io | bash`
 
@@ -25,9 +25,9 @@ Make sure you have [Java v8+](https://www.oracle.com/java/technologies/javase-do
 
 `java -version`
 
-#####2. Install either [Docker]((https://docs.docker.com/get-docker/)) or [Singularity](https://sylabs.io/guides/3.0/user-guide/installation.html) if cluster doesn't have them yet
+##### 2. Install either [Docker]((https://docs.docker.com/get-docker/)) or [Singularity](https://sylabs.io/guides/3.0/user-guide/installation.html) if cluster doesn't have them yet
 
-#####3. Run PAC with following command:
+##### 3. Run PAC with following command:
 
 `nextflow run http://github.com/anna-saukkonen/PAC.git --genome_version GRCh37 --reads "path_to_reads_{1,2}.fq.gz" --variants "path_to_variants" -profile docker`
 
