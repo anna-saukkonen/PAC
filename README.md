@@ -39,7 +39,7 @@ Make sure you have [Java v8+](https://www.oracle.com/java/technologies/javase-do
 ## Options:
 
 #### Required
---genome_version:  GRCh37 *or* GRCh38
+##### --genome_version:  GRCh37 *or* GRCh38
 
 
 --reads:  "pathtoreads_**{1,2}.fq.gz**
@@ -58,22 +58,11 @@ reads have to be saved in the same directory in the format: *path_to_read_1.fq.g
 
 
 #### Additional non-essential
-To receive email when the pipeline is finished
--N:  name@email_address.com
+-N:  name@email_address.com  (To receive email when the pipeline is finished)
 
-
-Name of output directory
--outdir:  "name_of_results_file_directory"
-
-default:  "/pac_results"
+-outdir:  "name_of_results_file_directory"  (default:  "/pac_results")
  
-
-Number of threads
--cpus:  number
-
-default:1
-
-We recommend at least 10 for speed
+-cpus:  number  (default:1  We recommend at least 10 for speed)
 
 
 
