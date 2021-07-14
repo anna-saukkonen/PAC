@@ -39,7 +39,8 @@ Make sure you have [Java v8+](https://www.oracle.com/java/technologies/javase-do
 ## Options:
 
 #### Required
-##### --genome_version:  GRCh37 *or* GRCh38
+##### --genome_version:  
+GRCh37 *or* GRCh38
 
 
 --reads:  "pathtoreads_**{1,2}.fq.gz**
