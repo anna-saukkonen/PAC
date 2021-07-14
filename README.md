@@ -2,7 +2,7 @@
 Author: Anna Saukkonen
 anna.saukkonen@gmail.com
 
-## Introduction:
+## INTRODUCTION:
 
 This pipeline has been created to adjust for computational biases associated with allelic counts.
 It comprises of the following steps:
@@ -16,7 +16,7 @@ See our [preprint](https://www.biorxiv.org/content/10.1101/2021.07.13.452202v1) 
 
 
 
-## Installation
+## INSTALLATION AND RUNNING
 ##### 1. Download nextflow
 
 `curl -fsSL get.nextflow.io | bash`
@@ -36,9 +36,9 @@ Make sure you have [Java v8+](https://www.oracle.com/java/technologies/javase-do
 
 
 
-## Options:
+## OPTIONS:
 
-#### Required
+#### REQUIRED
 ##### --genome_version:  
 GRCh37 *or* GRCh38
 
@@ -62,7 +62,7 @@ docker *or* singularity
 
 
 
-#### Additional non-essential
+#### NON ESSENTIAL
 ##### -N:  
 name@email_address.com  (To receive email when the pipeline is finished)
 
