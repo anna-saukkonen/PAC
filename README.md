@@ -1,6 +1,7 @@
 # PAC **P**ersonalised **A**SE **C**aller
 Author: Anna Saukkonen
 anna.saukkonen@gmail.com
+See our [preprint](https://www.biorxiv.org/content/10.1101/2021.07.13.452202v1) for additional information
 
 ## INTRODUCTION:
 
@@ -8,11 +9,11 @@ This pipeline has been created to adjust for computational biases associated wit
 It comprises of the following steps:
 1.	Local phasing of genetic data using PHASER
 2.	Creation of parental genomes to align sequencing data to
-3.	Selection of the best mapping for each read across the two parental genomes
-4.	Re-allocation of multimapping reads using RSEM
+3.	Re-allocation of multimapping reads using RSEM
+4.	Selection of the best mapping for each read across the two parental genomes
 5.	Outputs haplotype and site level allelic counts
 
-See our [preprint](https://www.biorxiv.org/content/10.1101/2021.07.13.452202v1) for additional information
+
 
 
 
@@ -58,7 +59,7 @@ docker *or* singularity
      
 
 ##### -id:  
-"name_of_sample"       
+"name_of_sample"  This needs to be same as in the VCF file      
 
 
 
@@ -72,6 +73,8 @@ name@email_address.com  (To receive email when the pipeline is finished)
 ##### -cpus:  
 number  (default:1  We recommend at least 10 for speed)
 
+
+Depending on the size of file you might need up to 128000MB, min 64000MB
 
 
 ```
