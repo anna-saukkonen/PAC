@@ -8,6 +8,6 @@ Links to files used:
 
 1000 Genomes phase 3 reference
 
-[GTEx data](https://github.com/broadinstitute/gtex-pipeline/)
+[GTEx data](https://gtexportal.org/home/datasets)
 
 Rest of the files can be found [here](https://figshare.com/projects/PAC/118125)
