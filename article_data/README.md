@@ -7,3 +7,5 @@ Links to files used:
 [Human genome file GRCh37](https://hgdownload.soe.ucsc.edu/goldenPath/hg19/bigZips/)
 
 [1000 Genomes phase 3 reference]()
+
+Rest of the files can be found [here](https://figshare.com/projects/PAC/118125)
