@@ -7,7 +7,12 @@ See our preprint [PAC: Highly accurate quantification of allelic gene expression
 
 ## INTRODUCTION:
 
-This pipeline has been created to adjust for computational biases associated with allelic counts.
+Allele-specific expression (ASE) is the imbalanced expression of the two alleles of a gene. While 
+many genes are expressed equally from both alleles, gene regulatory differences driven by
+genetic changes (i.e. regulatory variants) frequently cause the two alleles to be expressed at
+different levels, resulting in allele-specific expression patterns. The detection of ASE events 
+relies on accurate alignment of RNA-sequencing reads, where challenges still remain. This pipeline 
+has been created to adjust for computational biases associated with allelic counts.
 It comprises of the following steps:
 1.	Local phasing of genetic data using PHASER
 2.	Creation of parental genomes to align sequencing data to
@@ -34,8 +39,13 @@ Make sure you have [Java v8+](https://www.oracle.com/java/technologies/javase-do
 
 ##### 3. Run PAC with following command:
 
-`nextflow run http://github.com/anna-saukkonen/PAC.git --genome_version GRCh37 --reads "path_to_reads_{1,2}.fq.gz" --variants "path_to_variants" -profile docker`
+You can either run with this:
+`path_to/nextflow run https://github.com/anna-saukkonen/PAC -r main --genome_version GRCh37 --reads "path_to_reads_{1,2}.fq.gz" --variants "path_to_variants" -profile docker`
 
+-r command specifies the branch
+
+Or download repository and run with this:
+`path_to/nextflow run PAC/main.nf --genome_version GRCh37 --reads "path_to_reads_{1,2}.fq.gz" --variants "path_to_variants" -profile docker`
 
 
 
@@ -53,7 +63,7 @@ reads have to be saved in the same directory in the format: *path_to_read_1.fq.g
 
 
 ##### --variants:  
-"path_to_variants"
+"path_to_variants.vcf.gz"
 
 
 ##### -profile:  
@@ -73,10 +83,35 @@ name@email_address.com  (To receive email when the pipeline is finished)
 "name_of_results_file_directory"  (default:  "/pac_results")
  
 ##### -cpus:  
-number  (default:1  We recommend at least 10 for speed)
+number  (default:10  We recommend at least 10 for speed)
 
 
 Depending on the size of file you might need up to 128000MB, min 64000MB
+
+
+## OUTPUT
+
+PAC generates 4 output files:
+
+* haplotype level ASE calls:
+  - *ID*_gene_level_ae.txt
+  - 
+* Single nucleotide level ASE calls from PAC: 
+  - results_2genomes_*ID*.RSEM.STAR.SOFT.NOTRIM_baq.txt
+  - results_2genomes_*ID*.RSEM.STAR.SOFT.NOTRIM.txt
+  - 
+* Single nucleotide level ASE calls based on standard single genome mapping (for comoparison):
+  - results_1genome_*ID*.SOFT.NOTRIM_baq.txt
+  - results_1genome_*ID*.SOFT.NOTRIM.txt
+
+
+## TEST DATASET
+
+To test PAC on smaller dataset:
+nextflow run run https://github.com/anna-saukkonen/PAC -r main --genome_version GRCh37 --reads "/test/NA12890_merged_sample_0.05_{1,2}.fq.gz" --variants "/test/NA12877_output.phased.downsampled.vcf.gz" --id NA12877 -profile singularity
+
+See Test folder for output files you should get
+
 
 
 ```
