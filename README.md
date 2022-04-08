@@ -78,6 +78,7 @@ docker *or* singularity
 
 
 
+
 #### NON ESSENTIAL
 ##### -N:  
 name@email_address.com  (To receive email when the pipeline is finished)
@@ -90,6 +91,7 @@ number  (default:10  We recommend at least 10 for speed)
 
 
 Depending on the size of file you might need up to 128000MB, min 64000MB
+
 
 
 ## OUTPUT
@@ -108,6 +110,7 @@ PAC generates 4 output files:
   - results_1genome_*ID*.SOFT.NOTRIM.txt
 
 
+
 ## TEST DATASET
 
 To test PAC on smaller dataset:
@@ -115,6 +118,7 @@ To test PAC on smaller dataset:
 nextflow run https://github.com/anna-saukkonen/PAC -r main --genome_version GRCh37 --reads "/test/NA12890_merged_sample_0.05_{1,2}.fq.gz" --variants "/test/NA12877_output.phased.downsampled.vcf.gz" --id NA12877 -profile singularity
 
 See Test folder for output files you should get
+
 
 
 
