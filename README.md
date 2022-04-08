@@ -115,7 +115,13 @@ PAC generates 4 output files:
 
 To test PAC on smaller dataset:
 
-nextflow run https://github.com/anna-saukkonen/PAC -r main --genome_version GRCh37 --reads "/test/NA12890_merged_sample_0.05_{1,2}.fq.gz" --variants "/test/NA12877_output.phased.downsampled.vcf.gz" --id NA12877 -profile singularity
+load java
+
+load singularity
+
+git clone https://github.com/anna-saukkonen/PAC.git
+
+path_to_nextflow/nextflow run PAC/main.nf --genome_version GRCh37 --reads "PAC/test/NA12890_merged_sample_0./05_{1,2}.fq.gz" --variants "PAC/test/NA12877_output.phased.downsampled.vcf.gz" --id NA12877 -profile singularity
 
 See Test folder for output files you should get
 
