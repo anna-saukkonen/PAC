@@ -41,14 +41,14 @@ Make sure you have [Java v8+](https://www.oracle.com/java/technologies/javase-do
 
 - You can either run with this:
 
-`path_to/nextflow run https://github.com/anna-saukkonen/PAC -r main --genome_version GRCh37 --reads "path_to_reads_{1,2}.fq.gz" --variants "path_to_variants" -profile docker`
+`path_to/nextflow run https://github.com/anna-saukkonen/PAC -r main --genome_version GRCh37/38 --reads "path_to_reads_{1,2}.fq.gz" --variants "path_to_variants" --id ID -profile docker/singularity`
 
 -r command specifies the branch
 
 
 - Or download repository and run with this:
 
-`path_to/nextflow run PAC/main.nf --genome_version GRCh37 --reads "path_to_reads_{1,2}.fq.gz" --variants "path_to_variants" -profile docker`
+`path_to/nextflow run PAC/main.nf --genome_version GRCh37/38 --reads "path_to_reads_{1,2}.fq.gz" --variants "path_to_variants" --id ID -profile docker/singularity`
 
 
 
@@ -73,7 +73,7 @@ reads have to be saved in the same directory in the format: *path_to_read_1.fq.g
 docker *or* singularity
      
 
-##### -id:  
+##### --id:  
 "name_of_sample"  This needs to be same as in the VCF file      
 
 
