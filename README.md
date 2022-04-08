@@ -100,11 +100,11 @@ PAC generates 4 output files:
 
 * haplotype level ASE calls:
   - *ID*_gene_level_ae.txt
-  - 
+  
 * Single nucleotide level ASE calls from PAC: 
   - results_2genomes_*ID*.RSEM.STAR.SOFT.NOTRIM_baq.txt
   - results_2genomes_*ID*.RSEM.STAR.SOFT.NOTRIM.txt
-  - 
+   
 * Single nucleotide level ASE calls based on standard single genome mapping (for comoparison):
   - results_1genome_*ID*.SOFT.NOTRIM_baq.txt
   - results_1genome_*ID*.SOFT.NOTRIM.txt
