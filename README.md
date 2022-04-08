@@ -25,7 +25,7 @@ It comprises of the following steps:
 
 
 ## INSTALLATION AND RUNNING
-##### 1. Download nextflow
+#### 1. Download nextflow
 
 `curl -fsSL get.nextflow.io | bash`
 
@@ -34,10 +34,10 @@ Make sure you have [Java v8+](https://www.oracle.com/java/technologies/javase-do
 `java -version`
 
 
-##### 2. Install either [Docker]((https://docs.docker.com/get-docker/)) or [Singularity](https://sylabs.io/guides/3.0/user-guide/installation.html) if cluster doesn't have them yet
+#### 2. Install either [Docker]((https://docs.docker.com/get-docker/)) or [Singularity](https://sylabs.io/guides/3.0/user-guide/installation.html) if cluster doesn't have them yet
 
 
-##### 3. Run PAC with following command:
+#### 3. Run PAC with following command:
 
 - You can either run with this:
 
