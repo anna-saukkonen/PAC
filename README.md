@@ -7,10 +7,12 @@ anna.saukkonen@gmail.com
 
 See our preprint [PAC: Highly accurate quantification of allelic gene expression for population and disease genetics](https://www.biorxiv.org/content/10.1101/2021.07.13.452202v1) for additional information
 
-##### Table of Contents  
-[Introduction](#INTRODUCTION)  
-[Installation and running](#INSTALLATION-AND-RUNNING)  
-
+## TABLE OF CONTENTS
+1. [Introduction](#INTRODUCTION)  
+2. [Installation and running](#INSTALLATION-AND-RUNNING)  
+3. [Options](#OPTIONS)
+4. [Output](#OUTPUT)
+5. [Test Dataset](#TEST-DATASET)
 
 <!-- toc -->
 
