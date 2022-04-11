@@ -110,6 +110,8 @@ PAC generates 4 output files:
   - results_1genome_*ID*.SOFT.NOTRIM.txt
 
 
+
+
 >The haplotype level ASE results file contain following columns:
 >
 >-contig: chromosome
