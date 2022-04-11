@@ -1,4 +1,4 @@
-# **P**ersonalised **A**SE **C**aller (PAC)
+# *P*ersonalised *A*SE *C*aller (PAC)
 ============================================
 
 Author: Anna Saukkonen
@@ -56,32 +56,29 @@ Make sure you have [Java v8+](https://www.oracle.com/java/technologies/javase-do
 
 ## OPTIONS:
 
-#### REQUIRED
+### REQUIRED
 ##### --genome_version:  
 GRCh37 *or* GRCh38
 
 
-##### --reads:  
-"pathtoreads_**{1,2}.fq.gz**
+##### --reads:  "pathtoreads_**{1,2}.fq.gz**
 
 reads have to be saved in the same directory in the format: *path_to_read_1.fq.gz* and *path_to_read_2.fq.gz*
 
 
-##### --variants:  
-"path_to_variants.vcf.gz"
+##### --variants:  "path_to_variants.vcf.gz"
 
 
-##### -profile:  
-docker *or* singularity
+##### -profile:  docker *or* singularity
      
 
-##### --id:  
-"name_of_sample"  This needs to be same as in the VCF file      
+##### --id:  "name_of_sample"  
+This needs to be same as in the VCF file      
 
 
 
 
-#### NON ESSENTIAL
+### NON ESSENTIAL
 ##### -N:  
 name@email_address.com  (To receive email when the pipeline is finished)
 
@@ -100,40 +97,40 @@ Depending on the size of file you might need up to 128000MB, min 64000MB
 
 PAC generates 4 output files:
 
-* haplotype level ASE calls:
+###### * haplotype level ASE calls:
   - *ID*_gene_level_ae.txt
   
-* Single nucleotide level ASE calls from PAC: 
+###### * Single nucleotide level ASE calls from PAC: 
   - results_2genomes_*ID*.RSEM.STAR.SOFT.NOTRIM_baq.txt
   - results_2genomes_*ID*.RSEM.STAR.SOFT.NOTRIM.txt
    
-* Single nucleotide level ASE calls based on standard single genome mapping (for comoparison):
+###### * Single nucleotide level ASE calls based on standard single genome mapping (for comoparison):
   - results_1genome_*ID*.SOFT.NOTRIM_baq.txt
   - results_1genome_*ID*.SOFT.NOTRIM.txt
 
 
 
 
->The haplotype level ASE results file contain following columns:
->
->-contig: chromosome
->-start: gene start position
->-stop: gene end position
->-name: gene name
->-aCount: haplotype coverage
->-bCount: haplotype coverage
->-totalCount: total coverage
+###### ⋅⋅⋅The haplotype level ASE results file contain following columns:⋅⋅⋅
 
->The single nucleotide level ASE results files contain following columns:
->
->-Chr: chromosome
->-Pos: position along chromosome
->-RefAl: reference allele
->-AltAl: alternative allele
->-MapRef: reference allele coverage
->-MapAlt: alternative allele coverage
->-MapRatio: reference allele ratio
->-Mapcov: toal coverage at the site
+-contig: chromosome
+-start: gene start position
+-stop: gene end position
+-name: gene name
+-aCount: haplotype coverage
+-bCount: haplotype coverage
+-totalCount: total coverage
+
+###### The single nucleotide level ASE results files contain following columns:
+
+-Chr: chromosome
+-Pos: position along chromosome
+-RefAl: reference allele
+-AltAl: alternative allele
+-MapRef: reference allele coverage
+-MapAlt: alternative allele coverage
+-MapRatio: reference allele ratio
+-Mapcov: toal coverage at the site
 
 ## TEST DATASET
 
