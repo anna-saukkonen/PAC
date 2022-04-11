@@ -2,12 +2,12 @@ This folder contains data we used to generate results in our [preprint](https://
 
 Links to files used:
 
-[Platinum VCF](https://github.com/Illumina/PlatinumGenomes/blob/master/files/2017-1.0.files)
+- [Platinum VCF](https://github.com/Illumina/PlatinumGenomes/blob/master/files/2017-1.0.files)
 
-[Human genome file GRCh37](https://hgdownload.soe.ucsc.edu/goldenPath/hg19/bigZips/)
+- [Human genome file GRCh37](https://hgdownload.soe.ucsc.edu/goldenPath/hg19/bigZips/)
 
-1000 Genomes phase 3 reference
+- 1000 Genomes phase 3 reference
 
-[GTEx data](https://gtexportal.org/home/datasets)
+- [GTEx data](https://gtexportal.org/home/datasets)
 
-Rest of the files can be found [here](https://figshare.com/projects/PAC/118125)
+- Rest of the files can be found [here](https://figshare.com/projects/PAC/118125)
