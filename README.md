@@ -9,7 +9,7 @@ See our preprint [PAC: Highly accurate quantification of allelic gene expression
 
 ##### Table of Contents  
 [Introduction](#INTRODUCTION)  
-[Installation and running](#INSTALLATION AND RUNNING)  
+[Installation and running](#INSTALLATION-AND-RUNNING)  
 
 
 <!-- toc -->
