@@ -88,7 +88,6 @@ name@email_address.com  (To receive email when the pipeline is finished)
 ##### -cpus:  
 number  (default:10  We recommend at least 10 for speed)
 
-
 Depending on the size of file you might need up to 128000MB, min 64000MB
 
 
@@ -115,22 +114,22 @@ PAC generates 4 output files:
 
    -contig: chromosome  
    -start: gene start position  
--stop: gene end position
--name: gene name
--aCount: haplotype coverage
--bCount: haplotype coverage
--totalCount: total coverage
+   -stop: gene end position  
+   -name: gene name  
+   -aCount: haplotype coverage  
+   -bCount: haplotype coverage  
+   -totalCount: total coverage  
 
 ##### The single nucleotide level ASE results files contain following columns:
 
--Chr: chromosome
--Pos: position along chromosome
--RefAl: reference allele
--AltAl: alternative allele
--MapRef: reference allele coverage
--MapAlt: alternative allele coverage
--MapRatio: reference allele ratio
--Mapcov: toal coverage at the site
+   -Chr: chromosome  
+   -Pos: position along chromosome  
+   -RefAl: reference allele  
+   -AltAl: alternative allele  
+   -MapRef: reference allele coverage  
+   -MapAlt: alternative allele coverage  
+   -MapRatio: reference allele ratio  
+   -Mapcov: toal coverage at the site  
 
 ## TEST DATASET
 
