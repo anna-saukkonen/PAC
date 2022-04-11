@@ -78,14 +78,13 @@ this needs to be same as in the VCF file
 
 
 ### NON ESSENTIAL
-##### -N:  
-name@email_address.com  (To receive email when the pipeline is finished)
+##### -N:  name@email_address.com  (To receive email when the pipeline is finished)
 
-##### -outdir:  
-"name_of_results_file_directory"  (default:  "/pac_results")
+##### -outdir:  "name_of_results_file_directory"  
+(default:  "/pac_results")
  
-##### -cpus:  
-number  (default:10  We recommend at least 10 for speed)
+##### -cpus:  number  
+(default:10  We recommend at least 10 for speed)
 
 Depending on the size of file you might need up to 128000MB, min 64000MB
 
