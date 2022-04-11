@@ -111,9 +111,9 @@ PAC generates 4 output files:
 
 
 
-###### ⋅⋅⋅The haplotype level ASE results file contain following columns:⋅⋅⋅
+##### The haplotype level ASE results file contain following columns:
 
--contig: chromosome
+⋅⋅⋅-contig: chromosome⋅⋅⋅
 -start: gene start position
 -stop: gene end position
 -name: gene name
@@ -121,7 +121,7 @@ PAC generates 4 output files:
 -bCount: haplotype coverage
 -totalCount: total coverage
 
-###### The single nucleotide level ASE results files contain following columns:
+##### The single nucleotide level ASE results files contain following columns:
 
 -Chr: chromosome
 -Pos: position along chromosome
