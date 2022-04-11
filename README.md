@@ -57,7 +57,7 @@ Make sure you have [Java v8+](https://www.oracle.com/java/technologies/javase-do
 ## OPTIONS:
 
 ### REQUIRED
-##### --genome_version:  
+##### --genome_version:
 GRCh37 *or* GRCh38
 
 
