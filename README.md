@@ -98,6 +98,16 @@ PAC generates 4 output files:
 #### * Haplotype level ASE calls:
   - *ID*_gene_level_ae.txt
   
+| Haplotype level ASE results columns  | Description          |
+| ------------------------------------ |:--------------------:| 
+| contig                               | chromosome           | 
+| start                                | gene start position  |  
+| stop                                 | gene end position    |
+| name                                 | gene name            |
+| aCount                               | haplotype a coverage |
+| bCount                               | haplotype b coverage |
+| totalCount                           | total coverage       |
+
 #### * Single nucleotide level ASE calls from PAC: 
   - results_2genomes_*ID*.RSEM.STAR.SOFT.NOTRIM_baq.txt
   - results_2genomes_*ID*.RSEM.STAR.SOFT.NOTRIM.txt
@@ -106,34 +116,20 @@ PAC generates 4 output files:
   - results_1genome_*ID*.SOFT.NOTRIM_baq.txt
   - results_1genome_*ID*.SOFT.NOTRIM.txt
 
+| Single nucleotide level ASE results columns  | Description                 |
+| -------------------------------------------- |:---------------------------:| 
+| Chr                                          | chromosome                  | 
+| Pos                                          | position along chromosome   |  
+| RefAl                                        | reference allele            |
+| AltAl                                        | alternative allele          |
+| MapRef                                       | reference allele coverage   |
+| MapAlt                                       | alternative allele coverage |
+| MapRatio                                     | reference allele ratio      |
+| Mapcov                                       | toal coverage at the site   |
 
-| Haplotype level ASE results   | Description         |
-| file columns                  |                     |
-| ----------------------------- |:-------------------:| 
-| contig                        | chromosome          | 
-| start                         | gene start position |  
-| stop                          | gene end position   |
 
-##### The haplotype level ASE results file contain following columns:
 
-   -contig: chromosome  
-   -start: gene start position  
-   -stop: gene end position  
-   -name: gene name  
-   -aCount: haplotype coverage  
-   -bCount: haplotype coverage  
-   -totalCount: total coverage  
 
-##### The single nucleotide level ASE results files contain following columns:
-
-   -Chr: chromosome  
-   -Pos: position along chromosome  
-   -RefAl: reference allele  
-   -AltAl: alternative allele  
-   -MapRef: reference allele coverage  
-   -MapAlt: alternative allele coverage  
-   -MapRatio: reference allele ratio  
-   -Mapcov: toal coverage at the site  
 
 ## TEST DATASET
 
