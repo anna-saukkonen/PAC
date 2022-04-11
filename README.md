@@ -119,7 +119,7 @@ PAC generates 4 output files:
   - results_2genomes_*ID*.RSEM.STAR.SOFT.NOTRIM_baq.txt
   - results_2genomes_*ID*.RSEM.STAR.SOFT.NOTRIM.txt
    
-#### * Single nucleotide level ASE calls based on standard single genome mapping (for comoparison):
+#### * Single nucleotide level ASE calls based on standard single genome mapping (for comparison):
   - results_1genome_*ID*.SOFT.NOTRIM_baq.txt
   - results_1genome_*ID*.SOFT.NOTRIM.txt
 
