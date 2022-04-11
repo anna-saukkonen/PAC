@@ -7,6 +7,13 @@ anna.saukkonen@gmail.com
 
 See our preprint [PAC: Highly accurate quantification of allelic gene expression for population and disease genetics](https://www.biorxiv.org/content/10.1101/2021.07.13.452202v1) for additional information
 
+##### Table of Contents  
+[Introduction](#INTRODUCTION)  
+[Installation and running](#INSTALLATION AND RUNNING)  
+
+
+<!-- toc -->
+
 ## INTRODUCTION:
 
 Allele-specific expression (ASE) is the imbalanced expression of the two alleles of a gene. While 
