@@ -97,7 +97,7 @@ Depending on the size of file you might need up to 128000MB, min 64000MB
 
 PAC generates 4 output files:
 
-#### * haplotype level ASE calls:
+#### * Haplotype level ASE calls:
   - *ID*_gene_level_ae.txt
   
 #### * Single nucleotide level ASE calls from PAC: 
@@ -113,10 +113,10 @@ PAC generates 4 output files:
 
 ##### The haplotype level ASE results file contain following columns:
 
-  -contig: chromosome
-  -start: gene start position
-  -stop: gene end position
-  -name: gene name
+⋅⋅-contig: chromosome
+⋅⋅-start: gene start position
+-stop: gene end position
+-name: gene name
 -aCount: haplotype coverage
 -bCount: haplotype coverage
 -totalCount: total coverage
