@@ -113,8 +113,8 @@ PAC generates 4 output files:
 
 ##### The haplotype level ASE results file contain following columns:
 
-⋅⋅-contig: chromosome
-⋅⋅-start: gene start position
+   -contig: chromosome  
+   -start: gene start position  
 -stop: gene end position
 -name: gene name
 -aCount: haplotype coverage
