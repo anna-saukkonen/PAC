@@ -57,8 +57,7 @@ Make sure you have [Java v8+](https://www.oracle.com/java/technologies/javase-do
 ## OPTIONS:
 
 ### REQUIRED
-##### --genome_version:
-GRCh37 *or* GRCh38
+##### --genome_version: GRCh37 *or* GRCh38
 
 
 ##### --reads:  "pathtoreads_**{1,2}.fq.gz**
@@ -73,7 +72,7 @@ reads have to be saved in the same directory in the format: *path_to_read_1.fq.g
      
 
 ##### --id:  "name_of_sample"  
-This needs to be same as in the VCF file      
+this needs to be same as in the VCF file      
 
 
 
@@ -108,7 +107,11 @@ PAC generates 4 output files:
   - results_1genome_*ID*.SOFT.NOTRIM.txt
 
 
-
+| Haplotype level ASE results   | Description         |
+| ----------------------------- |:-------------------:| 
+| contig                        | chromosome          | 
+| start                         | gene start position |  
+| stop                          | gene end position   |
 
 ##### The haplotype level ASE results file contain following columns:
 
