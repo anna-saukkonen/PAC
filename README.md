@@ -111,23 +111,25 @@ PAC generates 4 output files:
 
 
 >The haplotype level ASE results file contain following columns:
->-contig: chromosome
->-start: gene start position
--stop: gene end position
--name: gene name
--aCount: haplotype coverage
--bCount: haplotype coverage
--totalCount: total coverage
+>
+>- contig: chromosome
+>- start: gene start position
+>- stop: gene end position
+>- name: gene name
+>- aCount: haplotype coverage
+>- bCount: haplotype coverage
+>- totalCount: total coverage
 
-The single nucleotide level ASE results files contain following columns:
--Chr: chromosome
--Pos: position along chromosome
--RefAl: reference allele
--AltAl: alternative allele
--MapRef: reference allele coverage
--MapAlt: alternative allele coverage
--MapRatio: reference allele ratio
--Mapcov: toal coverage at the site
+>The single nucleotide level ASE results files contain following columns:
+>
+>- Chr: chromosome
+>- Pos: position along chromosome
+>- RefAl: reference allele
+>- AltAl: alternative allele
+>- MapRef: reference allele coverage
+>- MapAlt: alternative allele coverage
+>- MapRatio: reference allele ratio
+>- Mapcov: toal coverage at the site
 
 ## TEST DATASET
 
