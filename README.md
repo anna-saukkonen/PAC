@@ -27,7 +27,7 @@ It comprises of the following steps:
 
 
 ## INSTALLATION AND RUNNING
-#### 1. Download nextflow
+### 1. Download nextflow
 
 `curl -fsSL get.nextflow.io | bash`
 
@@ -35,20 +35,19 @@ Make sure you have [Java v8+](https://www.oracle.com/java/technologies/javase-do
 
 `java -version`
 
+### 2. Install either [Docker]((https://docs.docker.com/get-docker/)) or [Singularity](https://sylabs.io/guides/3.0/user-guide/installation.html) if cluster doesn't have them yet
 
-#### 2. Install either [Docker]((https://docs.docker.com/get-docker/)) or [Singularity](https://sylabs.io/guides/3.0/user-guide/installation.html) if cluster doesn't have them yet
 
+### 3. Run PAC with following command:
 
-#### 3. Run PAC with following command:
-
-- You can either run with this:
+* You can either run with this:
 
 `path_to/nextflow run https://github.com/anna-saukkonen/PAC -r main --genome_version GRCh37/38 --reads "path_to_reads_{1,2}.fq.gz" --variants "path_to_variants" --id ID -profile docker/singularity`
 
 -r command specifies the branch
 
 
-- Or download repository and run with this:
+* Or download repository and run with this:
 
 `path_to/nextflow run PAC/main.nf --genome_version GRCh37/38 --reads "path_to_reads_{1,2}.fq.gz" --variants "path_to_variants" --id ID -profile docker/singularity`
 
