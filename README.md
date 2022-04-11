@@ -110,6 +110,24 @@ PAC generates 4 output files:
   - results_1genome_*ID*.SOFT.NOTRIM.txt
 
 
+>The haplotype level ASE results file contain following columns:
+>-contig: chromosome
+>-start: gene start position
+-stop: gene end position
+-name: gene name
+-aCount: haplotype coverage
+-bCount: haplotype coverage
+-totalCount: total coverage
+
+The single nucleotide level ASE results files contain following columns:
+-Chr: chromosome
+-Pos: position along chromosome
+-RefAl: reference allele
+-AltAl: alternative allele
+-MapRef: reference allele coverage
+-MapAlt: alternative allele coverage
+-MapRatio: reference allele ratio
+-Mapcov: toal coverage at the site
 
 ## TEST DATASET
 
@@ -123,7 +141,7 @@ git clone https://github.com/anna-saukkonen/PAC.git
 
 path_to_nextflow/nextflow run PAC/main.nf --genome_version GRCh37 --reads "PAC/test/NA12890_merged_sample_0.005_{1,2}.fq.gz" --variants "PAC/test/NA12877_output.phased.downsampled.vcf.gz" --id NA12877 -profile singularity
 
-See Test folder for output files you should get
+See test/pac_results folder for output files you should get
 
 
 
