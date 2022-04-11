@@ -97,14 +97,14 @@ Depending on the size of file you might need up to 128000MB, min 64000MB
 
 PAC generates 4 output files:
 
-###### * haplotype level ASE calls:
+#### * haplotype level ASE calls:
   - *ID*_gene_level_ae.txt
   
-###### * Single nucleotide level ASE calls from PAC: 
+#### * Single nucleotide level ASE calls from PAC: 
   - results_2genomes_*ID*.RSEM.STAR.SOFT.NOTRIM_baq.txt
   - results_2genomes_*ID*.RSEM.STAR.SOFT.NOTRIM.txt
    
-###### * Single nucleotide level ASE calls based on standard single genome mapping (for comoparison):
+#### * Single nucleotide level ASE calls based on standard single genome mapping (for comoparison):
   - results_1genome_*ID*.SOFT.NOTRIM_baq.txt
   - results_1genome_*ID*.SOFT.NOTRIM.txt
 
@@ -113,10 +113,10 @@ PAC generates 4 output files:
 
 ##### The haplotype level ASE results file contain following columns:
 
-⋅⋅⋅-contig: chromosome⋅⋅⋅
--start: gene start position
--stop: gene end position
--name: gene name
+  -contig: chromosome
+  -start: gene start position
+  -stop: gene end position
+  -name: gene name
 -aCount: haplotype coverage
 -bCount: haplotype coverage
 -totalCount: total coverage
