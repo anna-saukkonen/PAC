@@ -56,7 +56,7 @@ Make sure you have [Java v8+](https://www.oracle.com/java/technologies/javase-do
 
 ## OPTIONS:
 
-### REQUIRED
+### Required
 ##### --genome_version: GRCh37 *or* GRCh38
 
 
@@ -77,7 +77,7 @@ this needs to be same as in the VCF file
 
 
 
-### NON ESSENTIAL
+### Optional
 ##### -N:  name@email_address.com  (To receive email when the pipeline is finished)
 
 ##### -outdir:  "name_of_results_file_directory"  
