@@ -108,6 +108,7 @@ PAC generates 4 output files:
 
 
 | Haplotype level ASE results   | Description         |
+| file columns                  |                     |
 | ----------------------------- |:-------------------:| 
 | contig                        | chromosome          | 
 | start                         | gene start position |  
