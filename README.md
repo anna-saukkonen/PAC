@@ -1,5 +1,5 @@
 # *P*ersonalised *A*SE *C*aller (PAC)
-============================================
+---------------------------------------
 
 Author: Anna Saukkonen
 
@@ -123,7 +123,7 @@ PAC generates 4 output files:
 | MapRef                                       | reference allele coverage   |
 | MapAlt                                       | alternative allele coverage |
 | MapRatio                                     | reference allele ratio      |
-| Mapcov                                       | toal coverage at the site   |
+| Mapcov                                       | total coverage at the site  |
 
 
 
