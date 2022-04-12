@@ -69,12 +69,11 @@ Make sure you have [Java v8+](https://www.oracle.com/java/technologies/javase-do
 
 
 ##### --reads:  "pathtoreads_**{1,2}.fq.gz**
-
 reads have to be saved in the same directory in the format: *path_to_read_1.fq.gz* and *path_to_read_2.fq.gz*
 
 
 ##### --variants:  "path_to_variants.vcf.gz"
-
+vcf file needs to be phased
 
 ##### -profile:  docker *or* singularity
      
