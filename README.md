@@ -5,7 +5,7 @@ Author: Anna Saukkonen
 
 anna.saukkonen@gmail.com
 
-See our paper [PAC: Highly accurate quantification of allelic gene expression for population and disease genetics](https://genome.cshlp.org/content/early/2022/07/06/gr.276296.121) for additional information
+See our paper [Highly accurate quantification of allelic gene expression for population and disease genetics](https://genome.cshlp.org/content/early/2022/07/06/gr.276296.121) for additional information
 
 ## TABLE OF CONTENTS
 1. [Introduction](#INTRODUCTION)  
