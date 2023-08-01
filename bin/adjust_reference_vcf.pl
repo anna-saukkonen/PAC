@@ -12,10 +12,10 @@ $father_vcf=~s/vcf//; $father_vcf.="father.vcf";
 open (OUTM, ">$mother_vcf") || die "Unable to open file to write to: $!\n";
 open (OUTF, ">$father_vcf") || die "Unable to open file to write to: $!\n";
 
-for (1..24) {
+for (1..21) {
   my $chr = $_;
-  $chr="X" if ($chr==23);
-  $chr="Y" if ($chr==24);
+  $chr="X" if ($chr==20);
+  $chr="Y" if ($chr==21);
   my $file = "chr".$chr."_".$id.".map";
   my @reference = (); my @father = (); my @mother = ();
   open (MAP, "$file") || die "Unable to open map file $file to read: $!\n";
