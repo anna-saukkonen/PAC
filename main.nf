@@ -267,9 +267,6 @@ process create_parental_genomes {
   cat STAR_2Gen_Ref/chr17_${id}_maternal.fa >> STAR_2Gen_Ref/${id}_maternal.fa
   cat STAR_2Gen_Ref/chr18_${id}_maternal.fa >> STAR_2Gen_Ref/${id}_maternal.fa
   cat STAR_2Gen_Ref/chr19_${id}_maternal.fa >> STAR_2Gen_Ref/${id}_maternal.fa
-  cat STAR_2Gen_Ref/chr20_${id}_maternal.fa >> STAR_2Gen_Ref/${id}_maternal.fa
-  cat STAR_2Gen_Ref/chr21_${id}_maternal.fa >> STAR_2Gen_Ref/${id}_maternal.fa
-  cat STAR_2Gen_Ref/chr22_${id}_maternal.fa >> STAR_2Gen_Ref/${id}_maternal.fa
   cat STAR_2Gen_Ref/chrX_${id}_maternal.fa >> STAR_2Gen_Ref/${id}_maternal.fa
   cat STAR_2Gen_Ref/chrY_${id}_maternal.fa >> STAR_2Gen_Ref/${id}_maternal.fa
   cat STAR_2Gen_Ref/chrM_${id}_maternal.fa >> STAR_2Gen_Ref/${id}_maternal.fa
@@ -294,9 +291,6 @@ process create_parental_genomes {
   cat STAR_2Gen_Ref/chr17_${id}_paternal.fa >> STAR_2Gen_Ref/${id}_paternal.fa
   cat STAR_2Gen_Ref/chr18_${id}_paternal.fa >> STAR_2Gen_Ref/${id}_paternal.fa
   cat STAR_2Gen_Ref/chr19_${id}_paternal.fa >> STAR_2Gen_Ref/${id}_paternal.fa
-  cat STAR_2Gen_Ref/chr20_${id}_paternal.fa >> STAR_2Gen_Ref/${id}_paternal.fa
-  cat STAR_2Gen_Ref/chr21_${id}_paternal.fa >> STAR_2Gen_Ref/${id}_paternal.fa
-  cat STAR_2Gen_Ref/chr22_${id}_paternal.fa >> STAR_2Gen_Ref/${id}_paternal.fa
   cat STAR_2Gen_Ref/chrX_${id}_paternal.fa >> STAR_2Gen_Ref/${id}_paternal.fa
   cat STAR_2Gen_Ref/chrY_${id}_paternal.fa >> STAR_2Gen_Ref/${id}_paternal.fa
   cat STAR_2Gen_Ref/chrM_${id}_paternal.fa >> STAR_2Gen_Ref/${id}_paternal.fa
