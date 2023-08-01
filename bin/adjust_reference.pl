@@ -6,10 +6,10 @@ my $id = $ARGV[1]; #ID in vcf
 
 open (OUT, ">map_over.txt") || die "Unable to open file to write to: $!\n";
 
-for (1..24) {
+for (1..21) {
   my $chr = $_;
-  $chr="X" if ($chr==23);
-  $chr="Y" if ($chr==24);
+  $chr="X" if ($chr==20);
+  $chr="Y" if ($chr==21);
   my $file = "chr".$chr."_".$id.".map";
   my @reference = (); my @father = (); my @mother = ();
   open (MAP, "$file") || die "Unable to open map file $file to read: $!\n";
